@@ -9,7 +9,7 @@ interface ButtonProperties {
 }
 
 //Create a button component and a render method that returns how the button is displayed
-const StopwatchButton: 
+const Buttons: 
 React.FC<ButtonProperties> = ({ onClick, buttonLabel}) => {
     return (
         <button onClick = {onClick}>{buttonLabel}</button>
@@ -17,4 +17,4 @@ React.FC<ButtonProperties> = ({ onClick, buttonLabel}) => {
 }
 
 //Export the component for use
-export default StopwatchButton;
+export default Buttons;

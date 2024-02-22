@@ -1,18 +1,18 @@
 //Importing require modules
 import React, {useState, useEffect} from 'react'
-import StopWatch from './StopWatch';
+import Main from './main';
 
 
-//Define the App Component by returning the StopWatch Component
+//Define the App Component by returning the main Component
 const App = () => {
     
     return(
-        <div className = "StopWatch App">
+        <div className = "WiserChoice">
 
-            <StopWatch />
+            <Main/>
         </div>
     );
 }
 
 //Export the component for use
-export default App;
+export default Main;
