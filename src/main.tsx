@@ -56,21 +56,38 @@ const WiserChoice = () => {
     };
 
 
+    //PART 5) HANDLING IMPORTANCE
+    const [rank, setRank] = useState(false);
+
+    const handleImportance = (index:number, value:number) => {
+      const newCategories = [...categories];
+      newCategories[index].importance = value;
+      setCategories(newCategories);
+    };
+
+    
+    //PART 6) MAKING THE FINAL DECISION
+    const [decisionmade, setDecision] = useState(false);
+
+
+
     // RENDER COMPONENT JSX
     return (
       <div>
-        {!start ? (
-          //PART 1) GET STARTED 
-          <div>
-          <img src = {logo} style = {{display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '30%', height: 'auto'}} />
-          <h1> Wiser Choices </h1>
-          <h2 style={{ textAlign: 'center' }}>Stuck between endless options and possibilities. WiserChoice guides you to the Wisest Choice! Here's how it works: </h2>
-          <div className = "container">
-          <Buttons btnClass = "main-button" onClick={() => setStart(true)} buttonLabel="Start Now"/> 
+          {
+          !decisionmade ? (
+          !rank ? (
+          !start ? (
+            //PART 1) GET STARTED 
+            <div>
+            <img src = {logo} style = {{display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '30%', height: 'auto'}} />
+            <h1> Wiser Choices </h1>
+            <h2 style={{ textAlign: 'center' }}>Stuck between endless options and possibilities. WiserChoice guides you to the Wisest Choice! Here's how it works: </h2>
+            <div className = "container">
+            <Buttons btnClass = "main-button" onClick={() => setStart(true)} buttonLabel="Start Now"/> 
+            </div>
           </div>
-        </div>
-        ):(
-
+          ):(
 
           // PART 2) OPTIONS
           <div style = {{minWidth:'850px'}}>
@@ -119,7 +136,7 @@ const WiserChoice = () => {
 
  
             {/* PART 4) EXPANDING OPTIONS PER CATEGORY*/}
-            <label style = {{margin: '10px', fontWeight: '900'}}>Metrics </label>
+            <label style = {{margin: '10px', fontWeight: '900'}}>Metrics: </label>
             {options.map((option, optionindex) => (
                 <div key={optionindex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                
@@ -139,11 +156,64 @@ const WiserChoice = () => {
 
               </div>
               </div>
+              <div className = "container">
+              <Buttons btnClass = "main-button" onClick={() => setRank(true)} buttonLabel="Next"/> 
+              </div>
+
               
         </div>
         
+        )
+        ): (
+
+          //PART 5) HANDLING THE IMPORTANCE
+          <div className = "container">
+          <div className = "container2">
+          <img src = {logo} style = {{display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '10%', height: 'auto'}} />
+          <h1 style = {{fontSize:'30px'}}>Category Importance: </h1>
+          <h2 style={{ textAlign: 'center', fontSize:'20px'}}>Rank the importance of each category on the scale from 1 to 10.</h2>
+
+          {categories.map ((category, index) => (
+          <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+          <div style = {{width: '20%'}}>
+          <label> <h2>{category.name}:</h2></label>
+          </div>
+          <div style={{ width: '80%' }}>
+              <input
+              type = "range"
+              min ="0"
+              max = "10"
+              value = {category.importance}
+              onChange = {(e) => handleImportance(index, Number(e.target.value))}
+              className = "scale"
+              />
+                 </div>
+
+              <span className = "scaleText">{category.importance}</span>
+              </div>
+              
+          ))}
+
+        <div className = "container" style = {{display: 'fixed', bottom: '10px'}}>
+              <Buttons btnClass = "main-button" onClick={() => setDecision(true)} buttonLabel="Next"/> 
+              </div>
+          </div>
+          </div>
+
+          )
+
+          ) : (
+
+            <div>
+          <h1 style = {{fontSize:'30px'}}>Category Importance: </h1>
+        <h2 style={{ textAlign: 'center' }}>Rank the importance of each category on the scale from 1 to 10.</h2>
+            </div>
+        
+        
         )}
         </div>
+        
     );
   };
+  
 export default WiserChoice;

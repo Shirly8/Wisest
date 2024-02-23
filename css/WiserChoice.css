@@ -1,4 +1,5 @@
 /*Styles for body of the page to ensure centered and themed*/
+
 body, #root{
   box-sizing: border-box;
   display:flex;
@@ -30,11 +31,11 @@ h2 {
 .main-button {
   border-radius: 50px;
   text-align: center;
-  padding: 15px 50px;
+  padding: 10px 60px;
   font-weight: bolder;
   background-color: #C13B34;
   color: #F6EBCD;
-  font-size: 25px;
+  font-size: 20px;
   display:inline-block;
   cursor:pointer;
   font-family:Poppins,sans-serif
@@ -79,4 +80,30 @@ h2 {
   text-align: center;
   font-size: large;
   font-style:italic;
+}
+
+.container2 {
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 800px;
+  padding:0px;
+}
+
+.scale {
+  width: 95%;
+  height:20px;
+  background: #C13B34;
+  outline: none;
+  opacity: '0.7';
+  border-radius: 15px;
+  transition: 'opacity .2s';
+}
+
+
+.scaleText {
+  background-color: #FBB5BF;
+  padding:10px 15px;
+  color:#C13B34;
+  font-size:15px;
 }
