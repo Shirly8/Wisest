@@ -1,6 +1,7 @@
 //MADE BY SHIRLEY HUANG
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Buttons from './Buttons'; 
+import Buffer from './Buffer'; 
 import '../css/WiserChoice.css';
 import logo from '../images/logo.png';
 
@@ -67,10 +68,45 @@ const WiserChoice = () => {
 
     
     //PART 6) MAKING THE FINAL DECISION
-    const [decisionmade, setDecision] = useState(false);
+    const [decisionmade, setDecisionPage] = useState(false);
 
+    const [scores, setScores] = useState ([0]);
 
+    //6.A) CALCULATE SCORES
+    const calculateScore = () => {
+      //APPLY NOMALIZATION: Find the maximum value in each cateogry
+      const maxVal = categories.map(category => Math.max(...category.metrics));
 
+      //Calculate scores in each item of the array
+      const scores = options.map ((option, optionindex) => {
+        let Eachscore = 0;
+        categories.forEach((category,categoryIndex) => {
+
+          //Normalize the values in the metrics by dividing maximum value in each category
+          const normalizedMetric = category.metrics[optionindex]/maxVal[categoryIndex];
+          Eachscore += normalizedMetric*category.importance;
+        }) 
+        return Eachscore; //Return score for each option
+      })
+
+      return scores;
+    };
+
+    //6.B) Determine the best score
+    const [bestDecision, setBestDecision] = useState('');
+
+    useEffect(() => {
+      if (decisionmade) {
+        const scores = calculateScore();
+        const final  = Math.max(... scores);
+        const bestOptionIndex = scores.indexOf(final);
+
+        setScores(scores);
+        setBestDecision(options[bestOptionIndex]);
+      }
+
+    }, [decisionmade]);
+    
     // RENDER COMPONENT JSX
     return (
       <div>
@@ -111,7 +147,6 @@ const WiserChoice = () => {
             <label style={{fontSize:'15px', textAlign: 'center', marginTop:'3px', marginBottom:'10px'}}> Choice {index+1}: </label>
           </div>
         ))}
-
 
 
 
@@ -167,7 +202,6 @@ const WiserChoice = () => {
         ): (
 
           //PART 5) HANDLING THE IMPORTANCE
-          <div className = "container">
           <div className = "container2">
           <img src = {logo} style = {{display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '10%', height: 'auto'}} />
           <h1 style = {{fontSize:'30px'}}>Category Importance: </h1>
@@ -195,9 +229,8 @@ const WiserChoice = () => {
           ))}
 
         <div className = "container" style = {{display: 'fixed', bottom: '10px'}}>
-              <Buttons btnClass = "main-button" onClick={() => setDecision(true)} buttonLabel="Next"/> 
+              <Buttons btnClass = "main-button" onClick={() => setDecisionPage(true)} buttonLabel="Next"/> 
               </div>
-          </div>
           </div>
 
           )
@@ -205,8 +238,9 @@ const WiserChoice = () => {
           ) : (
 
             <div>
-          <h1 style = {{fontSize:'30px'}}>Category Importance: </h1>
-        <h2 style={{ textAlign: 'center' }}>Rank the importance of each category on the scale from 1 to 10.</h2>
+              <Buffer />
+              <h2> The best decision for you is: </h2>
+              <h1>{bestDecision}</h1>
             </div>
         
         
