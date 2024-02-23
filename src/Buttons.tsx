@@ -6,13 +6,14 @@ import React from 'react'
 interface ButtonProperties {
     onClick:() => void;
     buttonLabel: string;
+    btnClass?: string;
 }
 
 //Create a button component and a render method that returns how the button is displayed
 const Buttons: 
-React.FC<ButtonProperties> = ({ onClick, buttonLabel}) => {
+React.FC<ButtonProperties> = ({ onClick, buttonLabel, btnClass}) => {
     return (
-        <button onClick = {onClick}>{buttonLabel}</button>
+        <button className = {btnClass} onClick = {onClick}>{buttonLabel}</button>
     );
 }
 
