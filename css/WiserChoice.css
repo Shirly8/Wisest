@@ -55,3 +55,28 @@ h2 {
   width:40px;
   height:40px;
 }
+
+.long-button {
+  border-style: none;
+  background-color: #FBB5BF;
+  color: white;
+  font-size: 15px;
+  display: inline-block;
+  cursor: pointer;
+  margin: 4px 0px;  
+  width: 80%;
+  height:30px;
+}
+
+.categoryText {
+  width: 80%;
+  height: 30px;
+  background-color: #C13B34;
+  border: 1px solid white;
+  color:white;
+  font-weight: bold;
+  font-family:Poppins,sans-serif;
+  text-align: center;
+  font-size: large;
+  font-style:italic;
+}

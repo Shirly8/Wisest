@@ -88,8 +88,8 @@ const WiserChoice = () => {
                 style={{width: '70vw', maxWidth: '850px', height: '40px'}}
               />
 
-              <Buttons btnClass="small-button" onClick={() => deleteOption(index)} buttonLabel="-"/>
               <Buttons btnClass="small-button" onClick={() => addOption()} buttonLabel="+"/>
+              <Buttons btnClass="small-button" onClick={() => deleteOption(index)} buttonLabel="-"/>
             </div>
             <label style={{fontSize:'15px', textAlign: 'center', marginTop:'3px', marginBottom:'10px'}}> Choice {index+1}: </label>
           </div>
@@ -102,32 +102,37 @@ const WiserChoice = () => {
             {/*PART 3) CATEGORIES*/}
             <div>
             <h1 style = {{fontSize:'30px'}}>Category: </h1>
-            <h2 style = {{fontSize:'20px'}}> Define custom categories and metrics for each option:</h2>
+            <h2 style = {{fontSize:'20px'}}> Define custom categories and metrics for each option: </h2>
 
-              <div style = {{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px,1fr))', gap:'1rem'}}>
+              <div style = {{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px,1fr))', gap:'15px', borderRadius: '20px'}}>
           
               {categories.map((category, categoryindex) => (
-                <div key={categoryindex} style={{marginBottom: '5px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <div key={categoryindex} style={{marginBottom: '5px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: '1px solid gray', borderRadius: '20px'}}>
 
-                <label> Category #{categoryindex+1}: </label>
+                <div style = {{backgroundColor: '#C13B34', width:'100%', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 0px', borderRadius: '20px 20px 0 0'}}>
+                <label style = {{fontWeight: '900', color: 'white'}}> Category #{categoryindex+1}: </label>
                 <input
                 value = {category.name}
                 onChange = {(e) => handleCategoryChange(categoryindex, e.target.value)}           
-                />
+                className = "categoryText"/>
+              </div>
 
  
             {/* PART 4) EXPANDING OPTIONS PER CATEGORY*/}
+            <label style = {{margin: '10px', fontWeight: '900'}}>Metrics </label>
             {options.map((option, optionindex) => (
-              <div key = {optionindex}>
-                <span> {option}: </span>  {/* Display option*/}
+                <div key={optionindex} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+               
+                <span style = {{color: '#FB7F79'}}> {option} </span>  {/* Display option*/}
               <input
               value = {category.metrics[optionindex]} //CREATES A TEXT FIELD ARRAY OF AN ARRAY
               onChange = {(e) => handleMetricChange(categoryindex, optionindex, e.target.value)}
+              style = {{width: '130%', height:'30px', marginBottom:'10px'}}
            />
            </div>
             ))}
-                         <Buttons btnClass="small-button" onClick={() => deleteCategory(categoryindex)} buttonLabel="-"/>
-              <Buttons btnClass="small-button" onClick={() => addCategory()} buttonLabel="+"/>
+              <Buttons btnClass="long-button" onClick={() => addCategory()} buttonLabel="Add Category"/>
+              <Buttons btnClass="long-button" onClick={() => deleteCategory(categoryindex)} buttonLabel="Delete Category"/>
 
             </div>
               ))}
