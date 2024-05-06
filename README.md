@@ -3,6 +3,7 @@
 Forget magic 8 balls or randomized choosers! What about real calculated decisions based on statistical and your own personal needs. Wisest is there for you through difficult times (Deciding on job offers, universities, or cities to move), through the good times (Decising on a restaurant, vacation destination), or through the daily times (Picking a movie, clothes), Wisest is alwasy there! 
 
 ## Demonstration 🍽️
+![Alt Text](https://github.com/Shirly8/Wisest/blob/1c50d76629bc5a031df796b0022d441ab28dd7b7/2024-05-06_12_16_52_video.gif)
 
 
 ## Features 🌟
