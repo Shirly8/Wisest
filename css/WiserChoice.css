@@ -5,27 +5,35 @@ body, #root{
   display:flex;
   justify-content: center;
   align-items: center;
-  background-color:#FFF7EA;
-  color:#C13B34;
-  font-family:Poppins,sans-serif
+  color:whte;
+  font-family: Poppins,sans-serif;
+  background-color:#060724;
+  margin: 0;
+  padding: 0;
 }
 
-
+ 
+label {
+  color: white;
+}
 h1 {
   font-size: 50px;
   font-weight:900;
   text-align: center;
+  color: white;
   
 }
 
 h2 {
-  color: #FB7F79;
+  color: #EB7F67;
   text-align: center;
+  font-size: 20px;
 }
 
 .container {
   display: flex;
   justify-content: center;
+  margin-top:10px;
 }
 
 .main-button {
@@ -47,7 +55,7 @@ h2 {
 
 .small-button {
   border-style: none;
-  background-color: #FBB5BF;
+  background-color: #FF6E70;
   color: white;
   font-size: 25px;
   display: inline-block;
@@ -59,7 +67,7 @@ h2 {
 
 .long-button {
   border-style: none;
-  background-color: #FBB5BF;
+  background-color: #FF6E70;
   color: white;
   font-size: 15px;
   display: inline-block;
@@ -93,7 +101,6 @@ h2 {
 .scale {
   width: 95%;
   height:20px;
-  background: #C13B34;
   outline: none;
   opacity: '0.7';
   border-radius: 15px;
@@ -102,9 +109,9 @@ h2 {
 
 
 .scaleText {
-  background-color: #FBB5BF;
+  background-color: #EB7F67;
   padding:10px 15px;
-  color:#C13B34;
+  color:white;
   font-size:15px;
 }
 
@@ -112,3 +119,60 @@ h2 {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+.CategoryScores{
+  display: flex;
+  flex-direction: column;
+  border: 2px solid gray;
+  min-width:700px;
+  margin-Bottom:20px;
+}
+
+.optionText {
+  font-family: 'Poppins';
+  font-size: '50px';
+  font-weight: bolder;
+  text-align: 'center';
+}
+
+.finalprint {
+  font-size: '200px';
+}
+
+.yesno, .noyes {
+  font-family: 'Poppins';
+  background: none;
+  border: 1px solid white;
+  color:white;
+  font-size: 15px;
+  padding: 4px 15px;
+  margin:0px 0px 10px 0px;
+  width: 75px;
+}
+
+.yesno {
+  border-radius: 20px 0px 0px 20px;
+}
+
+.noyes {
+  border-radius: 0px 20px 20px 0px;
+}
+
+.yesno:hover, .noyes:hover, .yesno.clicked, .noyes.clicked {
+  background: #F6EBCD;
+  color: black;
+  cursor: pointer;
+}
+
+
+.dropdown {
+  background: white;
+  color: #060724;
+  border: 1px solid black;
+  cursor:pointer;
+  font-family: Poppins,sans-serif;
+  font-size:10px;
+  text-align: center;
+}
+
