@@ -7,7 +7,7 @@ Forget magic 8 balls or randomized choosers! What about real calculated decision
 
 ## Demonstration 🍽️ 
 
-![Alt Text](https://github.com/Shirly8/Wisest/blob/d683d059411fe7153f3d6368c83a50c9c168cf25/Gif%20Demonstration.gif)
+![Gif Demonstration](https://github.com/Shirly8/Wisest/blob/eb1ee75d1706dafd5781b16efbad25259a1b0bf4/Gif%20demonstration)
 
 
 ## Features 🌟
@@ -35,6 +35,8 @@ Forget magic 8 balls or randomized choosers! What about real calculated decision
 - html2canvas
 - SQLite3
 
+## Application Architecture: 
+![Diagram](https://github.com/Shirly8/Wisest/blob/553c01fcb14959274b695ece6229445ddd4655aa/Wisest%20Diagram.png)
 
 ## Installation 🚀
 1. Clone the repo
