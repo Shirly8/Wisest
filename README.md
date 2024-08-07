@@ -1,46 +1,52 @@
-# Getting Started with Create React App
+# Wisest - where the best 'WISEST' decisions are made 🧠🔮
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+Forget magic 8 balls or randomized choosers! What about real calculated decisions based on statistics and your own needs? Wisest is there for you through difficult times (Deciding on job offers, universities, or cities to move to), through the good times (Decising on a restaurant, or vacation destination), or through the daily times (Picking a movie, or clothes), Wisest is always there! 
 
-In the project directory, you can run:
+[VISIT WISEST](https://www.ShirleyProject.com/Wisest)
 
-### `npm start`
+## Demonstration 🍽️ 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+![Alt Text](https://github.com/Shirly8/Wisest/blob/1c50d76629bc5a031df796b0022d441ab28dd7b7/2024-05-06_12_16_52_video.gif)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `npm test`
+## Features 🌟
+- **Multi-Criteria Decision Analysis**: Wisest allows you to input multiple options and evaluate them based on various criteria. This way, your informed decision considers all factors.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Optimal Conditions**: For each category, you can specify whether a higher value, lower value, 'Yes', 'No', or rank is optimal. Wisest's flexibility can adapt to any decision-making scenario.
 
-### `npm run build`
+- **Metrics System**: Wisests lets you enter any metrics and values as you wish. Whether its ranking a decision on a scale of 10, to selecting Yes/No buttons to enter any numerical values. 
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Rankings**: After inputting all your metrics, you can assign a preference ranking to each category. This helps you weigh the importance of each factor in your decision.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **User-Friendly Interface**: With its intuitive design, Wisest is easy to use. Just input your options, set your criteria, input your metrics and category ranking, and let Wisest do the rest!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+-**Accurate Calculation**: Wisest is simple! Its algorithm normalizes the metrics, inverse the metrics (if lower is better), and calculates the scores for each option by adding the product of the normalized metric. Finally, Wisest weighs the choices based on the category's importance. This ensures that each option is evaluated fairly and based on what you think is important to you! 
 
-### `npm run eject`
+## Built With 🛠️
+- React.js
+- Python (Flask)
+- TypeScript
+- CSS3
+- jsPDF
+- Gemini API
+- spaCy NLP
+- Chart.js
+- html2canvas
+- SQLite3
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Installation 🚀
+1. Clone the repo
+   ```sh
+   git clone https://github.com/Shirly8/Wisest.git
+2. Compile
+   ```bash
+    npm install
+3. Run Python Application
+   ```bash
+    python3 api.py
+4. Run
+    ```bash
+    npm start
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
