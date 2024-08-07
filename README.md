@@ -7,7 +7,7 @@ Forget magic 8 balls or randomized choosers! What about real calculated decision
 
 ## Demonstration 🍽️ 
 
-![Alt Text](https://github.com/Shirly8/Wisest/blob/eb1ee75d1706dafd5781b16efbad25259a1b0bf4/Gif%20demonstration)
+![Alt Text](https://github.com/Shirly8/Wisest/blob/d683d059411fe7153f3d6368c83a50c9c168cf25/Gif%20Demonstration.gif)
 
 
 ## Features 🌟
