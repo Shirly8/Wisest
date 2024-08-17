@@ -11,8 +11,8 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 
-API_KEY = 'AIzaSyAgMkx-Wlq6IimwP45s5fxnoyyT-sqEakg'
-API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent'
+API_KEY = 'INSERT KEY'
+API_URL = 'INSERT URL'
 
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
