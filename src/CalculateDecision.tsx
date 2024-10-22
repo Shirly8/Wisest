@@ -152,7 +152,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({ categories, optio
         setFeedback(data.feedback);
       } catch (error) {
         console.error('Error fetching feedback:', error);
-        setFeedback('An error occurred while fetching feedback.');
+        setFeedback('Gemini API is not activated. To use this, please run it locally with API key.');
       }
     };
 
