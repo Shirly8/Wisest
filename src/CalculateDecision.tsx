@@ -1,12 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import Buffer from './Buffer'
-import ProgressBar from '@ramonak/react-progress-bar';
 import gemini from './images/gemini.png';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import {Pie} from 'react-chartjs-2'
 import 'chart.js/auto';
-import * as d3 from 'd3';
 import { supabase } from './supabaseClient';
 import SignInModal from './SignInModal';
 import CurrentDecisionSection from './CurrentDecisionSection';
@@ -71,7 +68,6 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
   const riskAssessmentRef = useRef<HTMLDivElement>(null);
 
   // 3) STATE MANAGEMENT
-  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [saveStatus, setSaveStatus] = useState<string>('');
   const [showSignInModal, setShowSignInModal] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -258,8 +254,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     }
   };
 
-  const saveToDatabase = async () => {
-    setIsSaving(true);
+  const saveToDatabase = useCallback(async () => {
     setSaveStatus('Saving...');
     
     try {
@@ -287,10 +282,8 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     } catch (error) {
       setSaveStatus('Failed to save decision. Please try again.');
       setTimeout(() => setSaveStatus(''), 5000);
-    } finally {
-      setIsSaving(false);
     }
-  };
+  }, [selectedDecisionId]);
 
   // 6) SCORE CALCULATION
   const calculateScore = () => {
@@ -331,8 +324,6 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
       return eachScore;
     });
 
-    const winner = options[scores.indexOf(Math.max(...scores))];
-    
     return scores;
   };
 

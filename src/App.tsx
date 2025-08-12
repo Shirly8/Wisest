@@ -166,10 +166,6 @@ const DecisionMaker: React.FC = () => {
     navigate('/decision-history');
   };
 
-  const selectDecision = (decisionId: string) => {
-    navigate(`/decision-maker?decisionId=${decisionId}`);
-  };
-
   return (
     <Main 
       reset={reset} 
@@ -189,14 +185,12 @@ const DecisionMaker: React.FC = () => {
 // 5) DECISION HISTORY - View and manage saved decisions
 const DecisionHistoryPage: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedDecisionId, setSelectedDecisionId] = useState<string | null>(null);
 
   const onBack = () => {
     navigate('/');
   };
 
   const onSelectDecision = (decisionId: string) => {
-    setSelectedDecisionId(decisionId);
     navigate('/decision-maker');
   };
 

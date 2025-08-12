@@ -19,7 +19,7 @@ function Buffer() {
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '100vh' }}>
-            <img src={logo}style={{
+            <img src={logo} alt="Wisest Logo" style={{
                 width: '100px',
                 height: '100px',
                 animation: 'spin 2s linear infinite'
