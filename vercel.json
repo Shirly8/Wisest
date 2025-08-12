@@ -2,40 +2,21 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/api.py",
-      "use": "@vercel/python",
+      "src": "package.json",
+      "use": "@vercel/static-build",
       "config": {
-        "runtime": "python3.9"
+        "distDir": "build"
       }
     }
   ],
   "routes": [
     {
-      "src": "/test",
-      "dest": "backend/api.py"
-    },
-    {
-      "src": "/wisest",
-      "dest": "backend/api.py"
-    },
-    {
-      "src": "/save-decision",
-      "dest": "backend/api.py"
-    },
-    {
-      "src": "/delete-decision/(.*)",
-      "dest": "backend/api.py"
-    },
-    {
-      "src": "/health",
-      "dest": "backend/api.py"
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "backend/api.py"
+      "dest": "/index.html"
     }
-  ],
-  "env": {
-    "PYTHONPATH": "backend"
-  }
+  ]
 } 
