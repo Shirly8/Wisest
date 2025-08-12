@@ -8,11 +8,8 @@ interface ImportanceProps {
   setDecision: React.Dispatch<React.SetStateAction<boolean>>;
 } 
 
-
 const Importance: React.FC<ImportanceProps> = ({ categories, setCategories, setImportance, setDecision}) => {
-
-  //PART 5) HANDLING IMPORTANCE
-
+  // 1) IMPORTANCE HANDLING
   const handleImportance = (index:number, value: number) => {
     const newCategories = [...categories];
     newCategories[index].importance = value;
@@ -51,9 +48,8 @@ const Importance: React.FC<ImportanceProps> = ({ categories, setCategories, setI
               
           ))}
 
-          <button className = 'startbutton' onClick = {() => setImportance(false)}>Back</button>
-          <button className = 'startbutton' onClick = {() => setDecision(true)}>Next</button>
-
+          <button className = 'home-secondary-button' onClick = {() => setImportance(false)}>Back</button>
+          <button className = 'home-secondary-button' onClick = {() => setDecision(true)}>Next</button>
 
       </div>
     </div>

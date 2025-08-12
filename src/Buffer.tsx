@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import logo from './images/logo.png';
 
-// Create a function to buffer the screen
 function Buffer() {
     const [buffering, setBuffering] = useState(true);
 
-    // SETS A TIMER 
+    // 1) TIMER SETUP
     useEffect(() => {
         const timer = setTimeout(() => {
             setBuffering(false);
-        }, 5000); // Buffering for 5 seconds
+        }, 5000);
 
         return () => clearTimeout(timer); 
     }, []);
 
     if (!buffering) {
-        return null; // Render nothing if not buffering
+        return null;
     }
 
-    // RENDERING
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '100vh' }}>
             <img src={logo}style={{

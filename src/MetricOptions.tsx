@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 interface MetricOptionsProps {
   index: number;
   setMetricTypes: React.Dispatch<React.SetStateAction<number[]>>;
@@ -12,12 +11,10 @@ interface MetricOptionsProps {
   deleteCategory: (index:number) => void;
 }
 
-
 const MetricOptions: React.FC<MetricOptionsProps> = ({ index, options, metricTypes, categories, handleMetricChange, addCategory, deleteCategory}) => {
   const category = categories[index];
 
-
-  //FOR RADIO BUTTONS:
+  // 1) YES/NO RADIO BUTTONS
   const renderYesNoButtons = (optionIndex: number) => (
     <div>
       <label>
@@ -45,24 +42,19 @@ const MetricOptions: React.FC<MetricOptionsProps> = ({ index, options, metricTyp
 
   return (
     <div style = {{margin: '3%'}}>
-          {/* PART 4) EXPANDING OPTIONS PER CATEGORY*/}
-          <div style = {{marginBottom: '7px'}}>
-          <label style = {{fontWeight: '900'}}>Metrics: </label>
-          </div>
-          {options.map((option, optionindex) => (
-            <div key = {optionindex}>
+      {/* 2) METRICS INPUT */}
+      <div style = {{marginBottom: '7px'}}>
+        <label style = {{fontWeight: '900'}}>Metrics: </label>
+      </div>
+      {options.map((option, optionindex) => (
+        <div key = {optionindex}>
+          {option === '' ? (
+            <span style = {{color: '#FB7F79'}}> Choice #{optionindex + 1} </span> 
+          ): (
+           <span style = {{color: '#FB7F79'}}> {option} </span> 
+          )}
 
-              {/* Choices in words */}
-              {option === '' ? (
-                <span style = {{color: '#FB7F79'}}> Choice #{optionindex + 1} </span> 
-              ): (
-               <span style = {{color: '#FB7F79'}}> {option} </span> 
-              )}
-
-
-            {/* DISPLAYING ALL OPTIONS */}
-
-            {/* SCALING 1 TO 10 */}
+          {/* 3) SCALING 1 TO 10 */}
           {metricTypes[index] === 4 && (
             <div className='scale'>
               <input
@@ -73,15 +65,13 @@ const MetricOptions: React.FC<MetricOptionsProps> = ({ index, options, metricTyp
                 onChange={(e) => handleMetricChange(index, optionindex, e.target.value)}
               />
               <label>{categories[index].metrics[optionindex]}</label>
-
             </div>
           )}
 
-          {/* YES/NO BUTTONS */}
+          {/* 4) YES/NO BUTTONS */}
           {(metricTypes[index] === 2 || metricTypes[index] === 3) && renderYesNoButtons(optionindex)}
 
-
-         {/* NUMBER INPUT */}
+          {/* 5) NUMBER INPUT */}
           {(metricTypes[index] === 1 || metricTypes[index] === 0) && (
             <input
               type="text"
@@ -90,13 +80,14 @@ const MetricOptions: React.FC<MetricOptionsProps> = ({ index, options, metricTyp
               className='numberInput'
             />
           )}
-
         </div>
       ))}
-          <button className = "long-button" onClick = {() => addCategory()}> Add</button>
-          <button className = "long-button" onClick = {() => deleteCategory(index)}> Delete </button>
-
-
+      
+      {/* 6) CATEGORY ACTIONS */}
+      <div style={{ display: 'flex', gap: '5px', marginTop: '10px', justifyContent: 'center' }}>
+        <button className = "home-secondary-button" style={{ fontSize: '12px', padding: '8px 20px', borderRadius: '0', border: 'none', minWidth: '80px' }} onClick = {() => addCategory()}> Add</button>
+        <button className = "home-secondary-button" style={{ fontSize: '12px', padding: '8px 20px', borderRadius: '0', border: 'none', minWidth: '80px' }} onClick = {() => deleteCategory(index)}> Delete </button>
+      </div>
     </div>
   );
 };

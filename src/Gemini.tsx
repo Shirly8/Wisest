@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import gemini from './images/gemini.png';
 
-
 interface GeminiProps {
   options: string[];
   setMainConsiderations: React.Dispatch<React.SetStateAction<string>>;
@@ -11,9 +10,9 @@ interface GeminiProps {
 }
 
 const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoiceConsiderations, MainConsiderations, choiceConsiderations}) => {
-
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
+  // 1) OPTION SELECTION
   const handleOptionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     if (!selectedOptions.includes(value)) {
@@ -25,8 +24,7 @@ const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoic
     setSelectedOptions(selectedOptions.filter((o) => o !== option));
   };
 
-
-  //SEND CONSIDERATIONS TO GEMINI API:
+  // 2) CONSIDERATIONS HANDLING
   const handleMainConsiderationsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMainConsiderations(e.target.value);
   };
@@ -34,7 +32,6 @@ const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoic
   const handleChoiceConsiderationsChange = (option: string, value: string) => {
     setChoiceConsiderations({ ...choiceConsiderations, [option]: value });
   };
-
 
   return (
     <div className = "geminibackground">
@@ -62,7 +59,6 @@ const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoic
         <option key = {index} value = {option}>
             {option}
         </option>
-
       ))}
     </select>
 
