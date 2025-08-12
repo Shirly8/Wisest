@@ -384,7 +384,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     const fetchFeedback = async () => {
       setIsLoadingFeedback(true);
       try {
-        const response = await fetch('/wisest', {
+        const response = await fetch('https://wisest.onrender.com/wisest', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

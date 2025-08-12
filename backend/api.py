@@ -16,6 +16,7 @@ allowed_origins = [
     "http://localhost:3000",  # Local development
     "https://wisest.vercel.app",  # Your Vercel frontend
     "https://wisest-git-main-yourusername.vercel.app",  # Vercel preview
+    "https://wisests.shirleyproject.com"  # Your custom domain
 ]
 
 CORS(app, resources={r"/*": {"origins": allowed_origins}})
