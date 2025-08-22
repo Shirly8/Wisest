@@ -8,6 +8,7 @@ import { supabase } from './supabaseClient';
 import SignInModal from './SignInModal';
 import CurrentDecisionSection from './CurrentDecisionSection';
 import DecisionNamingModal from './DecisionNamingModal';
+import './CalculateDecision.css';
 
 import { 
   createTradeoffAnalysis, 
@@ -472,7 +473,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
       {!showContent ? (
         <Buffer />
       ) : (
-        <div style={{backgroundColor: '#060724'}} id="content">
+        <div className="calculate-decision-container" id="content">
           {/* 10) FINAL DECISION DISPLAY */}
           <div className='final'>
             <div className='final-subtitle'>The best decision for you is:</div>
@@ -480,8 +481,8 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
           </div>
 
           {/* 11) DECISION BREAKDOWN ANALYSIS */}
-          <h2 style={{color: 'white', fontSize:'18px', marginTop: '1%', backgroundColor: '#FF6E70'}}>Decision Breakdown Analysis</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '10px', maxWidth: '1400px', margin: '0 auto' }}>
+          <h2 className="section-header">Decision Breakdown Analysis</h2>
+          <div className="decision-breakdown-grid">
             
             <CategoryBreakdown 
               categories={categories}
@@ -496,10 +497,10 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               preparePieChart={preparePieChart}
             />
 
-            <div style={{ border: '1px solid #FF6E70', borderRadius: '8px', padding: '15px', minHeight: '450px', display: 'flex', flexDirection: 'column' }}>
-              <h3 style={{color: '#FF6E70', fontSize:'16px', marginBottom: '10px', textAlign: 'center'}}>Risk Assessment</h3>
-              <div ref={riskAssessmentRef} style={{ width: '100%', height: '350px', flex: 1 }}></div>
-              <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
+            <div className="analysis-box">
+              <h3>Risk Assessment</h3>
+              <div ref={riskAssessmentRef} className="chart-container"></div>
+              <p className="analysis-description">
                 <strong>How to read:</strong> Taller bars = higher risk. Red = High, Yellow = Medium, Green = Low.<br/>
                 <strong>Look for:</strong> Options with lower bars = safer choices for your priorities.
               </p>
@@ -510,29 +511,29 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
           {/* 12) STRATEGIC ANALYSIS DIAGRAMS */}
           <h2 className="strategic-analysis-header">Strategic Decision Analysis</h2>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', padding: '20px', maxWidth: '1400px', margin: '0 auto' }}>
-            <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', minHeight: '450px' }}>
-              <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px' }}>Trade-off Analysis</h3>
-              <div ref={radarChartRef} style={{ width: '100%', height: '300px' }}></div>
-              <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
+          <div className="strategic-analysis-grid">
+            <div className="strategic-analysis-box">
+              <h3>Trade-off Analysis</h3>
+              <div ref={radarChartRef} className="strategic-chart-container"></div>
+              <p className="analysis-description">
                 <strong>How to read:</strong> Each point = one option. Top-right = best in both categories.<br/>
                 <strong>Look for:</strong> Options closest to top-right corner = best balance.
               </p>
             </div>
 
-            <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', minHeight: '450px' }}>
-              <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px' }}>Decision Confidence</h3>
-              <div ref={comparisonChartRef} style={{ width: '100%', height: '300px' }}></div>
-              <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
+            <div className="strategic-analysis-box">
+              <h3>Decision Confidence</h3>
+              <div ref={comparisonChartRef} className="strategic-chart-container"></div>
+              <p className="analysis-description">
                 <strong>How to read:</strong> Taller bars = higher scores. Big gaps = confident choice.<br/>
                 <strong>Look for:</strong> Clear winner with large score difference = high confidence.
               </p>
             </div>
 
-            <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', minHeight: '450px' }}>
-              <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px' }}>Decision Stability</h3>
-              <div ref={heatmapRef} style={{ width: '100%', height: '300px' }}></div>
-              <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
+            <div className="strategic-analysis-box">
+              <h3>Decision Stability</h3>
+              <div ref={heatmapRef} className="strategic-chart-container"></div>
+              <p className="analysis-description">
                 <strong>How to read:</strong> ✓ = stable, ⚠ = sensitive to changes.<br/>
                 <strong>Look for:</strong> Categories with ⚠ - small changes could flip your decision.
               </p>
@@ -542,7 +543,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
           {/* 13) GEMINI FEEDBACK */}
           <div className="geminibackground">
             <div className='gemini-header'>
-              <img src={gemini} className="gemini-logo"></img>
+              <img src={gemini} className="gemini-logo" alt="Gemini Logo"></img>
               <h1 className="gemini-title">Gemini Says</h1>
             </div>
 
@@ -553,12 +554,12 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                   <span className="loading-text">Gemini is analyzing your decision...</span>
                 </div>
               ) : (
-                <pre style={{ fontSize: '14px', whiteSpace: 'pre-wrap' }}>{feedback}</pre>
+                <pre>{feedback}</pre>
               )}
             </div>
           </div>
 
-          <div style={{ marginTop: '40px', marginBottom: '40px', textAlign: 'center' }}>
+          <div className="action-buttons-section">
             {saveStatus && (
               <div style={{
                 position: 'fixed',
@@ -607,33 +608,16 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
           </div>
 
           {/* 14) BOTTOM ACTION BUTTONS */}
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            gap: '20px', 
-            marginTop: '40px', 
-            marginBottom: '40px',
-            padding: '20px'
-          }}>
+          <div className="action-buttons-section">
             <button 
-              className='startbutton'
+              className='action-button primary'
               onClick={reset}
-              style={{ 
-                backgroundColor: '#FF6E70',
-                fontSize: '16px',
-                padding: '12px 24px'
-              }}
             >
               Reset
             </button>
             <button 
-              className='startbutton'
+              className='action-button secondary'
               onClick={handleSignOut}
-              style={{ 
-                backgroundColor: '#666',
-                fontSize: '16px',
-                padding: '12px 24px'
-              }}
             >
               Sign Out
             </button>

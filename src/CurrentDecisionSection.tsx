@@ -26,7 +26,7 @@ const CurrentDecisionSection: React.FC<CurrentDecisionSectionProps> = ({
   onBack
 }) => {
   return (
-    <div style={{ 
+    <div className="current-decision-section" style={{ 
       backgroundColor: 'rgba(255, 255, 255, 0.1)', 
       borderRadius: '12px', 
       padding: '20px', 
@@ -38,30 +38,11 @@ const CurrentDecisionSection: React.FC<CurrentDecisionSectionProps> = ({
       
       <div style={{ 
         display: 'grid', 
-        gridTemplateColumns: '1fr 1fr 1fr', 
+        gridTemplateColumns: '1fr 1fr', 
         gap: '30px'
       }}>
         
-        {/* 1) LEFT COLUMN - DECISION SUMMARY */}
-        <div>
-          <h3 style={{ color: '#FF6E70', marginBottom: '15px', fontSize: '18px' }}>Decision Summary</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 'bold', minWidth: '100px', flexShrink: 0 }}>Best Choice:</span>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', wordBreak: 'break-word' }}>{bestDecision}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 'bold', minWidth: '100px', flexShrink: 0 }}>Options:</span>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', wordBreak: 'break-word' }}>{options.join(', ')}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 'bold', minWidth: '100px', flexShrink: 0 }}>Categories:</span>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', wordBreak: 'break-word' }}>{categories.map(cat => cat.title).join(', ')}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 2) MIDDLE COLUMN - SAVE STATUS */}
+        {/* 1) LEFT COLUMN - SAVE STATUS */}
         <div>
           <h3 style={{ color: '#4ECDC4', marginBottom: '15px', fontSize: '18px' }}>Save Status</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -102,7 +83,7 @@ const CurrentDecisionSection: React.FC<CurrentDecisionSectionProps> = ({
           </div>
         </div>
 
-        {/* 3) RIGHT COLUMN - QUICK ACTIONS */}
+        {/* 2) RIGHT COLUMN - QUICK ACTIONS */}
         <div>
           <h3 style={{ color: '#FFD93D', marginBottom: '15px', fontSize: '18px' }}>Quick Actions</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -136,9 +117,9 @@ const CurrentDecisionSection: React.FC<CurrentDecisionSectionProps> = ({
 
       </div>
 
-      {/* 4) AUTHENTICATION STATUS */}
+      {/* 3) AUTHENTICATION STATUS */}
       {!isAuthenticated && (
-        <div style={{ 
+        <div className="auth-note" style={{ 
           backgroundColor: 'rgba(255, 110, 112, 0.1)', 
           border: '1px solid rgba(255, 110, 112, 0.3)',
           borderRadius: '8px',

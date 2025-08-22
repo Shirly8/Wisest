@@ -548,8 +548,15 @@ h2 {
 
 .geminitext { 
   width: 90%;
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.05);
   color: lightgray;
+  border: 1px solid #2E98DD;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
 }
 
 .geminicontainer2 {
@@ -558,6 +565,13 @@ h2 {
   margin: 1%;
   align-items: center;
   justify-content: center;
+  width: 800px;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
 }
 
 .geminiheading {
@@ -1444,5 +1458,1425 @@ h2 {
     flex-direction: column;
     align-items: center;
   }
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  /* General mobile adjustments */
+  body, #root {
+    min-height: 100vh;
+    padding: 10px;
+  }
+
+  /* Header and logo adjustments */
+  .App-logo {
+    height: 60px;
+    margin: 10px;
+  }
+
+  h1 {
+    font-size: 32px;
+    margin: 10px 0;
+  }
+
+  .LogoHeader {
+    margin-bottom: -20px;
+  }
+
+  /* Container adjustments */
+  .container {
+    margin-right: 2%;
+    margin-left: 2%;
+    padding: 10px;
+  }
+
+  /* Button adjustments */
+  .startbutton {
+    padding: 8px 30px;
+    font-size: 14px;
+    margin: 5px;
+  }
+
+  /* Option input adjustments */
+  .optionText {
+    width: 280px;
+    max-width: 280px;
+    font-size: 13px;
+    padding: 3px 10px;
+    height: 28px;
+  }
+
+  .addremove {
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+    margin-left: 8px;
+  }
+
+  .optionbox {
+    padding: 4px 10px;
+    margin-bottom: 6px;
+    gap: 8px;
+  }
+
+  /* Category grid adjustments */
+  .categoryboxes {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  .individualbox {
+    margin-bottom: 10px;
+    margin-top: 5px;
+    padding: 10px;
+  }
+
+  .categoryText {
+    width: 90%;
+    height: 28px;
+    font-size: 14px;
+    margin-bottom: 3%;
+  }
+
+  /* Metric input adjustments */
+  .metricText {
+    width: 60px;
+    height: 25px;
+    font-size: 12px;
+    padding: 2px 5px;
+  }
+
+  .importanceSlider {
+    width: 80px;
+  }
+
+  /* Home page adjustments */
+  .home-main-container {
+    padding: 20px 10px;
+  }
+
+  .home-top-section {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .home-title-section h2 {
+    font-size: 24px;
+  }
+
+  .home-description {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .home-features {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .feature-item {
+    font-size: 12px;
+  }
+
+  .home-bottom-section {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .home-how-to-section,
+  .home-auth-column {
+    width: 100%;
+  }
+
+  .how-to-examples {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .example-item {
+    font-size: 12px;
+  }
+
+  /* Decision results adjustments */
+  .final {
+    padding: 20px 10px;
+  }
+
+  .final-subtitle {
+    font-size: 16px;
+  }
+
+  .final-decision {
+    font-size: 24px;
+    padding: 15px;
+  }
+
+  /* Analysis grid adjustments */
+  .analysis-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .analysis-box {
+    min-height: 350px;
+    padding: 15px;
+  }
+
+  .analysis-box h3 {
+    font-size: 16px;
+  }
+
+  /* Gemini section adjustments */
+  .geminibackground {
+    padding: 20px 10px;
+  }
+
+  .gemini-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .gemini-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .gemini-title {
+    font-size: 20px;
+  }
+
+  .geminicontainer {
+    padding: 15px;
+    font-size: 13px;
+  }
+
+  /* Action buttons adjustments */
+  .action-buttons {
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 10px;
+  }
+
+  .action-buttons button {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .optionText {
+    width: 240px;
+    max-width: 240px;
+    font-size: 12px;
+  }
+
+  .categoryText {
+    width: 95%;
+    font-size: 13px;
+  }
+
+  .metricText {
+    width: 50px;
+    font-size: 11px;
+  }
+
+  .importanceSlider {
+    width: 60px;
+  }
+
+  .final-decision {
+    font-size: 20px;
+    padding: 10px;
+  }
+
+  .analysis-box {
+    min-height: 300px;
+    padding: 10px;
+  }
+
+  .geminicontainer {
+    font-size: 12px;
+    padding: 10px;
+  }
+}
+
+/* Landscape mobile adjustments */
+@media (max-width: 768px) and (orientation: landscape) {
+  .categoryboxes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .home-bottom-section {
+    flex-direction: row;
+  }
+
+  .home-how-to-section,
+  .home-auth-column {
+    width: 48%;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .categoryboxes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .optionText {
+    width: 400px;
+    max-width: 400px;
+  }
+
+  .analysis-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Additional responsive styles for decision results */
+@media (max-width: 768px) {
+  /* Decision breakdown analysis */
+  .decision-breakdown {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+    padding: 10px !important;
+  }
+
+  .decision-breakdown > div {
+    min-height: 400px !important;
+  }
+
+  /* Strategic analysis */
+  .strategic-analysis-grid {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+    padding: 15px !important;
+  }
+
+  .strategic-analysis-box {
+    min-height: 350px !important;
+    padding: 15px !important;
+  }
+
+  /* Charts and visualizations */
+  .chart-container {
+    height: 250px !important;
+    width: 100% !important;
+  }
+
+  /* Text adjustments */
+  .analysis-description {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Current decision section */
+  .current-decision-section {
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 15px !important;
+  }
+
+  .current-decision-section button {
+    width: 100% !important;
+    margin: 5px 0 !important;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .decision-breakdown > div {
+    min-height: 350px !important;
+  }
+
+  .strategic-analysis-box {
+    min-height: 300px !important;
+  }
+
+  .chart-container {
+    height: 200px !important;
+  }
+
+  .final-decision {
+    font-size: 18px !important;
+    padding: 10px !important;
+  }
+}
+
+/* Mobile Responsive Fixes for App.tsx */
+@media (max-width: 768px) {
+  /* Fix body and root layout */
+  body, #root {
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Fix Start container */
+  .Start {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+  }
+
+  /* Fix background image - make it cover 50% of screen */
+  .StartImage {
+    width: 100vw;
+    height: 50vh;
+    object-fit: cover;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    display: block;
+  }
+
+  /* Fix logo header */
+  .LogoHeader {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    padding: 0 20px;
+    z-index: 1;
+  }
+
+  .App-logo {
+    height: 50px;
+    margin: 0 10px;
+  }
+
+  h1 {
+    font-size: 28px;
+    margin: 0;
+    text-align: center;
+  }
+
+  /* Fix home main container */
+  .home-main-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 15px;
+    margin: 0;
+    gap: 25px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* Fix top section */
+  .home-top-section {
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    align-items: center;
+  }
+
+  .home-title-section {
+    width: 100%;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+  }
+
+  .home-title-section .home-subtitle {
+    font-size: 24px;
+    margin: 0 0 15px 0;
+  }
+
+  .home-description-section {
+    width: 100%;
+    text-align: center;
+  }
+
+  .home-description {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 20px 0;
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  /* Fix features grid - reduce width so boxes don't stretch full screen */
+  .home-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .feature-item {
+    padding: 10px;
+    font-size: 12px;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .feature-icon {
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+
+  /* Fix bottom section */
+  .home-bottom-section {
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    align-items: center;
+  }
+
+  .home-how-to-section {
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    margin: 0 auto;
+  }
+
+  .home-auth-column {
+    width: 90%;
+    max-width: 400px;
+    flex: none;
+  }
+
+  .home-auth-content {
+    width: 100%;
+    padding: 20px;
+    margin: 0 auto;
+  }
+
+  /* Fix how-to examples - reduce width and center */
+  .how-to-examples {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 15px auto;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .example-item {
+    padding: 8px;
+    font-size: 11px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .example-icon {
+    font-size: 16px;
+  }
+
+  /* Fix auth sections */
+  .auth-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .auth-description {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .auth-signed-in,
+  .auth-signed-out {
+    gap: 15px;
+  }
+
+  .auth-buttons {
+    gap: 10px;
+  }
+
+  .user-email {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  /* Fix buttons - center and reduce width */
+  .home-secondary-button {
+    width: 80%;
+    max-width: 250px;
+    padding: 12px 20px;
+    font-size: 14px;
+    margin: 5px auto;
+    display: block;
+  }
+
+  .home-start-now-button {
+    width: 80%;
+    max-width: 250px;
+    padding: 12px 20px;
+    font-size: 14px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  /* Fix learn more section */
+  .learn-more-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    text-align: center;
+  }
+
+  /* Fix scroll indicator */
+  .scroll-indicator {
+    margin: 10px 0;
+  }
+
+  .chevron-down {
+    font-size: 3rem;
+  }
+
+  /* Reduce font size for description text */
+  .how-to-description {
+    font-size: 12px;
+    line-height: 1.4;
+    margin-bottom: 15px;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .home-main-container {
+    padding: 15px 10px;
+  }
+
+  .home-title-section .home-subtitle {
+    font-size: 20px;
+  }
+
+  .home-description {
+    font-size: 13px;
+    padding: 0 15px;
+  }
+
+  .home-features {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    width: 85%;
+    max-width: 300px;
+  }
+
+  .feature-item {
+    padding: 8px;
+    font-size: 11px;
+  }
+
+  .how-to-examples {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    width: 85%;
+    max-width: 280px;
+  }
+
+  .example-item {
+    padding: 6px;
+    font-size: 10px;
+  }
+
+  .home-how-to-section,
+  .home-auth-content {
+    padding: 15px;
+    width: 85%;
+    max-width: 350px;
+  }
+
+  .home-how-to-section {
+    margin: 0 auto;
+  }
+
+  .home-auth-column {
+    width: 85%;
+    max-width: 350px;
+  }
+
+  .auth-title {
+    font-size: 16px;
+  }
+
+  .auth-description {
+    font-size: 13px;
+  }
+
+  .home-secondary-button {
+    width: 85%;
+    max-width: 220px;
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+
+  .home-start-now-button {
+    width: 85%;
+    max-width: 220px;
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+
+  /* Even smaller font for description on very small screens */
+  .how-to-description {
+    font-size: 11px;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+}
+
+/* Landscape orientation fixes */
+@media (max-width: 768px) and (orientation: landscape) {
+  .home-main-container {
+    padding: 15px 20px;
+  }
+
+  .home-top-section {
+    flex-direction: row;
+    gap: 15px;
+  }
+
+  .home-title-section {
+    flex: 0 0 40%;
+  }
+
+  .home-description-section {
+    flex: 1;
+  }
+
+  .home-bottom-section {
+    flex-direction: row;
+    gap: 15px;
+  }
+
+  .home-how-to-section {
+    flex: 1;
+  }
+
+  .home-auth-column {
+    flex: 0 0 35%;
+  }
+
+  /* Adjust background image for landscape */
+  .StartImage {
+    height: 40vh;
+  }
+}
+
+/* Fix container issues */
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+    margin: 0;
+    padding: 0 15px;
+    box-sizing: border-box;
+  }
+}
+
+/* Mobile Responsive Styles for Gemini Components */
+@media (max-width: 768px) {
+  .geminicontainer2 {
+    flex-direction: column;
+    padding: 15px;
+    margin: 10px auto;
+    align-items: center;
+    justify-content: center;
+    width: 85%;
+    max-width: 85%;
+    border-radius: 6px;
+  }
+
+  .geminicontainer2 h1 {
+    font-size: 12px !important;
+    width: 100% !important;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .geminitext {
+    width: 100%;
+    min-height: 80px;
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .geminiheading {
+    font-size: 12px;
+    margin: 8px 0 4px 0;
+    text-align: center;
+  }
+
+  .geminioptions {
+    width: 100%;
+    margin: 8px 0;
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .geminibutton {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .geminicontainer2 {
+    padding: 12px;
+    margin: 8px auto;
+    width: 90%;
+    max-width: 90%;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .geminicontainer2 h1 {
+    font-size: 11px !important;
+    text-align: center;
+  }
+
+  .geminitext {
+    min-height: 60px;
+    font-size: 11px;
+    padding: 6px;
+  }
+
+  .geminiheading {
+    font-size: 11px;
+    margin: 6px 0 3px 0;
+    text-align: center;
+  }
+
+  .geminioptions {
+    font-size: 11px;
+    padding: 6px;
+  }
+
+  .geminibutton {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+}
+
+/* Mobile Responsive Styles for Main.tsx Components */
+@media (max-width: 768px) {
+  /* Header adjustments */
+  header {
+    margin-bottom: 10px;
+  }
+
+  .App-logo {
+    height: 40px;
+    margin: 10px;
+  }
+
+  /* OptionContainer mobile styles */
+  .OptionContainer {
+    width: 85%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 8px;
+  }
+
+  .OptionContainer h1 {
+    font-size: 18px !important;
+    text-align: center;
+    margin: 8px auto;
+  }
+
+  .OptionContainer h2 {
+    font-size: 12px !important;
+    text-align: center;
+    margin: 6px auto;
+    padding: 0 8px;
+  }
+
+  /* Option boxes mobile styles */
+  .optionbox {
+    width: 95%;
+    max-width: 350px;
+    margin: 0 auto 4px auto;
+    padding: 3px 6px;
+    gap: 4px;
+  }
+
+  .optionText {
+    width: 220px;
+    max-width: 220px;
+    font-size: 11px;
+    padding: 2px 6px;
+    height: 24px;
+  }
+
+  .addremove {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    margin-left: 4px;
+  }
+
+  /* Category boxes mobile styles */
+  .categoryboxes {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding: 0 6px;
+    max-width: 85%;
+    width: 85%;
+    margin: 0 auto;
+  }
+
+  .individualbox {
+    margin-bottom: 4px;
+    margin-top: 2px;
+    padding: 4px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .categoryheadings {
+    padding: 4px 0px;
+  }
+
+  .categoryheadings label {
+    font-size: 14px !important;
+    margin: 2px 0;
+  }
+
+  .categoryText {
+    width: 85%;
+    height: 18px;
+    font-size: 9px;
+    margin-bottom: 2%;
+  }
+
+  .dropdown {
+    width: 90%;
+    font-size: 8px;
+    padding: 2px 4px;
+  }
+
+  /* Gemini button mobile styles */
+  .geminibutton {
+    width: 85% !important;
+    max-width: 280px !important;
+    margin: 8px auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .geminibutton img {
+    width: 5% !important;
+    height: 6% !important;
+    margin-right: 4px;
+  }
+
+  /* Navigation buttons mobile styles */
+  .home-secondary-button {
+    width: 75%;
+    max-width: 180px;
+    padding: 8px 12px;
+    font-size: 11px;
+    margin: 4px auto;
+    display: block;
+  }
+
+  /* Category Importance slider improvements - Mobile stacked layout */
+  .rankingslider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    max-width: 350px;
+    margin: 8px auto;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 8px;
+  }
+
+  .rankingslider h3 {
+    font-size: 16px;
+    margin-bottom: 6px;
+    text-align: center;
+    color: #FF6E70;
+    font-weight: bold;
+  }
+
+  .rankingslider p {
+    font-size: 12px;
+    margin-bottom: 8px;
+    padding: 0 10px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.4;
+  }
+
+  .rankingslider label {
+    font-size: 13px;
+    margin-bottom: 6px;
+    text-align: center;
+    color: white;
+    font-weight: 500;
+  }
+
+  /* Horizontal layout for slider and score */
+  .scale {
+    margin: 6px 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 10px;
+  }
+
+  .scale input[type="range"] {
+    flex: 1;
+    margin: 0;
+    min-width: 0;
+    height: 8px;
+    border-radius: 4px;
+  }
+
+  .scale span {
+    font-size: 14px;
+    min-width: 30px;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    background: rgba(78, 205, 196, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(78, 205, 196, 0.3);
+  }
+
+  /* Number input improvements */
+  .numberInput {
+    width: 80%;
+    height: 32px;
+    margin: 6px auto;
+    font-size: 13px;
+    padding: 6px 10px;
+    text-align: center;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+
+  /* Long button improvements */
+  .long-button {
+    font-size: 13px;
+    height: 32px;
+    margin: 5px auto;
+    width: 80%;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #FF6E70 0%, #c13a34 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .long-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 110, 112, 0.4);
+  }
+
+  /* Yes/No button improvements */
+  .yesnobutton {
+    margin: 8px auto;
+    padding: 8px 16px;
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .yesnobutton:checked {
+    background: linear-gradient(135deg, #FF6E70 0%, #c13a34 100%);
+    border-color: rgba(255, 110, 112, 0.5);
+    box-shadow: 0 0 10px rgba(255, 110, 112, 0.3);
+  }
+
+  /* Category boxes mobile styles - fit screen width without enlarging */
+  .categoryboxes {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding: 0 6px;
+    max-width: 85%;
+    width: 85%;
+    margin: 0 auto;
+  }
+
+  .individualbox {
+    margin-bottom: 4px;
+    margin-top: 2px;
+    padding: 4px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .categoryheadings {
+    padding: 4px 0px;
+  }
+
+  .categoryheadings label {
+    font-size: 14px !important;
+    margin: 2px 0;
+  }
+
+  .categoryText {
+    width: 85%;
+    height: 18px;
+    font-size: 9px;
+    margin-bottom: 2%;
+  }
+
+  .dropdown {
+    width: 90%;
+    font-size: 8px;
+    padding: 2px 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Header adjustments for extra small */
+  header {
+    margin-bottom: 8px;
+  }
+
+  .App-logo {
+    height: 35px;
+    margin: 8px;
+  }
+
+  /* OptionContainer extra small device styles */
+  .OptionContainer {
+    width: 90%;
+    max-width: 350px;
+    padding: 6px;
+  }
+
+  .OptionContainer h1 {
+    font-size: 16px !important;
+    margin: 6px auto;
+  }
+
+  .OptionContainer h2 {
+    font-size: 11px !important;
+    margin: 4px auto;
+    padding: 0 6px;
+  }
+
+  /* Option boxes extra small device styles */
+  .optionbox {
+    width: 98%;
+    max-width: 320px;
+    margin: 0 auto 3px auto;
+    padding: 2px 4px;
+    gap: 3px;
+  }
+
+  .optionText {
+    width: 200px;
+    max-width: 200px;
+    font-size: 10px;
+    padding: 1px 4px;
+    height: 22px;
+  }
+
+  .addremove {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+    margin-left: 3px;
+  }
+
+  /* Category boxes extra small device styles - 50% wider */
+  .categoryboxes {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding: 0 6px;
+    max-width: 95%;
+    width: 95%;
+  }
+
+  .individualbox {
+    margin-bottom: 4px;
+    margin-top: 2px;
+    padding: 4px;
+    /* Make boxes 50% wider */
+    transform: scale(1.4);
+    transform-origin: center;
+    margin: 8px 0;
+  }
+
+  .categoryheadings {
+    padding: 4px 0px;
+  }
+
+  .categoryheadings label {
+    font-size: 9px !important;
+    margin: 1px 0;
+  }
+
+  .categoryText {
+    width: 85%;
+    height: 20px;
+    font-size: 8px;
+    margin-bottom: 2%;
+  }
+
+  .dropdown {
+    width: 90%;
+    font-size: 7px;
+    padding: 1px 3px;
+  }
+
+  /* Gemini button extra small device styles */
+  .geminibutton {
+    width: 90% !important;
+    max-width: 250px !important;
+    margin: 6px auto !important;
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+
+  .geminibutton img {
+    width: 6% !important;
+    height: 7% !important;
+    margin-right: 3px;
+  }
+
+  /* Navigation buttons extra small device styles */
+  .home-secondary-button {
+    width: 80%;
+    max-width: 160px;
+    padding: 6px 10px;
+    font-size: 10px;
+    margin: 3px auto;
+  }
+
+  /* Category Importance slider improvements for extra small */
+  .rankingslider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 95%;
+    max-width: 320px;
+    margin: 6px auto;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 6px;
+  }
+
+  .rankingslider h3 {
+    font-size: 14px;
+    margin-bottom: 4px;
+    text-align: center;
+    color: #FF6E70;
+    font-weight: bold;
+  }
+
+  .rankingslider p {
+    font-size: 11px;
+    margin-bottom: 6px;
+    padding: 0 8px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.3;
+  }
+
+  .rankingslider label {
+    font-size: 12px;
+    margin-bottom: 4px;
+    text-align: center;
+    color: white;
+    font-weight: 500;
+  }
+
+  /* Horizontal layout for slider and score */
+  .scale {
+    margin: 4px 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 8px;
+  }
+
+  .scale input[type="range"] {
+    flex: 1;
+    margin: 0;
+    min-width: 0;
+    height: 6px;
+    border-radius: 3px;
+  }
+
+  .scale span {
+    font-size: 12px;
+    min-width: 25px;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    background: rgba(78, 205, 196, 0.1);
+    padding: 3px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(78, 205, 196, 0.3);
+  }
+
+  /* Number input improvements */
+  .numberInput {
+    width: 75%;
+    height: 28px;
+    margin: 4px auto;
+    font-size: 12px;
+    padding: 4px 8px;
+    text-align: center;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+
+  /* Long button improvements */
+  .long-button {
+    font-size: 12px;
+    height: 28px;
+    margin: 4px auto;
+    width: 75%;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #FF6E70 0%, #c13a34 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .long-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(255, 110, 112, 0.4);
+  }
+
+  /* Yes/No button improvements */
+  .yesnobutton {
+    margin: 6px auto;
+    padding: 6px 12px;
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .yesnobutton:checked {
+    background: linear-gradient(135deg, #FF6E70 0%, #c13a34 100%);
+    border-color: rgba(255, 110, 112, 0.5);
+    box-shadow: 0 0 8px rgba(255, 110, 112, 0.3);
+  }
+
+  /* Category boxes extra small device styles - fit screen width without enlarging */
+  .categoryboxes {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    padding: 0 3px;
+    max-width: 98%;
+    width: 98%;
+  }
+
+  .individualbox {
+    margin-bottom: 2px;
+    margin-top: 1px;
+    padding: 2px;
+    /* Remove transform scale */
+  }
+
+  .categoryheadings {
+    padding: 2px 0px;
+  }
+
+  .categoryheadings label {
+    font-size: 10px !important;
+    margin: 1px 0;
+  }
+
+  .categoryText {
+    width: 85%;
+    height: 18px;
+    font-size: 9px;
+    margin-bottom: 1%;
+  }
+
+  .dropdown {
+    width: 90%;
+    font-size: 8px;
+    padding: 1px 2px;
+  }
+}
+
+/* Category boxes extra small device styles */
+.categoryboxes {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 0 4px;
+  max-width: 90%;
+  width: 90%;
+}
+
+.individualbox {
+  margin-bottom: 3px;
+  margin-top: 1px;
+  padding: 3px;
+}
+
+.categoryheadings {
+  padding: 3px 0px;
+}
+
+.categoryheadings label {
+  font-size: 13px !important;
+  margin: 1px 0;
+}
+
+.categoryText {
+  width: 80%;
+  height: 16px;
+  font-size: 8px;
+  margin-bottom: 1%;
+}
+
+.dropdown {
+  width: 85%;
+  font-size: 7px;
+  padding: 1px 2px;
 }
 
