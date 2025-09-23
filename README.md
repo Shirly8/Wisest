@@ -27,14 +27,19 @@ Forget magic 8 balls or randomized choosers! What about real calculated decision
 - React.js
 - Python (Flask)
 - TypeScript
+- CRA
+- React Router
+- Chart.js + D3.js
+- BootStrap
 - CSS3
 - jsPDF
-- Gemini API
+- Google-GenerativeAI (Gemini API)
+- Supabase (Google OAuth, PostGres)
 - spaCy NLP
 - Chart.js
 - html2canvas
-- SQLite3
-- 
+- Vercel
+
 
 ## Application Architecture: 
 ![Diagram](https://github.com/Shirly8/Wisest/blob/553c01fcb14959274b695ece6229445ddd4655aa/Wisest%20Diagram.png)
