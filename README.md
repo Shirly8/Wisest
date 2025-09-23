@@ -3,7 +3,7 @@
 
 Forget magic 8 balls or randomized choosers! What about real calculated decisions based on statistics and your own needs? Wisest is there for you through difficult times (Deciding on job offers, universities, or cities to move to), through the good times (Decising on a restaurant, or vacation destination), or through the daily times (Picking a movie, or clothes), Wisest is always there! 
 
-[VISIT WISEST][https://shirleyproject.my.canva.site/wisest]
+[VISIT WISEST](https://shirleyproject.my.canva.site/wisest)
 
 ## Demonstration 🍽️ 
 
@@ -34,6 +34,7 @@ Forget magic 8 balls or randomized choosers! What about real calculated decision
 - Chart.js
 - html2canvas
 - SQLite3
+- 
 
 ## Application Architecture: 
 ![Diagram](https://github.com/Shirly8/Wisest/blob/553c01fcb14959274b695ece6229445ddd4655aa/Wisest%20Diagram.png)
