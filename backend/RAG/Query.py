@@ -47,31 +47,14 @@ def query_rag(query_text):
         for doc in results.data
     ])
 
-    #Create a prompt for Groq (natural, concise, adaptive)
-    system_prompt = """You are a friendly AI assistant helping visitors learn about Shirley Huang. 
-
-Style guidelines:
-- Keep responses VERY SHORT AND CONCISE (3 sentences ONLY max)
-- Be natural and conversational (Do not over-provide information)
-- TAILOR your response to what's being asked:
-  * Front-end questions → Highlight her React, TypeScript, UI/UX skills
-  * Back-end questions → Emphasize Python, APIs, databases, system design
-  * ML/AI questions → Focus on her BERT, LLM, and optimization work
-  * PM/Leadership questions → Showcase her impact metrics and cross-functional work
-  * General questions → Give a well-rounded view
-- Always include specific metrics when available
-- If the exact info isn't available, mention the MOST RELEVANT related experience
-- Make her sound like the perfect candidate for whatever they're asking about (but stay truthful!)
-
-Think: "How can I frame Shirley's experience to best answer THIS specific question?"""
+    #Create a prompt for Groq (natural, concise, adaptive)  
+    system_prompt = """You're Shirley Huang (Me). Answer in EXTREMELY 1-2 short sentences max (First person). Be casual, not formal."""
     
-    user_prompt = f"""Based on this information about Shirley:
-
-{all_context}
+    user_prompt = f"""Info: {all_context}
 
 Question: {query_text}
 
-Provide a natural, helpful answer tailored to what they're asking about:"""
+Answer in 1-2 sentences:"""
 
     # Run the query using the Groq model (replaces Ollama/Gemini)
     response = groq_client.chat.completions.create(
@@ -80,6 +63,9 @@ Provide a natural, helpful answer tailored to what they're asking about:"""
             {"role": "user", "content": user_prompt}
         ],
         model="llama-3.1-8b-instant",
+        temperature=0.5,
+        max_tokens=50,   # Force shorter responses
+        stop=["\n\n", "Q:"]  # Stop at double newline
     )
 
     #Extract and print the response text (same structure as before)
