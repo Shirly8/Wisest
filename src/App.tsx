@@ -139,7 +139,7 @@ const HomePage: React.FC = () => {
               )}
               
               <div className="learn-more-section">
-                <a href="https://shirleyproject.com/wisest">
+                <a href="https://shirleyproject.my.canva.site/wisest">
                   <button className="home-secondary-button">Learn More</button>
                 </a>
               </div>

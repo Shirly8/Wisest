@@ -14,9 +14,13 @@ app = Flask(__name__)
 # CORS configuration for production and development
 allowed_origins = [
     "http://localhost:3000",  # Local development
+    "http://localhost:5173",  # Vite dev server
     "https://wisest.vercel.app",  # Your Vercel frontend
     "https://wisest-git-main-yourusername.vercel.app",  # Vercel preview
-    "https://wisests.shirleyproject.com"  # Your custom domain
+    "https://wisests.shirleyproject.com",  # Your custom domain
+    "https://shirleyproject.com",  # ShirleyProject domain
+    "https://www.shirleyproject.com",  # ShirleyProject www
+    "https://shirleyproject.vercel.app"  # ShirleyProject Vercel
 ]
 
 CORS(app, resources={r"/*": {"origins": allowed_origins}})
@@ -174,6 +178,28 @@ Remember: You are the expert advisor - trust your judgment even if it differs fr
     except Exception as e:
         print("Error:", str(e))
         return jsonify({'error': str(e)}), 500
+
+# RAG Chat endpoint for ShirleyProject
+@app.route('/chat', methods=['POST'])
+def chat():
+    try:
+        from RAG import query_rag
+        
+        data = request.get_json()
+        message = data.get('message', '')
+        
+        if not message:
+            return jsonify({'error': 'Message is required'}), 400
+        
+        # Query the RAG system (using your original query_rag function)
+        response = query_rag(message)
+        
+        return jsonify({'answer': response})
+    except Exception as e:
+        print("Error in chat endpoint:", str(e))
+        return jsonify({
+            'answer': "I'm having trouble accessing my knowledge base right now. Please try again later!"
+        }), 500
 
 # Health check endpoint for deployment platforms
 @app.route('/health', methods=['GET'])
