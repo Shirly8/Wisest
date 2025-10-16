@@ -1,6 +1,6 @@
 import argparse
 from groq import Groq
-from langchain_ollama import OllamaEmbeddings
+from sentence_transformers import SentenceTransformer
 from .RAG import initialize_chroma
 import os
 from dotenv import load_dotenv
@@ -9,8 +9,8 @@ load_dotenv()
 
 #To run: python3 -m RAG.Query --query "What projects has Shirley worked on?"
 
-# Initialize Ollama (for query embeddings, matches document embeddings)
-ollama_embeddings = OllamaEmbeddings(model="nomic-embed-text")
+# Initialize sentence-transformers (for query embeddings, 768 dims matches Ollama docs)
+embedding_model = SentenceTransformer('all-mpnet-base-v2')
 # Initialize Groq (for answer generation)
 groq_client = Groq(api_key=os.environ.get('GROQ_API_KEY'))
 
@@ -19,8 +19,8 @@ def query_rag(query_text):
     #Initialize Database (Supabase replaces ChromaDB)
     db = initialize_chroma()
     
-    #Generate query embedding using Ollama (same as documents)
-    query_embedding = ollama_embeddings.embed_query(query_text)
+    #Generate query embedding using sentence-transformers (768 dims, same as Ollama docs)
+    query_embedding = embedding_model.encode(query_text).tolist()
 
     #Search database using Supabase vector similarity (replaces ChromaDB similarity_search)
     results = db.rpc(
@@ -42,10 +42,31 @@ def query_rag(query_text):
         for doc in results.data
     ])
 
-    #Create a prompt for Groq (updated for Shirley's portfolio)
-    system_prompt = "You are an AI assistant helping people learn about Shirley Huang's professional background, projects, and experience. Provide helpful, specific, and friendly answers. Keep responses concise and relevant."
+    #Create a prompt for Groq (natural, concise, adaptive)
+    system_prompt = """You are a friendly AI assistant helping visitors learn about Shirley Huang. 
+
+Style guidelines:
+- Keep responses VERY SHORT AND CONCISE (3 sentences ONLY max)
+- Be natural and conversational (Do not over-provide information)
+- TAILOR your response to what's being asked:
+  * Front-end questions → Highlight her React, TypeScript, UI/UX skills
+  * Back-end questions → Emphasize Python, APIs, databases, system design
+  * ML/AI questions → Focus on her BERT, LLM, and optimization work
+  * PM/Leadership questions → Showcase her impact metrics and cross-functional work
+  * General questions → Give a well-rounded view
+- Always include specific metrics when available
+- If the exact info isn't available, mention the MOST RELEVANT related experience
+- Make her sound like the perfect candidate for whatever they're asking about (but stay truthful!)
+
+Think: "How can I frame Shirley's experience to best answer THIS specific question?"""
     
-    user_prompt = f"Context from Shirley's portfolio:\n{all_context}\n\nQuestion: {query_text}\n\nAnswer:"
+    user_prompt = f"""Based on this information about Shirley:
+
+{all_context}
+
+Question: {query_text}
+
+Provide a natural, helpful answer tailored to what they're asking about:"""
 
     # Run the query using the Groq model (replaces Ollama/Gemini)
     response = groq_client.chat.completions.create(

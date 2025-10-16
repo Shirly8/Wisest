@@ -4,7 +4,7 @@ import argparse
 import requests
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
-from langchain_ollama import OllamaEmbeddings
+from sentence_transformers import SentenceTransformer
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import time
@@ -17,8 +17,8 @@ SUPABASE_KEY = os.environ.get('SUPABASE_SERVICE_KEY', os.environ.get('SUPABASE_A
 DATA_PATH = 'Shirly8/ShirleyHuang-Data'  # GitHub repo
 db = None
 
-# Initialize Ollama embeddings (local, for document embedding )
-ollama_embeddings = OllamaEmbeddings(model="nomic-embed-text")
+# Initialize sentence-transformers (768 dims, works on Render)
+embedding_model = SentenceTransformer('all-mpnet-base-v2')
 
 
 # Function processes all documents from GitHub RAG folder only
@@ -98,12 +98,12 @@ def createIds(chunks):
     return chunks
 
 
-#Initialize Ollama embeddings (local, runs on your laptop)
+#Initialize sentence-transformers embeddings (works on Render)
 def get_embedding():
     """Wrapper to match original interface - returns function that generates embeddings"""
     def embed_text(text):
-        # Ollama returns a list for single text
-        return ollama_embeddings.embed_query(text)
+        # sentence-transformers returns numpy array, convert to list
+        return embedding_model.encode(text).tolist()
     return embed_text
 
 

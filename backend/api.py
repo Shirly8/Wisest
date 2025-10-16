@@ -33,7 +33,7 @@ if not API_KEY:
     raise ValueError("GEMINI_API_KEY environment variable is required")
 
 genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-2.5-flash')
 
 # Simple in-memory storage for decisions (in production, use a database)
 decisions = {}
