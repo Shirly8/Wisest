@@ -4,10 +4,10 @@ import argparse
 import requests
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
-from sentence_transformers import SentenceTransformer
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import time
+import cohere
 
 load_dotenv()
 
@@ -17,8 +17,8 @@ SUPABASE_KEY = os.environ.get('SUPABASE_SERVICE_KEY', os.environ.get('SUPABASE_A
 DATA_PATH = 'Shirly8/ShirleyHuang-Data'  # GitHub repo
 db = None
 
-# Initialize sentence-transformers (768 dims, works on Render)
-embedding_model = SentenceTransformer('all-mpnet-base-v2')
+# Initialize Cohere client for embeddings (FREE: 100 calls/min, 384 dims - same as old model!)
+cohere_client = cohere.Client(os.environ.get('COHERE_API_KEY'))
 
 
 # Function processes all documents from GitHub RAG folder only
@@ -98,12 +98,17 @@ def createIds(chunks):
     return chunks
 
 
-#Initialize sentence-transformers embeddings (works on Render)
+#Initialize Cohere embeddings (FREE & ultra-lightweight, no local model!)
 def get_embedding():
     """Wrapper to match original interface - returns function that generates embeddings"""
     def embed_text(text):
-        # sentence-transformers returns numpy array, convert to list
-        return embedding_model.encode(text).tolist()
+        # Cohere embed-english-light-v3.0: 384 dimensions (same as old all-MiniLM-L6-v2!)
+        response = cohere_client.embed(
+            texts=[text],
+            model="embed-english-light-v3.0",
+            input_type="search_document"
+        )
+        return response.embeddings[0]
     return embed_text
 
 

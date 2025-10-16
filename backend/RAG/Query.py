@@ -1,6 +1,6 @@
 import argparse
 from groq import Groq
-from sentence_transformers import SentenceTransformer
+import cohere
 from .RAG import initialize_chroma
 import os
 from dotenv import load_dotenv
@@ -9,8 +9,8 @@ load_dotenv()
 
 #To run: python3 -m RAG.Query --query "What projects has Shirley worked on?"
 
-# Initialize sentence-transformers (for query embeddings, 768 dims matches Ollama docs)
-embedding_model = SentenceTransformer('all-mpnet-base-v2')
+# Initialize Cohere client for embeddings (FREE: 100 calls/min, no heavy model loading!)
+cohere_client = cohere.Client(os.environ.get('COHERE_API_KEY'))
 # Initialize Groq (for answer generation)
 groq_client = Groq(api_key=os.environ.get('GROQ_API_KEY'))
 
@@ -19,8 +19,13 @@ def query_rag(query_text):
     #Initialize Database (Supabase replaces ChromaDB)
     db = initialize_chroma()
     
-    #Generate query embedding using sentence-transformers (768 dims, same as Ollama docs)
-    query_embedding = embedding_model.encode(query_text).tolist()
+    #Generate query embedding using Cohere (384 dims for embed-english-light-v3.0)
+    response = cohere_client.embed(
+        texts=[query_text],
+        model="embed-english-light-v3.0",
+        input_type="search_query"
+    )
+    query_embedding = response.embeddings[0]
 
     #Search database using Supabase vector similarity (replaces ChromaDB similarity_search)
     results = db.rpc(
