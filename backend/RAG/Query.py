@@ -37,8 +37,11 @@ def query_rag(query_text):
     ).execute()
     
     if not results.data:
+        print(f"[RAG] No results found for query: {query_text}")
         return "I don't have enough information to answer that question."
 
+    print(f"[RAG] Found {len(results.data)} relevant documents")
+    
     #Initialize Groq to get the answer (replaces Ollama/Gemini)
     
     #combine all the chunks and pass it to Groq (same structure as before)
@@ -48,25 +51,24 @@ def query_rag(query_text):
     ])
 
     #Create a prompt for Groq (natural, concise, adaptive)  
-    system_prompt = """You are Shirley. Respond in 10-15 words MAX. Be direct. No explanations. Answer ONLY what's asked."""
+    system_prompt = """You are Shirley Huang answering questions about yourself. Keep responses concise (2-3 sentences). When asked about "you" or what makes you unique, focus on YOUR skills and experience as a person, not just describing project features. Be accurate and use the context."""
     
-    # Run the query using the Groq model with ultra-brief examples
+    # Run the query using the Groq model
     response = groq_client.chat.completions.create(
         messages=[
             {"role": "system", "content": system_prompt},
-            # Ultra-short few-shot examples (10 words or less)
-            {"role": "user", "content": f"Context: [React, TypeScript, Python experience]\n\nWhat tech do you use?"},
-            {"role": "assistant", "content": "React, TypeScript, Python, Flask."},
-            {"role": "user", "content": f"Context: [BERT model, 0.98 F1]\n\nDo you have ML experience?"},
-            {"role": "assistant", "content": "Yeah, fine-tuned BERT with 0.98 F1."},
-            {"role": "user", "content": f"Context: [UI/UX, scalable systems]\n\nWhat are you good at?"},
-            {"role": "assistant", "content": "Building intuitive UIs and scalable systems."},
+            # Few-shot examples
+            {"role": "user", "content": f"Context: [React, TypeScript, Python, Flask]\n\nWhat tech do you use?"},
+            {"role": "assistant", "content": "I work with React and TypeScript on frontend, Python and Flask on backend."},
+            {"role": "user", "content": f"Context: [BERT fine-tuning, 0.98 F1]\n\nDo you have ML experience?"},
+            {"role": "assistant", "content": "Yeah, I fine-tuned BERT models for fraud detection and got a 0.98 F1 score."},
+            {"role": "user", "content": f"Context: [Full-stack dev, UI/UX, scalable systems]\n\nWhat makes you unique?"},
+            {"role": "assistant", "content": "I combine strong full-stack skills with user-centered design thinking. I build products that are both technically solid and genuinely useful."},
             # Actual query
             {"role": "user", "content": f"Context: {all_context}\n\n{query_text}"}
         ],
-        model="llama-3.1-8b-instant",  # 70b-versatile was decommissioned
-        temperature=0.5,
-        stop=["\n", "Context:", "Question:"]
+        model="llama-3.1-8b-instant",
+        temperature=0.6
     )
 
     #Extract and print the response text (same structure as before)
