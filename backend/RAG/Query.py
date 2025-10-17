@@ -64,7 +64,7 @@ def query_rag(query_text):
             # Actual query
             {"role": "user", "content": f"Context: {all_context}\n\n{query_text}"}
         ],
-        model="llama-3.1-70b-versatile",
+        model="llama-3.1-8b-instant",  # 70b-versatile was decommissioned
         temperature=0.5,
         stop=["\n", "Context:", "Question:"]
     )
