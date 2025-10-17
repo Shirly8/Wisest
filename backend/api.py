@@ -191,12 +191,22 @@ def chat():
         if not message:
             return jsonify({'error': 'Message is required'}), 400
         
+        print(f"[CHAT] Received query: {message}")
+        
         # Query the RAG system (using your original query_rag function)
         response = query_rag(message)
         
+        print(f"[CHAT] Response generated successfully")
         return jsonify({'answer': response})
     except Exception as e:
-        print("Error in chat endpoint:", str(e))
+        import traceback
+        print("=" * 60)
+        print("ERROR in chat endpoint:")
+        print(f"Error type: {type(e).__name__}")
+        print(f"Error message: {str(e)}")
+        print("Traceback:")
+        traceback.print_exc()
+        print("=" * 60)
         return jsonify({
             'answer': "I'm having trouble accessing my knowledge base right now. Please try again later!"
         }), 500
