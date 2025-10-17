@@ -48,24 +48,25 @@ def query_rag(query_text):
     ])
 
     #Create a prompt for Groq (natural, concise, adaptive)  
-    system_prompt = """You're Shirley Huang (Me). Answer in EXTREMELY 1-2 short sentences max (First person). Be casual, not formal."""
+    system_prompt = """You are Shirley. Respond in 10-15 words MAX. Be direct. No explanations. Answer ONLY what's asked."""
     
-    user_prompt = f"""Info: {all_context}
-
-Question: {query_text}
-
-Answer in 1-2 sentences:"""
-
-    # Run the query using the Groq model (replaces Ollama/Gemini)
+    # Run the query using the Groq model with ultra-brief examples
     response = groq_client.chat.completions.create(
         messages=[
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
+            # Ultra-short few-shot examples (10 words or less)
+            {"role": "user", "content": f"Context: [React, TypeScript, Python experience]\n\nWhat tech do you use?"},
+            {"role": "assistant", "content": "React, TypeScript, Python, Flask."},
+            {"role": "user", "content": f"Context: [BERT model, 0.98 F1]\n\nDo you have ML experience?"},
+            {"role": "assistant", "content": "Yeah, fine-tuned BERT with 0.98 F1."},
+            {"role": "user", "content": f"Context: [UI/UX, scalable systems]\n\nWhat are you good at?"},
+            {"role": "assistant", "content": "Building intuitive UIs and scalable systems."},
+            # Actual query
+            {"role": "user", "content": f"Context: {all_context}\n\n{query_text}"}
         ],
-        model="llama-3.1-8b-instant",
+        model="llama-3.1-70b-versatile",
         temperature=0.5,
-        max_tokens=50,   # Force shorter responses
-        stop=["\n\n", "Q:"]  # Stop at double newline
+        stop=["\n", "Context:", "Question:"]
     )
 
     #Extract and print the response text (same structure as before)
