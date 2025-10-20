@@ -183,7 +183,10 @@ Remember: You are the expert advisor - trust your judgment even if it differs fr
 @app.route('/chat', methods=['POST'])
 def chat():
     try:
-        from RAG import query_rag
+        import importlib
+        import RAG.Query
+        importlib.reload(RAG.Query)
+        from RAG.Query import query_rag
         
         data = request.get_json()
         message = data.get('message', '')
