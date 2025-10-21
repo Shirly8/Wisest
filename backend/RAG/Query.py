@@ -92,18 +92,14 @@ def query_rag(query_text):
         # Log to Supabase for analytics
         try:
             response_time_ms = int((time.time() - start_time) * 1000)
-            print(f"[LOG] Attempting to log query to Supabase...")
-            result = db.table('chat_logs').insert({
+            db.table('chat_logs').insert({
                 'query': query_text,
                 'response': response_text,
                 'response_time_ms': response_time_ms,
                 'found_results': True
             }).execute()
-            print(f"[LOG] Successfully logged query! Response: {result}")
         except Exception as e:
-            print(f"[ERROR] Failed to log query: {type(e).__name__}: {e}")
-            import traceback
-            traceback.print_exc()
+            print(f"[WARN] Failed to log query: {e}")
         
         return response_text
     else:
