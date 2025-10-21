@@ -429,14 +429,45 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     }, 5000);
   }, [options, categories, metricTypes, mainConsideration, choiceConsiderations]);
 
-  // 8) D3 VISUALIZATIONS
+  // 8) NORMALIZE DATA FOR CHARTS
+  const normalizeForCharts = () => {
+    return categories.map(category => {
+      const values = category.metrics.map(extractNumber);
+      const minVal = Math.min(...values);
+      const maxVal = Math.max(...values);
+      const range = maxVal - minVal;
+      
+      const normalizedMetrics = values.map(value => {
+        if (range === 0) return 5; // Default to middle if no range
+        
+        let normalized;
+        if (metricTypes[categories.indexOf(category)] === 1) {
+          // Inverse metric (lower is better)
+          normalized = 10 - ((value - minVal) / range) * 10;
+        } else {
+          // Normal metric (higher is better)
+          normalized = ((value - minVal) / range) * 10;
+        }
+        
+        return Math.max(0, Math.min(10, normalized));
+      });
+      
+      return {
+        ...category,
+        metrics: normalizedMetrics
+      };
+    });
+  };
+
+  // 9) D3 VISUALIZATIONS
   useEffect(() => {
     if (showContent) {
       setTimeout(() => {
-        createTradeoffAnalysis(radarChartRef, categories, options, bestDecision);
-        createConfidenceAnalysis(comparisonChartRef, categories, options, bestDecision, calculateScore);
-        createSensitivityAnalysis(heatmapRef, categories, options, metricTypes, calculateScore, extractNumber);
-        createRiskAssessment(riskAssessmentRef, categories, options, metricTypes);
+        const normalizedCategories = normalizeForCharts();
+        createTradeoffAnalysis(radarChartRef, normalizedCategories, options, bestDecision);
+        createConfidenceAnalysis(comparisonChartRef, normalizedCategories, options, bestDecision, calculateScore);
+        createSensitivityAnalysis(heatmapRef, normalizedCategories, options, metricTypes, calculateScore, extractNumber);
+        createRiskAssessment(riskAssessmentRef, normalizedCategories, options, metricTypes);
       }, 100);
     }
   }, [showContent, categories, options, metricTypes]);
