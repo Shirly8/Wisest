@@ -1,5 +1,36 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import gemini from './images/gemini.png';
+
+// Auto-expanding textarea component for choice analysis
+const ChoiceTextarea: React.FC<{
+  option: string;
+  value: string;
+  onChange: (value: string) => void;
+  onDelete: () => void;
+}> = ({ option, value, onChange, onDelete }) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  }, [value]);
+
+  return (
+    <div>
+      <h4 className="geminiheading">{option}</h4>
+      <textarea 
+        ref={textareaRef}
+        className="geminitext" 
+        placeholder="Select your choices and list considerations you have for each options. Highlight key differences, pros and cons for this choice."
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      <button className="geminibutton" style={{border: 'none'}} onClick={onDelete}>X</button>
+    </div>
+  );
+};
 
 interface GeminiProps {
   options: string[];
@@ -11,6 +42,20 @@ interface GeminiProps {
 
 const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoiceConsiderations, MainConsiderations, choiceConsiderations}) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+
+  // Auto-expanding textarea hook
+  const useAutoResizeTextarea = (value: string) => {
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+      }
+    }, [value]);
+
+    return textareaRef;
+  };
 
   // 1) OPTION SELECTION
   const handleOptionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -33,6 +78,9 @@ const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoic
     setChoiceConsiderations({ ...choiceConsiderations, [option]: value });
   };
 
+  // Create refs for auto-resizing textareas
+  const mainTextareaRef = useAutoResizeTextarea(MainConsiderations);
+
   return (
     <div className = "geminibackground">
        <div className = 'feedback'>
@@ -43,9 +91,12 @@ const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoic
   
   <div className="geminicontainer2">
     <h1 style = {{fontSize: '15px', width: '20%'}}> Main Consideration </h1>
-    <textarea className = 'geminitext' placeholder= 'Tell us about your overall goals and considerations in making your decision. What do you really want? What do you value in your decision?'
-    value = {MainConsiderations}
-    onChange = {handleMainConsiderationsChange}
+    <textarea 
+      ref={mainTextareaRef}
+      className = 'geminitext' 
+      placeholder= 'Tell us about your overall goals and considerations in making your decision. What do you really want? What do you value in your decision?'
+      value = {MainConsiderations}
+      onChange = {handleMainConsiderationsChange}
     />
     </div>
 
@@ -63,15 +114,13 @@ const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoic
     </select>
 
     {selectedOptions.map((option, index) => (
-      <div key = {index}>
-        <h4 className = "geminiheading"> {option}</h4>
-        <textarea className = 'geminitext' placeholder= 'Select your choices and list considerations you have for each options. Highlight key differences, pros and cons for this choice. '
-       value={choiceConsiderations[option] || ''}
-        onChange={(e) => handleChoiceConsiderationsChange(option, e.target.value)}
-        />
-
-        <button className = "geminibutton" style = {{border: 'none'} } onClick={() => handleDeleteOption(option)}>X</button>
-        </div>
+      <ChoiceTextarea
+        key={index}
+        option={option}
+        value={choiceConsiderations[option] || ''}
+        onChange={(value) => handleChoiceConsiderationsChange(option, value)}
+        onDelete={() => handleDeleteOption(option)}
+      />
     ))}
 
     </div>

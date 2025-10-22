@@ -31,26 +31,26 @@
 }
 
 .back-button {
-  background: linear-gradient(135deg, #C13B34 0%, #a8322b 100%);
-  color: #F6EBCD;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 50px;
-  font-size: 16px;
+  background: #c13a34;
+  color: white;
+  border: 2px solid #f97f78;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 12px rgba(193, 58, 52, 0.3);
+  box-shadow: 0 2px 6px rgba(193, 58, 52, 0.3);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   font-family: Poppins, sans-serif;
 }
 
 .back-button:hover {
-  filter: drop-shadow(0 0 2em #C13B34);
-  color: white;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(193, 58, 52, 0.5);
+  background: #b2403d;
+  border-color: #ed5b7a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(193, 58, 52, 0.4);
 }
 
 .decisions-grid {
@@ -81,12 +81,9 @@
 
 .decision-card h3 {
   margin: 0 0 15px 0;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #c13a34 0%, #ff6e70 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #c13a34;
 }
 
 .decision-header {
@@ -99,12 +96,9 @@
 .decision-header h3 {
   margin: 0;
   flex: 1;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #c13a34 0%, #ff6e70 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #c13a34;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -116,10 +110,10 @@
 .decision-header input {
   flex: 1;
   background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 110, 112, 0.5);
+  border: 2px solid #f97f78;
   border-radius: 8px;
   padding: 8px 12px;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: white;
   font-family: Poppins, sans-serif;
@@ -128,9 +122,9 @@
 }
 
 .decision-header input:focus {
-  border-color: #FF6E70;
+  border-color: #c13a34;
   background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 10px rgba(255, 110, 112, 0.3);
+  box-shadow: 0 0 10px rgba(193, 58, 52, 0.3);
 }
 
 .decision-header input::placeholder {
@@ -138,23 +132,23 @@
 }
 
 .delete-button {
-  background: rgba(255, 110, 112, 0.1);
-  border: 1px solid rgba(255, 110, 112, 0.3);
-  color: #FF6E70;
-  padding: 8px 12px;
-  border-radius: 8px;
+  background: rgba(249, 127, 120, 0.1);
+  border: 1px solid #f97f78;
+  color: #f97f78;
+  padding: 6px 10px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 12px;
   transition: all 0.3s ease;
   margin-left: 10px;
   flex-shrink: 0;
 }
 
 .delete-button:hover {
-  background: rgba(255, 110, 112, 0.2);
-  border-color: rgba(255, 110, 112, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 110, 112, 0.3);
+  background: #f97f78;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(249, 127, 120, 0.3);
 }
 
 .delete-button:disabled {
@@ -201,11 +195,8 @@
 
 .empty-state h2 {
   margin: 0 0 15px 0;
-  font-size: 2rem;
-  background: linear-gradient(135deg, #c13a34 0%, #ff6e70 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 1.5rem;
+  color: #c13a34;
 }
 
 .empty-state p {
@@ -215,26 +206,26 @@
 }
 
 .empty-state button {
-  background: linear-gradient(135deg, #C13B34 0%, #a8322b 100%);
-  color: #F6EBCD;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 50px;
-  font-size: 16px;
+  background: #c13a34;
+  color: white;
+  border: 2px solid #f97f78;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 12px rgba(193, 58, 52, 0.3);
+  box-shadow: 0 2px 6px rgba(193, 58, 52, 0.3);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   font-family: Poppins, sans-serif;
 }
 
 .empty-state button:hover {
-  filter: drop-shadow(0 0 2em #C13B34);
-  color: white;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(193, 58, 52, 0.5);
+  background: #b2403d;
+  border-color: #ed5b7a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(193, 58, 52, 0.4);
 }
 
 .loading-container {
@@ -247,10 +238,10 @@
 }
 
 .loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid #FF6E70;
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #c13a34;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -270,34 +261,31 @@
 }
 
 .error-message h2 {
-  background: linear-gradient(135deg, #c13a34 0%, #ff6e70 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #c13a34;
   margin-bottom: 15px;
 }
 
 .error-message button {
-  background: linear-gradient(135deg, #C13B34 0%, #a8322b 100%);
-  color: #F6EBCD;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 50px;
-  font-size: 16px;
+  background: #c13a34;
+  color: white;
+  border: 2px solid #f97f78;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 14px;
   cursor: pointer;
   margin-top: 20px;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 12px rgba(193, 58, 52, 0.3);
+  box-shadow: 0 2px 6px rgba(193, 58, 52, 0.3);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   font-family: Poppins, sans-serif;
 }
 
 .error-message button:hover {
-  filter: drop-shadow(0 0 2em #C13B34);
-  color: white;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(193, 58, 52, 0.5);
+  background: #b2403d;
+  border-color: #ed5b7a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(193, 58, 52, 0.4);
 }
 
 @media (max-width: 768px) {
@@ -319,4 +307,29 @@
   .decision-card {
     padding: 20px;
   }
+}
+
+/* Decision details */
+.decision-detail {
+  margin: 8px 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
+}
+
+.decision-detail strong {
+  color: #f97f78;
+  font-weight: 600;
+}
+
+.decision-detail.best-choice {
+  background: rgba(193, 58, 52, 0.1);
+  border: 1px solid #c13a34;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 12px 0;
+}
+
+.decision-detail.best-choice strong {
+  color: #c13a34;
 } 

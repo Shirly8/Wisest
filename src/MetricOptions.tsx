@@ -22,7 +22,7 @@ const MetricOptions: React.FC<MetricOptionsProps> = ({ index, options, metricTyp
         <input
           type="radio"
           value="Yes"
-          checked={metricTypes[index] === 2 ? category.metrics[optionIndex] === 1 : category.metrics[optionIndex] === 0}
+          checked={category.metrics[optionIndex] === 1}
           onChange={(e) => handleMetricChange(index, optionIndex, e.target.value)}
           className='yesnobutton'
         />
@@ -32,7 +32,7 @@ const MetricOptions: React.FC<MetricOptionsProps> = ({ index, options, metricTyp
         <input
           type="radio"
           value="No"
-          checked={metricTypes[index] === 2 ? category.metrics[optionIndex] === 0 : category.metrics[optionIndex] === 1}
+          checked={category.metrics[optionIndex] === 0}
           onChange={(e) => handleMetricChange(index, optionIndex, e.target.value)}
           className = 'yesnobutton'
         />

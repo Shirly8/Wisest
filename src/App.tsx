@@ -12,6 +12,7 @@ import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [showBottomSection, setShowBottomSection] = useState<boolean>(false);
 
   // Auth state listener
   useEffect(() => {
@@ -24,6 +25,27 @@ const HomePage: React.FC = () => {
       setUserEmail(session?.user?.email ?? null);
     });
     return () => { sub.subscription.unsubscribe(); };
+  }, []);
+
+  // Scroll detection for bottom section
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      
+      // Show bottom section when user scrolls down 30% of the viewport (more sensitive)
+      if (scrollY > windowHeight * 0.3) {
+        setShowBottomSection(true);
+      } else {
+        setShowBottomSection(false);
+      }
+    };
+
+    // Initial check in case page is already scrolled
+    handleScroll();
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const signInWithGoogle = async () => {
@@ -46,10 +68,21 @@ const HomePage: React.FC = () => {
         {/* 2) TOP SECTION - Title with Description and Features */}
         <div className="home-top-section">
           <div className="home-title-section">
-            <h2 className="home-subtitle">Make Smarter Decisions</h2>
-            <button className="home-secondary-button" onClick={() => navigate('/decision-maker')}>
-              Start Now
-            </button>
+            <h2 className="home-subtitle">Make a Decision</h2>
+            <div className="home-title-buttons">
+              <button className="home-primary-button" onClick={() => navigate('/decision-maker')}>
+                Start Now
+              </button>
+              {!userEmail ? (
+                <button className="home-auth-button" onClick={signInWithGoogle}>
+                  Sign In
+                </button>
+              ) : (
+                <button className="home-auth-button" onClick={() => navigate('/decision-history')}>
+                  My Profile
+                </button>
+              )}
+            </div>
           </div>
           
           <div className="home-description-section">
@@ -80,70 +113,121 @@ const HomePage: React.FC = () => {
           </div>
         </div>
 
-        {/* 3) BOTTOM SECTION - How to do it (left) and Get Started (right) */}
-        <div className="home-bottom-section">
-          <div className="home-how-to-section">
-            <h3 className="how-to-title">How It Works</h3>
-            <p className="how-to-description">
-              Simply list your options, define custom categories and metrics, 
-              set importance weights, and let our algorithm calculate the best decision for you.
-            </p>
+        {/* 3) BOTTOM SECTION - Expanded How It Works (Scroll to reveal) */}
+        {showBottomSection && (
+          <div className="home-bottom-section">
+            <div className="home-how-to-section-expanded">
+            
+            
+            <div className="how-to-features">
+              <h4 className="features-title">Advanced Features</h4>
+              <div className="features-grid">
+                <div className="feature-card">
+                  <div className="feature-icon">🤖</div>
+                  <h5 className="feature-card-title">Gemini AI Integration</h5>
+                  <p className="feature-card-description">
+                    Leverage Google's advanced Gemini AI for intelligent decision analysis, 
+                    risk assessment, and personalized recommendations.
+                  </p>
+                </div>
+                
+                <div className="feature-card">
+                  <div className="feature-icon">📊</div>
+                  <h5 className="feature-card-title">Interactive Visualizations</h5>
+                  <p className="feature-card-description">
+                    Comprehensive charts and graphs showing decision confidence, 
+                    trade-off analysis, and risk assessment breakdowns.
+                  </p>
+                </div>
+                
+                <div className="feature-card">
+                  <div className="feature-icon">💾</div>
+                  <h5 className="feature-card-title">Decision History & Saving</h5>
+                  <p className="feature-card-description">
+                    Save and revisit your decisions anytime. Track decision patterns, 
+                    outcomes, and learn from your decision-making history.
+                  </p>
+                </div>
+                
+                <div className="feature-card">
+                  <div className="feature-icon">⚡</div>
+                  <h5 className="feature-card-title">Real-time Analysis</h5>
+                  <p className="feature-card-description">
+                    Instant scoring and ranking updates as you adjust criteria weights. 
+                    See how your priorities affect the final recommendation.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
             <div className="how-to-examples">
-              <div className="example-item">
-                <span className="example-icon">💼</span>
-                <span>Job Offers</span>
-              </div>
-              <div className="example-item">
-                <span className="example-icon">🏠</span>
-                <span>House Buying</span>
-              </div>
-              <div className="example-item">
-                <span className="example-icon">🎓</span>
-                <span>University Choice</span>
-              </div>
-              <div className="example-item">
-                <span className="example-icon">📊</span>
-                <span>Business Analysis</span>
+              <h4 className="examples-title">Perfect For</h4>
+              <div className="examples-carousel">
+                <div className="carousel-track">
+                  <div className="example-item">
+                    <span className="example-icon">💼</span>
+                    <span>Career Decisions</span>
+                  </div>
+                  <div className="example-item">
+                    <span className="example-icon">🏠</span>
+                    <span>Real Estate</span>
+                  </div>
+                  <div className="example-item">
+                    <span className="example-icon">🎓</span>
+                    <span>Education Choices</span>
+                  </div>
+                  <div className="example-item">
+                    <span className="example-icon">📊</span>
+                    <span>Business Strategy</span>
+                  </div>
+                  <div className="example-item">
+                    <span className="example-icon">💡</span>
+                    <span>Investment Options</span>
+                  </div>
+                  <div className="example-item">
+                    <span className="example-icon">🛒</span>
+                    <span>Major Purchases</span>
+                  </div>
+                  <div className="example-item">
+                    <span className="example-icon">🚗</span>
+                    <span>Vehicle Selection</span>
+                  </div>
+                  <div className="example-item">
+                    <span className="example-icon">🏥</span>
+                    <span>Healthcare Choices</span>
+                  </div>
+                  <div className="example-item">
+                    <span className="example-icon">✈️</span>
+                    <span>Travel Planning</span>
+                  </div>
+                  <div className="example-item">
+                    <span className="example-icon">💍</span>
+                    <span>Life Decisions</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <button className="home-secondary-button" onClick={() => navigate('/decision-maker')}>
-              Start Making Decisions
-            </button>
+            
+            <div className="how-to-cta">
+              <a href="https://shirleyproject.my.canva.site/wisest" className="home-primary-button">
+                Learn More
+              </a>
+            </div>
           </div>
-
-          <div className="home-auth-column">
-            <div className="home-auth-content">
-              <h3 className="auth-title">Get Started</h3>
-              
-              {userEmail ? (
-                <div className="auth-signed-in">
-                  <div className="home-user-info">
-                    <span className="user-email">Signed in as {userEmail}</span>
-                  </div>
-                  <div className="auth-buttons">
-                    <button className="home-secondary-button" onClick={() => navigate('/decision-history')}>
-                      View My Decisions
-                    </button>
-                    <button className="home-secondary-button" onClick={signOut}>
-                      Sign Out
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="auth-signed-out">
-                  <p className="auth-description">Sign in to save and access your decisions</p>
-                  <button className="home-secondary-button" onClick={signInWithGoogle}>
-                    Sign in with Google
-                  </button>
-                </div>
-              )}
-              
-              <div className="learn-more-section">
-                <a href="https://shirleyproject.my.canva.site/wisest">
-                  <button className="home-secondary-button">Learn More</button>
-                </a>
-              </div>
-            </div>
+        </div>
+        )}
+        
+        {/* Temporary spacer to ensure scrollable content */}
+        <div style={{ height: '100vh', background: 'rgba(255, 255, 255, 0.02)', margin: '20px 0' }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            height: '100%',
+            color: 'rgba(255, 255, 255, 0.5)',
+            fontSize: '18px'
+          }}>
+            Scroll down to see more content ↓
           </div>
         </div>
       </div>

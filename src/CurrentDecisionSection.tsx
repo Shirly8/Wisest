@@ -27,126 +27,202 @@ const CurrentDecisionSection: React.FC<CurrentDecisionSectionProps> = ({
 }) => {
   return (
     <div style={{ 
-      backgroundColor: 'rgba(255, 255, 255, 0.1)', 
-      borderRadius: '12px', 
-      padding: '20px', 
-      margin: '20px auto',
-      maxWidth: '1200px',
+      backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+      borderRadius: '8px', 
+      padding: '15px', 
+      margin: '15px auto',
+      maxWidth: '1000px',
       backdropFilter: 'blur(10px)',
-      border: '1px solid rgba(255, 255, 255, 0.2)'
+      border: '1px solid rgba(255, 255, 255, 0.1)'
     }}>
       
       <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: '1fr 1fr 1fr', 
-        gap: '30px'
+        display: 'flex', 
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: '20px'
       }}>
         
-        {/* 1) LEFT COLUMN - DECISION SUMMARY */}
-        <div>
-          <h3 style={{ color: '#FF6E70', marginBottom: '15px', fontSize: '18px' }}>Decision Summary</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 'bold', minWidth: '100px', flexShrink: 0 }}>Best Choice:</span>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', wordBreak: 'break-word' }}>{bestDecision}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 'bold', minWidth: '100px', flexShrink: 0 }}>Options:</span>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', wordBreak: 'break-word' }}>{options.join(', ')}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 'bold', minWidth: '100px', flexShrink: 0 }}>Categories:</span>
-              <span style={{ color: 'rgba(255, 255, 255, 0.9)', wordBreak: 'break-word' }}>{categories.map(cat => cat.title).join(', ')}</span>
-            </div>
-          </div>
+        {/* STATUS INDICATOR */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            backgroundColor: selectedDecisionId ? '#c13a34' : '#f97f78'
+          }}></div>
+          <span style={{ 
+            color: 'rgba(255, 255, 255, 0.8)', 
+            fontSize: '12px',
+            fontWeight: '500'
+          }}>
+            {selectedDecisionId ? 'Saved' : 'Unsaved'}
+          </span>
         </div>
 
-        {/* 2) MIDDLE COLUMN - SAVE STATUS */}
-        <div>
-          <h3 style={{ color: '#4ECDC4', marginBottom: '15px', fontSize: '18px' }}>Save Status</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button 
-              className='startbutton'
-              onClick={onSaveClick}
-              style={{ 
-                backgroundColor: isAuthenticated ? '#4ECDC4' : '#FF6E70',
-                fontSize: '14px',
-                padding: '12px 16px',
-                width: '100%'
-              }}
-            >
-              {selectedDecisionId ? 'Save Changes' : 'Save Decision'}
-            </button>
-            <button 
-              className='startbutton'
-              onClick={onBack}
-              style={{ 
-                backgroundColor: '#666',
-                fontSize: '14px',
-                padding: '12px 16px',
-                width: '100%'
-              }}
-            >
-              Back
-            </button>
-            {saveStatus && (
-              <p style={{ 
-                color: saveStatus.includes('success') ? '#4ECDC4' : '#FF6E70', 
-                marginTop: '10px',
-                fontSize: '14px',
-                textAlign: 'center'
-              }}>
-                {saveStatus}
-              </p>
-            )}
-          </div>
+        {/* ACTIONS */}
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <button 
+            onClick={onSaveClick}
+            style={{ 
+              backgroundColor: '#c13a34',
+              border: '2px solid #f97f78',
+              color: 'white',
+              fontSize: '14px',
+              padding: '10px 20px',
+              borderRadius: '25px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              fontFamily: 'Poppins, sans-serif',
+              fontWeight: '600',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              boxShadow: '0 2px 6px rgba(193, 58, 52, 0.3)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#b2403d';
+              e.currentTarget.style.borderColor = '#ed5b7a';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.boxShadow = '0 4px 10px rgba(193, 58, 52, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#c13a34';
+              e.currentTarget.style.borderColor = '#f97f78';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 2px 6px rgba(193, 58, 52, 0.3)';
+            }}
+          >
+            {selectedDecisionId ? 'Update' : 'Save'}
+          </button>
+          
+          <button 
+            onClick={onExportPDF}
+            style={{ 
+              backgroundColor: 'transparent',
+              border: '2px solid #f97f78',
+              color: '#f97f78',
+              fontSize: '14px',
+              padding: '10px 20px',
+              borderRadius: '25px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              fontFamily: 'Poppins, sans-serif',
+              fontWeight: '600',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f97f78';
+              e.currentTarget.style.color = 'white';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#f97f78';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            Export
+          </button>
+          
+          <button 
+            onClick={onViewHistory}
+            style={{ 
+              backgroundColor: 'transparent',
+              border: '2px solid #ed5b7a',
+              color: '#ed5b7a',
+              fontSize: '14px',
+              padding: '10px 20px',
+              borderRadius: '25px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              fontFamily: 'Poppins, sans-serif',
+              fontWeight: '600',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#ed5b7a';
+              e.currentTarget.style.color = 'white';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#ed5b7a';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            History
+          </button>
+          
+          <button 
+            onClick={onBack}
+            style={{ 
+              backgroundColor: 'transparent',
+              border: '2px solid rgba(255, 255, 255, 0.3)',
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: '14px',
+              padding: '10px 20px',
+              borderRadius: '25px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              fontFamily: 'Poppins, sans-serif',
+              fontWeight: '600',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+              e.currentTarget.style.color = 'white';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            Back
+          </button>
         </div>
-
-        {/* 3) RIGHT COLUMN - QUICK ACTIONS */}
-        <div>
-          <h3 style={{ color: '#FFD93D', marginBottom: '15px', fontSize: '18px' }}>Quick Actions</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button 
-              className='startbutton'
-              onClick={onExportPDF}
-              style={{ 
-                backgroundColor: '#FFD93D',
-                color: '#333',
-                fontSize: '14px',
-                padding: '12px 16px',
-                width: '100%'
-              }}
-            >
-              Export PDF
-            </button>
-            <button 
-              className='startbutton'
-              onClick={onViewHistory}
-              style={{ 
-                backgroundColor: '#9B59B6',
-                fontSize: '14px',
-                padding: '12px 16px',
-                width: '100%'
-              }}
-            >
-              View All Decisions
-            </button>
-          </div>
-        </div>
-
       </div>
 
-      {/* 4) AUTHENTICATION STATUS */}
+      {/* STATUS MESSAGE */}
+      {saveStatus && (
+        <div style={{ 
+          marginTop: '10px',
+          padding: '8px 12px',
+          backgroundColor: saveStatus.includes('success') ? 'rgba(193, 58, 52, 0.1)' : 'rgba(249, 127, 120, 0.1)',
+          border: `1px solid ${saveStatus.includes('success') ? '#c13a34' : '#f97f78'}`,
+          borderRadius: '4px'
+        }}>
+          <p style={{ 
+            color: saveStatus.includes('success') ? '#c13a34' : '#f97f78', 
+            margin: 0,
+            fontSize: '11px',
+            textAlign: 'center'
+          }}>
+            {saveStatus}
+          </p>
+        </div>
+      )}
+
+      {/* AUTHENTICATION NOTE */}
       {!isAuthenticated && (
         <div style={{ 
-          backgroundColor: 'rgba(255, 110, 112, 0.1)', 
-          border: '1px solid rgba(255, 110, 112, 0.3)',
-          borderRadius: '8px',
-          padding: '15px',
-          marginTop: '20px'
+          marginTop: '10px',
+          padding: '6px 10px',
+          backgroundColor: 'rgba(249, 127, 120, 0.1)',
+          border: '1px solid #f97f78',
+          borderRadius: '4px'
         }}>
-          <p style={{ color: '#FF6E70', margin: 0, fontSize: '14px' }}>
-            <strong>Note:</strong> Sign in to save your decisions and access them later.
+          <p style={{ 
+            color: '#f97f78', 
+            margin: 0, 
+            fontSize: '10px',
+            textAlign: 'center'
+          }}>
+            Sign in to save decisions
           </p>
         </div>
       )}

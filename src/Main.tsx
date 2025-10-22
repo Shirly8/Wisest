@@ -127,7 +127,8 @@ const Main: React.FC<MainProps> = ({reset, selectedDecisionId, setSelectedDecisi
           if (data) {
             // Set decision name and main consideration
             setDecisionName(data.title || '');
-            setMainConsiderations(data.title || '');
+            // Don't set mainConsideration to title - it should remain empty or be set separately
+            setMainConsiderations('');
             
             // Set options
             const optionNames = data.options.map((opt: any) => opt.name);

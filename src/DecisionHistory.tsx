@@ -10,6 +10,9 @@ interface Decision {
   created_at: string;
   updated_at: string;
   ai_feedback: any;
+  options?: { name: string }[];
+  categories?: { name: string; importance: number; higher_is_better: boolean }[];
+  best_choice?: string;
 }
 
 interface DecisionHistoryProps {
@@ -43,13 +46,25 @@ const DecisionHistory: React.FC<DecisionHistoryProps> = ({ onSelectDecision, onB
 
       const { data, error } = await supabase
         .from('decisions')
-        .select('*')
+        .select(`
+          *,
+          decision_options(name),
+          decision_categories(name, importance, higher_is_better)
+        `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
-      setDecisions(data || []);
+      // Process the data to include options and categories
+      const processedDecisions = (data || []).map(decision => ({
+        ...decision,
+        options: decision.decision_options || [],
+        categories: decision.decision_categories || [],
+        best_choice: decision.ai_feedback?.best_choice || null
+      }));
+      
+      setDecisions(processedDecisions);
     } catch (err) {
       setError('Failed to load decisions');
     } finally {
@@ -139,13 +154,7 @@ const DecisionHistory: React.FC<DecisionHistoryProps> = ({ onSelectDecision, onB
   };
 
   const getDecisionDisplayName = (decision: Decision) => {
-    if (decision.title.startsWith('Decision ')) {
-      const description = decision.description;
-      if (description.startsWith('Decision between: ')) {
-        const options = description.replace('Decision between: ', '');
-        return options.length > 50 ? options.substring(0, 50) + '...' : options;
-      }
-    }
+    // Always return the actual title, don't try to extract from description
     return decision.title;
   };
 
@@ -218,9 +227,29 @@ const DecisionHistory: React.FC<DecisionHistoryProps> = ({ onSelectDecision, onB
                   {deletingDecision === decision.id ? 'Deleting...' : '🗑️'}
                 </button>
               </div>
-              {decision.description && (
-                <p className="description">{decision.description}</p>
+              {/* Decision Between */}
+              {decision.options && decision.options.length > 0 && (
+                <div className="decision-detail">
+                  <strong>Decision Between:</strong> {decision.options.map(opt => opt.name).join(', ')}
+                </div>
               )}
+              
+              {/* Categories */}
+              {decision.categories && decision.categories.length > 0 && (
+                <div className="decision-detail">
+                  <strong>Categories:</strong> {decision.categories.map(cat => 
+                    `${cat.name} (${cat.higher_is_better ? 'higher is better' : 'lower is better'})`
+                  ).join(', ')}
+                </div>
+              )}
+              
+              {/* Best Choice */}
+              {decision.best_choice && (
+                <div className="decision-detail best-choice">
+                  <strong>Best Choice:</strong> {decision.best_choice}
+                </div>
+              )}
+              
               <div className="decision-meta">
                 <span className="date">Created: {formatDate(decision.created_at)}</span>
                 {decision.ai_feedback && (
