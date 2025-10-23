@@ -48,11 +48,13 @@ const MetricOptions: React.FC<MetricOptionsProps> = ({ index, options, metricTyp
       </div>
       {options.map((option, optionindex) => (
         <div key = {optionindex}>
-          {option === '' ? (
-            <span style = {{color: '#FB7F79'}}> Choice #{optionindex + 1} </span> 
-          ): (
-           <span style = {{color: '#FB7F79'}}> {option} </span> 
-          )}
+          <div>
+            {option === '' ? (
+              <span style = {{color: '#FB7F79'}}> Choice #{optionindex + 1} </span> 
+            ): (
+             <span style = {{color: '#FB7F79'}}> {option} </span> 
+            )}
+          </div>
 
           {/* 3) SCALING 1 TO 10 */}
           {metricTypes[index] === 4 && (
