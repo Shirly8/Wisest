@@ -216,6 +216,48 @@ def chat():
 def health_check():
     return jsonify({'status': 'healthy', 'message': 'Backend is running!'})
 
+# Warmup endpoint to prevent cold starts on Supabase
+@app.route('/warmup', methods=['GET'])
+def warmup():
+    """
+    Lightweight endpoint to keep the RAG system warm.
+    Initializes the Supabase connection without making expensive API calls.
+    Call this every 5-10 minutes via UptimeRobot to prevent cold starts.
+    """
+    try:
+        from RAG.RAG import initialize_chroma
+        import time
+
+        start_time = time.time()
+
+        # Initialize Supabase connection (this is what takes time on cold start)
+        db = initialize_chroma()
+
+        # Quick validation that the connection works
+        db.table('documents').select('id').limit(1).execute()
+
+        elapsed_ms = int((time.time() - start_time) * 1000)
+
+        return jsonify({
+            'status': 'warm',
+            'message': 'RAG system initialized successfully',
+            'response_time_ms': elapsed_ms,
+            'timestamp': datetime.now().isoformat()
+        })
+    except Exception as e:
+        import traceback
+        print("=" * 60)
+        print("ERROR in warmup endpoint:")
+        print(f"Error type: {type(e).__name__}")
+        print(f"Error message: {str(e)}")
+        print("Traceback:")
+        traceback.print_exc()
+        print("=" * 60)
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
 if __name__ == '__main__':
     print(f"Starting Flask app with project number: {PROJECT_NUMBER}")
     # Get port from environment variable (for Render/Vercel) or default to 5000
