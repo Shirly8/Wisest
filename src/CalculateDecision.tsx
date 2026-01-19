@@ -35,25 +35,29 @@ interface CalculateDecisionProps {
   showDecisionHistory: () => void;
   decisionName: string;
   setDecisionName: React.Dispatch<React.SetStateAction<string>>;
+  demoMode?: boolean;
+  demoFeedback?: string;
 }
 
-const CalculateDecision: React.FC<CalculateDecisionProps> = ({ 
-  categories, 
-  options, 
-  metricTypes, 
-  setDecision, 
-  reset, 
-  mainConsideration, 
-  choiceConsiderations, 
-  setCategories, 
-  setOptions, 
-  setMetricTypes, 
-  setMainConsideration, 
+const CalculateDecision: React.FC<CalculateDecisionProps> = ({
+  categories,
+  options,
+  metricTypes,
+  setDecision,
+  reset,
+  mainConsideration,
+  choiceConsiderations,
+  setCategories,
+  setOptions,
+  setMetricTypes,
+  setMainConsideration,
   setChoiceConsiderations,
   selectedDecisionId,
   showDecisionHistory,
   decisionName,
-  setDecisionName
+  setDecisionName,
+  demoMode = false,
+  demoFeedback = ''
 }) => {
   // 1) DECISION RESULTS
   const [bestDecision, setBestDecision] = useState<string>('');
@@ -112,6 +116,10 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
   };
 
   const handleSaveClick = () => {
+    if (demoMode) {
+      alert('This is a demo. Create your own decision to save!');
+      return;
+    }
     if (!isAuthenticated) {
       setShowSignInModal(true);
     } else {
@@ -384,6 +392,13 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     const fetchFeedback = async () => {
       setIsLoadingFeedback(true);
       try {
+        // Use demo feedback if in demo mode
+        if (demoMode && demoFeedback) {
+          setFeedback(demoFeedback);
+          setIsLoadingFeedback(false);
+          return;
+        }
+
         const response = await fetch('https://wisest.onrender.com/wisest', {
           method: 'POST',
           headers: {
@@ -408,11 +423,11 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
             }))
           }),
         });
-    
+
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-    
+
         const data = await response.json();
         setFeedback(data.feedback);
       } catch (error) {

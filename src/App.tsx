@@ -5,6 +5,7 @@ import './App.css';
 import startimg from './images/main.png';
 import Main from './Main';
 import DecisionHistory from './DecisionHistory';
+import Demo from './Demo';
 import { supabase } from './supabaseClient';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
@@ -279,14 +280,34 @@ const DecisionHistoryPage: React.FC = () => {
   };
 
   return (
-    <DecisionHistory 
+    <DecisionHistory
       onSelectDecision={onSelectDecision}
       onBack={onBack}
     />
   );
 };
 
-// 6) MAIN APP ROUTER
+// 6) DEMO PAGE - Demo decision with prebuilt values
+const DemoPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  const reset = () => {
+    navigate('/');
+  };
+
+  const showDecisionHistory = () => {
+    navigate('/decision-history');
+  };
+
+  return (
+    <Demo
+      reset={reset}
+      showDecisionHistory={showDecisionHistory}
+    />
+  );
+};
+
+// 7) MAIN APP ROUTER
 function App() {
   return (
     <Router>
@@ -294,6 +315,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/decision-maker" element={<DecisionMaker />} />
         <Route path="/decision-history" element={<DecisionHistoryPage />} />
+        <Route path="/demo" element={<DemoPage />} />
       </Routes>
     </Router>
   );
