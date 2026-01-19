@@ -44,6 +44,13 @@ interface GeminiProps {
 const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoiceConsiderations, MainConsiderations, choiceConsiderations, autoSelectAll = false}) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(autoSelectAll ? options : []);
 
+  // Auto-select all options when in demo mode
+  useEffect(() => {
+    if (autoSelectAll && options.length > 0) {
+      setSelectedOptions(options);
+    }
+  }, [autoSelectAll, options]);
+
   // Auto-expanding textarea hook
   const useAutoResizeTextarea = (value: string) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
