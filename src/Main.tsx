@@ -206,8 +206,8 @@ const Main: React.FC<MainProps> = ({
         } catch (err) {
           // Handle error silently
         }
-      } else if (!selectedDecisionId) {
-        // Reset to default state when no decision is selected
+      } else if (!selectedDecisionId && !demoMode) {
+        // Reset to default state when no decision is selected (but not in demo mode)
         setOptions(['']);
         setCategories([{ title: '', metrics: [''], importance: 0 }]);
         setMetricTypes([0]);
@@ -220,7 +220,7 @@ const Main: React.FC<MainProps> = ({
     };
 
     loadDecisionData();
-  }, [selectedDecisionId, dataLoaded, lastLoadedDecisionId]);
+  }, [selectedDecisionId, dataLoaded, lastLoadedDecisionId, demoMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     decision ? (
