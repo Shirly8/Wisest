@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import CalculateDecision from './CalculateDecision';
+import React, { useState, useEffect } from 'react';
+import Main from './Main';
 
 interface DemoProps {
   reset: () => void;
@@ -7,9 +7,6 @@ interface DemoProps {
 }
 
 const Demo: React.FC<DemoProps> = ({ reset, showDecisionHistory }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [showResults, setShowResults] = useState(true);
-
   // Demo data for tech job comparison
   const demoOptions = ['Google', 'Stripe', 'Shopify', 'Apple'];
 
@@ -58,44 +55,29 @@ Cons: Lower total compensation, limited in-person collaboration, time zone diffe
 Cons: Secretive culture, long commute to Cupertino, high expectations, competitive environment, limited transparency, strict confidentiality requirements, may feel constrained by company culture.`,
   };
 
-  const demoFeedback = `Based on your priorities and analysis, here's the breakdown:
+  const [selectedDecisionId, setSelectedDecisionId] = useState<string | null>(null);
 
-**Stripe** appears to be the strongest choice given your career ambitions. While it has the highest compensation ($200,000) and strong equity potential, you should carefully consider the work-life balance trade-offs. The fast-growing fintech environment will accelerate your growth and give you exposure to complex problems, which is crucial for becoming an engineering manager.
+  // Initialize Main component with demo data by setting the decision ID
+  // This will trigger the useEffect in Main to load the demo data
+  useEffect(() => {
+    // We're using null as the selectedDecisionId, but we could set it to a special demo ID
+    setSelectedDecisionId(null);
+  }, []);
 
-**Google** is your second-best option. The company offers excellent career growth opportunities, great engineering culture, and a better work-life balance than Stripe. However, the larger company structure might slow your path to management roles compared to Stripe's faster-paced environment.
-
-**Apple** is competitive but has lower work-life balance (4/10) which conflicts with your stated priorities, despite excellent compensation and prestige.
-
-**Shopify** offers the best work-life balance (10/10) and zero commute, but the lower compensation ($150,000) and limited career growth opportunities make it less ideal for your ambitious trajectory.
-
-**Recommendation**: Choose Stripe if you're willing to sacrifice short-term work-life balance for rapid career acceleration and management opportunities. The compensation and equity potential, combined with the fast-paced startup culture, will position you well for an engineering manager role within 3-5 years.`;
-
-  if (showResults) {
-    return (
-      <CalculateDecision
-        categories={demoCategories}
-        options={demoOptions}
-        metricTypes={demoMetricTypes}
-        setDecision={() => {}}
-        reset={reset}
-        choiceConsiderations={demoChoiceConsiderations}
-        mainConsideration={demoMainConsideration}
-        setCategories={() => {}}
-        setOptions={() => {}}
-        setMetricTypes={() => {}}
-        setMainConsideration={() => {}}
-        setChoiceConsiderations={() => {}}
-        selectedDecisionId={null}
-        showDecisionHistory={showDecisionHistory}
-        decisionName="Tech Job Comparison Demo"
-        setDecisionName={() => {}}
-        demoMode={true}
-        demoFeedback={demoFeedback}
-      />
-    );
-  }
-
-  return <div>Loading demo...</div>;
+  return (
+    <Main
+      reset={reset}
+      selectedDecisionId={selectedDecisionId}
+      setSelectedDecisionId={setSelectedDecisionId}
+      showDecisionHistory={showDecisionHistory}
+      demoMode={true}
+      demoOptions={demoOptions}
+      demoCategories={demoCategories}
+      demoMetricTypes={demoMetricTypes}
+      demoMainConsideration={demoMainConsideration}
+      demoChoiceConsiderations={demoChoiceConsiderations}
+    />
+  );
 };
 
 export default Demo;

@@ -12,11 +12,28 @@ interface MainProps {
   selectedDecisionId: string | null;
   setSelectedDecisionId: React.Dispatch<React.SetStateAction<string | null>>;
   showDecisionHistory: () => void;
+  demoMode?: boolean;
+  demoOptions?: string[];
+  demoCategories?: { title: string; metrics: number[]; importance: number }[];
+  demoMetricTypes?: number[];
+  demoMainConsideration?: string;
+  demoChoiceConsiderations?: { [key: string]: string };
 }
 
-const Main: React.FC<MainProps> = ({reset, selectedDecisionId, setSelectedDecisionId, showDecisionHistory}) => {
+const Main: React.FC<MainProps> = ({
+  reset,
+  selectedDecisionId,
+  setSelectedDecisionId,
+  showDecisionHistory,
+  demoMode = false,
+  demoOptions,
+  demoCategories,
+  demoMetricTypes,
+  demoMainConsideration,
+  demoChoiceConsiderations
+}) => {
   // 1) OPTIONS - Add or delete choices
-  const [options, setOptions] = useState(['']);
+  const [options, setOptions] = useState(demoMode && demoOptions ? demoOptions : ['']);
 
   const handleOptionChange = (index: number, value: string) => {
     const newOptions = [...options];
@@ -35,7 +52,11 @@ const Main: React.FC<MainProps> = ({reset, selectedDecisionId, setSelectedDecisi
   }
 
   // 2) CATEGORIES - Define criteria with title, metrics, and importance
-  const [categories, setCategories] = useState([{ title: '', metrics: Array(options.length).fill(''), importance: 0 }]);
+  const [categories, setCategories] = useState(
+    demoMode && demoCategories
+      ? demoCategories
+      : [{ title: '', metrics: Array(options.length).fill(''), importance: 0 }]
+  );
 
   const handleCategoryChange = (index: number, value: string) => {
     const newCategories = [...categories];
@@ -59,7 +80,9 @@ const Main: React.FC<MainProps> = ({reset, selectedDecisionId, setSelectedDecisi
   }
 
   // 3) METRIC TYPES - Handle different scoring methods
-  const [metricTypes, setMetricTypes] = useState(Array(options.length).fill(0));
+  const [metricTypes, setMetricTypes] = useState(
+    demoMode && demoMetricTypes ? demoMetricTypes : Array(options.length).fill(0)
+  );
 
   const handleMetricChange = (numCategory: number, numOptions: number, value: string) => {
     setCategories(prevCategories => {
@@ -99,8 +122,12 @@ const Main: React.FC<MainProps> = ({reset, selectedDecisionId, setSelectedDecisi
   };
 
   // 5) DECISION CONTEXT
-  const [mainConsiderations, setMainConsiderations] = useState('');
-  const [choiceConsiderations, setChoiceConsiderations] = useState<{ [key: string]: string }>({});
+  const [mainConsiderations, setMainConsiderations] = useState(
+    demoMode && demoMainConsideration ? demoMainConsideration : ''
+  );
+  const [choiceConsiderations, setChoiceConsiderations] = useState<{ [key: string]: string }>(
+    demoMode && demoChoiceConsiderations ? demoChoiceConsiderations : {}
+  );
   const [decisionName, setDecisionName] = useState<string>('');
 
   // 6) DATA LOADING - Prevent reloading when user is editing
