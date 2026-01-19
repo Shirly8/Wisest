@@ -336,6 +336,7 @@ const Main: React.FC<MainProps> = ({
           setChoiceConsiderations = {setChoiceConsiderations}
           MainConsiderations={mainConsiderations}
           choiceConsiderations={choiceConsiderations}
+          autoSelectAll={demoMode}
         />
       )}
 

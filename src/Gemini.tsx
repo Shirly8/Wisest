@@ -38,10 +38,11 @@ interface GeminiProps {
   setChoiceConsiderations: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
   MainConsiderations: string;
   choiceConsiderations: { [key: string]: string };
+  autoSelectAll?: boolean;
 }
 
-const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoiceConsiderations, MainConsiderations, choiceConsiderations}) => {
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoiceConsiderations, MainConsiderations, choiceConsiderations, autoSelectAll = false}) => {
+  const [selectedOptions, setSelectedOptions] = useState<string[]>(autoSelectAll ? options : []);
 
   // Auto-expanding textarea hook
   const useAutoResizeTextarea = (value: string) => {
