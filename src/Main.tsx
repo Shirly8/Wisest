@@ -18,6 +18,7 @@ interface MainProps {
   demoMetricTypes?: number[];
   demoMainConsideration?: string;
   demoChoiceConsiderations?: { [key: string]: string };
+  autoOpenGemini?: boolean;
 }
 
 const Main: React.FC<MainProps> = ({
@@ -30,7 +31,8 @@ const Main: React.FC<MainProps> = ({
   demoCategories,
   demoMetricTypes,
   demoMainConsideration,
-  demoChoiceConsiderations
+  demoChoiceConsiderations,
+  autoOpenGemini = false
 }) => {
   // 1) OPTIONS - Add or delete choices
   const [options, setOptions] = useState(demoMode && demoOptions ? demoOptions : ['']);
@@ -115,7 +117,7 @@ const Main: React.FC<MainProps> = ({
   // 4) NAVIGATION STATES
   const [importance, setImportance] = useState(false);
   const [decision, setDecision] = useState(false);
-  const [geminibox, setGeminibox] = useState(false);
+  const [geminibox, setGeminibox] = useState(autoOpenGemini);
 
   const toggleGemini = () => {
     setGeminibox(prevState => !prevState);

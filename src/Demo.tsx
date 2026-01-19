@@ -76,6 +76,7 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
       demoMetricTypes={demoMetricTypes}
       demoMainConsideration={demoMainConsideration}
       demoChoiceConsiderations={demoChoiceConsiderations}
+      autoOpenGemini={true}
     />
   );
 };
