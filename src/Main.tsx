@@ -220,7 +220,7 @@ const Main: React.FC<MainProps> = ({reset, selectedDecisionId, setSelectedDecisi
     ) : (
     <div>
       <header>
-        <img src = {logo} className = 'App-logo'></img>
+        <img src = {logo} className = 'App-logo' alt='logo'></img>
       </header>
 
       <div className = 'OptionContainer'>
@@ -296,8 +296,8 @@ const Main: React.FC<MainProps> = ({reset, selectedDecisionId, setSelectedDecisi
       {/* 10) GEMINI AI ANALYSIS */}
       <div>
         <button onClick = {toggleGemini}
-          className = "geminibutton" style = {{width: "100%",display: 'flex', alignItems: 'center', justifyContent: 'center'}}> 
-          <img src = {gemini} style = {{width: '3%', height: '4%'}}></img>
+          className = "geminibutton" style = {{width: "100%",display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <img src = {gemini} style = {{width: '3%', height: '4%'}} alt='gemini'></img>
           Analyze with Gemini AI </button>
       </div>
       {geminibox && (

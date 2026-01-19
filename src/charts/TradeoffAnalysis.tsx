@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface TradeoffAnalysisProps {
   categories: { title: string; metrics: number[]; importance: number }[];
   options: string[];
@@ -62,8 +63,9 @@ export const createTradeoffAnalysis = (
   }
   
   // 3) ADD DATA POINTS
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const colors = ['#FF6E70', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
-  
+
   const pointData = options.map((option, index) => ({
     option: option,
     xValue: category1.metrics[index],

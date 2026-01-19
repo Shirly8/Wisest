@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface DecisionConfidenceProps {
   categories: { title: string; metrics: number[]; importance: number }[];
   options: string[];
