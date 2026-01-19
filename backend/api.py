@@ -20,7 +20,8 @@ allowed_origins = [
     "https://wisests.shirleyproject.com",  # Your custom domain
     "https://shirleyproject.com",  # ShirleyProject domain
     "https://www.shirleyproject.com",  # ShirleyProject www
-    "https://shirleyproject.vercel.app"  # ShirleyProject Vercel
+    "https://shirleyproject.vercel.app",  # ShirleyProject Vercel
+    "https://affirmly-iota.vercel.app"  # Affirmly Vercel frontend
 ]
 
 CORS(app, resources={r"/*": {"origins": allowed_origins}})
