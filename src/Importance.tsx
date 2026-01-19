@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import logo from './images/logo.png'
 
 interface ImportanceProps {
@@ -6,7 +6,7 @@ interface ImportanceProps {
   setCategories: React.Dispatch<React.SetStateAction<{ title: string; metrics: number[]; importance: number }[]>>;
   setImportance: React.Dispatch<React.SetStateAction<boolean>>;
   setDecision: React.Dispatch<React.SetStateAction<boolean>>;
-} 
+}
 
 const Importance: React.FC<ImportanceProps> = ({ categories, setCategories, setImportance, setDecision}) => {
   // 1) IMPORTANCE HANDLING
@@ -19,7 +19,7 @@ const Importance: React.FC<ImportanceProps> = ({ categories, setCategories, setI
   return (
     <div>
       <header>
-      <img src = {logo} className = 'App-logo'></img>
+      <img src = {logo} className = 'App-logo' alt="logo"></img>
       </header>
 
       <div className = 'OptionContainer'>

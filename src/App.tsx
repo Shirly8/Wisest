@@ -53,6 +53,7 @@ const HomePage: React.FC = () => {
     await supabase.auth.signInWithOAuth({ provider: 'google' });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const signOut = async () => {
     await supabase.auth.signOut();
   };

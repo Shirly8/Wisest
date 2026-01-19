@@ -84,7 +84,7 @@ const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoic
   return (
     <div className = "geminibackground">
        <div className = 'feedback'>
-        <img src = {gemini} style = {{width: '7%', height:'6%'}}></img>
+        <img src = {gemini} style = {{width: '7%', height:'6%'}} alt="gemini"></img>
         <h1 className = "Gemini">Gemini AI</h1>
       </div>
     <p>Let Gemini AI help you make the best decision. Describe your goals, challenges, hesitations, suggestsions and let our AI assists you.</p>

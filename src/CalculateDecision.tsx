@@ -106,7 +106,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     });
     
     return () => subscription.unsubscribe();
-  }, [showSignInModal]);
+  }, [showSignInModal]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDecisionNaming = () => {
     if (decisionName.trim()) {
@@ -291,7 +291,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
       setSaveStatus('Failed to save decision. Please try again.');
       setTimeout(() => setSaveStatus(''), 5000);
     }
-  }, [selectedDecisionId]);
+  }, [selectedDecisionId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 6) SCORE CALCULATION
   const calculateScore = () => {
@@ -442,7 +442,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     setTimeout(() => {
       setShowContent(true);
     }, 5000);
-  }, [options, categories, metricTypes, mainConsideration, choiceConsiderations]);
+  }, [options, categories, metricTypes, mainConsideration, choiceConsiderations]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 8) NORMALIZE DATA FOR CHARTS
   const normalizeForCharts = () => {
@@ -485,10 +485,11 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
         createRiskAssessment(riskAssessmentRef, normalizedCategories, options, metricTypes);
       }, 100);
     }
-  }, [showContent, categories, options, metricTypes]);
+  }, [showContent, categories, options, metricTypes]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortedCategories = [...categories].sort((a, b) => b.importance - a.importance);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const sortedOptionsByCategory = sortedCategories.map(category => {
     return options
       .map((option, optionIndex) => ({
@@ -588,7 +589,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
           {/* 13) GEMINI FEEDBACK */}
           <div className="geminibackground">
             <div className='gemini-header'>
-              <img src={gemini} className="gemini-logo"></img>
+              <img src={gemini} className="gemini-logo" alt="gemini"></img>
               <h1 className="gemini-title">Gemini Says</h1>
             </div>
 

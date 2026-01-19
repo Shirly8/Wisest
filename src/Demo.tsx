@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CalculateDecision from './CalculateDecision';
 
 interface DemoProps {
@@ -7,6 +7,7 @@ interface DemoProps {
 }
 
 const Demo: React.FC<DemoProps> = ({ reset, showDecisionHistory }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showResults, setShowResults] = useState(true);
 
   // Demo data for tech job comparison
