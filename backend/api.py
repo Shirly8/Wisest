@@ -179,6 +179,75 @@ Remember: You are the expert advisor - trust your judgment even if it differs fr
         print("Error:", str(e))
         return jsonify({'error': str(e)}), 500
 
+# Affirmly - Generate affirmations endpoint
+@app.route('/affirmations', methods=['POST'])
+def generate_affirmations():
+    """
+    Generate personalized affirmations based on journal entry
+    """
+    try:
+        data = request.get_json()
+        title = data.get('title', '')
+        description = data.get('description', '')
+        mood = data.get('mood', 'neutral')
+
+        if not title or not description:
+            return jsonify({'error': 'Title and description are required'}), 400
+
+        prompt = f'''
+You are an affirmation generator. Generate a list of 10 affirmations based on the following journal entry.
+
+Title: "{title}"
+Description: "{description}"
+Mood: {mood}
+
+Based on the title and description, generate realistic but meaningful affirmations, encouraging yet realistic quotes or advice to uplift, motivate or help the individual who wrote this.
+Each response MUST be 1-3 sentences.
+These quotes or affirmations should be unique to the title and description and address the specific feelings and situation mentioned.
+
+Now generate 10 unique affirmations, quotes, or advice in a list like this:
+1. [affirmation]
+2. [affirmation]
+...
+10. [affirmation]
+
+Do not generate anything else. Just the list of 10 affirmations in this exact format.
+'''
+
+        response = model.generate_content(prompt)
+
+        if not response or not response.text:
+            return jsonify({'error': 'Failed to generate affirmations'}), 500
+
+        # Parse the response into a list of affirmations
+        affirmations_text = response.text.strip()
+        affirmations = []
+
+        for line in affirmations_text.split('\n'):
+            line = line.strip()
+            if line and not line[0].isdigit():  # Skip numbered lines, get actual content
+                affirmations.append(line)
+            elif line and line[0].isdigit():
+                # Extract affirmation after number
+                parts = line.split('.', 1)
+                if len(parts) > 1:
+                    affirmation = parts[1].strip()
+                    if affirmation:
+                        affirmations.append(affirmation)
+
+        # Ensure we have 10 affirmations
+        if len(affirmations) > 10:
+            affirmations = affirmations[:10]
+        elif len(affirmations) < 10:
+            # If parsing didn't work perfectly, return raw lines
+            affirmations = [line.strip() for line in affirmations_text.split('\n') if line.strip()][:10]
+
+        return jsonify(affirmations), 200
+
+    except Exception as e:
+        print(f"Error generating affirmations: {str(e)}")
+        return jsonify({'error': f'Failed to generate affirmations: {str(e)}'}), 500
+
 # RAG Chat endpoint for ShirleyProject
 @app.route('/chat', methods=['POST'])
 def chat():
