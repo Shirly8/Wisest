@@ -508,6 +508,85 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
       .sort((a, b) => b.score - a.score);
   });
 
+  // Helper function to parse and render Gemini feedback with markdown styling
+  const renderGeminiFeedback = (text: string) => {
+    const lines = text.split('\n');
+    const elements: React.ReactNode[] = [];
+    let i = 0;
+
+    while (i < lines.length) {
+      const line = lines[i].trim();
+
+      // Skip empty lines
+      if (!line) {
+        elements.push(<div key={`spacer-${i}`} style={{ height: '8px' }}></div>);
+        i++;
+        continue;
+      }
+
+      // Check for bold headings (**text**)
+      if (line.startsWith('**') && line.endsWith('**')) {
+        const headingText = line.slice(2, -2);
+        elements.push(
+          <h4
+            key={`heading-${i}`}
+            style={{
+              color: '#4ECDC4',
+              fontSize: '14px',
+              fontWeight: '700',
+              margin: '12px 0 8px 0',
+              fontFamily: 'Poppins, sans-serif'
+            }}
+          >
+            {headingText}
+          </h4>
+        );
+        i++;
+        continue;
+      }
+
+      // Check for numbered list items (1., 2., etc.)
+      if (/^\d+\./.test(line)) {
+        elements.push(
+          <div
+            key={`list-${i}`}
+            style={{
+              marginLeft: '12px',
+              marginBottom: '8px',
+              color: '#d0d0d0',
+              fontSize: '12px',
+              lineHeight: '1.5',
+              fontFamily: 'Poppins, sans-serif'
+            }}
+          >
+            {line}
+          </div>
+        );
+        i++;
+        continue;
+      }
+
+      // Regular paragraph text
+      elements.push(
+        <p
+          key={`para-${i}`}
+          style={{
+            color: '#d0d0d0',
+            fontSize: '12px',
+            lineHeight: '1.5',
+            margin: '8px 0',
+            fontFamily: 'Poppins, sans-serif'
+          }}
+        >
+          {line}
+        </p>
+      );
+      i++;
+    }
+
+    return elements;
+  };
+
   const handleSave = () => {
     const input = document.getElementById('content');
     if (input) {
@@ -717,16 +796,13 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                       }}>Analyzing your decision...</span>
                     </div>
                   ) : (
-                    <pre style={{
-                      fontSize: '12px',
-                      lineHeight: '1.5',
-                      whiteSpace: 'pre-wrap',
-                      wordWrap: 'break-word',
-                      color: '#e0e0e0',
-                      margin: '0',
-                      fontFamily: 'Poppins, monospace',
-                      textAlign: 'left'
-                    }}>{feedback}</pre>
+                    <div style={{
+                      textAlign: 'left',
+                      overflowY: 'auto',
+                      paddingRight: '4px'
+                    }}>
+                      {renderGeminiFeedback(feedback)}
+                    </div>
                   )}
                 </div>
               </div>
