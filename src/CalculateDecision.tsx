@@ -572,7 +572,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
       }
 
       // Check for numbered/bullet list items (starts with * or 1., 2., etc.)
-      if (/^[\*\d+\.]/.test(line) || line.match(/^\d+\./)) {
+      if (/^[*\d+.]/.test(line) || line.match(/^\d+\./)) {
         elements.push(
           <div
             key={`list-${i}`}
@@ -598,7 +598,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
         let lastIndex = 0;
 
         // Match **bold** and *italic* - handle text without spaces
-        const regex = /\*\*([^\*\n]+)\*\*|\*([^\*\n]+)\*/g;
+        const regex = /\*\*([^*\n]+)\*\*|\*([^*\n]+)\*/g;
         let match;
 
         while ((match = regex.exec(text)) !== null) {
