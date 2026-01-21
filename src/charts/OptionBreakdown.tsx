@@ -12,14 +12,14 @@ export const OptionBreakdown: React.FC<OptionBreakdownProps> = ({
   preparePieChart
 }) => {
   return (
-    <div style={{ border: '1px solid #FF6E70', borderRadius: '8px', padding: '15px', minHeight: '450px', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       <h3 style={{ color: '#FF6E70', fontSize: '16px', marginBottom: '10px', textAlign: 'center' }}>Option Breakdown</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '6px', flex: 1 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', flex: 1 }}>
         {options.map((option, index) => (
           <div key={index} style={{ padding: '6px', textAlign: 'center' }}>
-            <h4 style={{ color: '#FF6E70', fontSize: '10px', marginBottom: '3px', lineHeight: '1.2' }}>{option}</h4>
-            <div style={{ width: '100%', height: '140px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div style={{ width: '100%', height: '120px' }}>
+            <h4 style={{ color: '#FF6E70', fontSize: '12px', marginBottom: '6px', lineHeight: '1.2' }}>{option}</h4>
+            <div style={{ width: '100%', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ width: '100%', height: '90px' }}>
                 <Pie 
                   data={preparePieChart(index)} 
                   options={{

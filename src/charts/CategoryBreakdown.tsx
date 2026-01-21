@@ -29,11 +29,11 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({
   });
 
   return (
-    <div style={{ border: '1px solid #FF6E70', borderRadius: '8px', padding: '15px', minHeight: '450px', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       <h3 style={{ color: '#FF6E70', fontSize: '16px', marginBottom: '10px', textAlign: 'center' }}>Category Breakdown</h3>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px', flex: 1}}>
         {sortedCategories.map((category, index) => (
-          <div key={index} style={{ border: '1px solid #FF6E70', borderRadius: '4px', padding: '8px', backgroundColor: 'rgba(255, 110, 112, 0.1)' }}>
+          <div key={index} style={{ borderRadius: '4px', padding: '8px', backgroundColor: 'rgba(255, 110, 112, 0.1)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px' }}>
               <span style={{ backgroundColor: '#FF6E70', color: 'white', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>{index + 1}</span>
               <span style={{ color: '#FF6E70', fontSize: '14px', fontWeight: 'bold' }}>{category.title}</span>

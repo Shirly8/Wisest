@@ -394,15 +394,15 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
 
     // Always fetch fresh AI feedback
     const fetchFeedback = async (): Promise<string> => {
-      setIsLoadingFeedback(true);
       let feedbackText = '';
       try {
         // Use demo feedback if in demo mode
         if (demoMode && demoFeedback) {
           setFeedback(demoFeedback);
-          setIsLoadingFeedback(false);
           return demoFeedback;
         }
+
+        setIsLoadingFeedback(true);
 
         const response = await fetch('https://wisest.onrender.com/wisest', {
           method: 'POST',
@@ -728,10 +728,10 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               </div>
 
               {/* 11) DECISION BREAKDOWN ANALYSIS */}
-              <h2 style={{color: 'white', fontSize:'18px', marginTop: '20px', marginBottom: '16px', backgroundColor: '#FF6E70', padding: '12px', margin: '20px 0 16px 0'}}>Decision Breakdown Analysis</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '0', height: '380px' }}>
+              <h2 style={{color: 'white', fontSize:'18px', backgroundColor: '#FF6E70', padding: '12px', margin: '20px 0 12px 0'}}>Decision Breakdown Analysis</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '0', height: '340px', marginBottom: '32px' }}>
 
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
+                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
                   <CategoryBreakdown
                     categories={categories}
                     options={options}
@@ -741,50 +741,50 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                   />
                 </div>
 
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
+                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
                   <OptionBreakdown
                     options={options}
                     preparePieChart={preparePieChart}
                   />
                 </div>
 
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
-                  <h3 style={{color: '#FF6E70', fontSize:'14px', textAlign: 'center', margin: '0 0 10px 0'}}>Risk Assessment</h3>
-                  <div ref={riskAssessmentRef} style={{ width: '100%', height: '240px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '10px', lineHeight: '1.3', margin: '8px 0 0 0' }}>
+                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
+                  <h3 style={{color: '#FF6E70', fontSize:'14px', textAlign: 'center', margin: '0 0 8px 0'}}>Risk Assessment</h3>
+                  <div ref={riskAssessmentRef} style={{ width: '100%', height: '200px', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '6px 0 0 0' }}>
                     <strong>How to read:</strong> Taller bars = higher risk.<br/>
-                    <strong>Look for:</strong> Options with lower bars = safer choices.
+                    <strong>Look for:</strong> Options with lower bars = safer.
                   </p>
                 </div>
 
               </div>
 
               {/* 12) STRATEGIC ANALYSIS DIAGRAMS */}
-              <h2 className="strategic-analysis-header" style={{color: 'white', fontSize:'18px', backgroundColor: '#4ECDC4', padding: '12px', margin: '20px 0 16px 0'}}>Strategic Decision Analysis</h2>
+              <h2 className="strategic-analysis-header" style={{color: 'white', fontSize:'18px', backgroundColor: '#4ECDC4', padding: '12px', margin: '0 0 12px 0'}}>Strategic Decision Analysis</h2>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', padding: '0', height: '380px' }}>
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 10px 0' }}>Trade-off Analysis</h3>
-                  <div ref={radarChartRef} style={{ width: '100%', height: '240px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '10px', lineHeight: '1.3', margin: '8px 0 0 0' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', padding: '0', height: '340px' }}>
+                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 8px 0' }}>Trade-off Analysis</h3>
+                  <div ref={radarChartRef} style={{ width: '100%', height: '200px', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '6px 0 0 0' }}>
                     <strong>How to read:</strong> Each point = one option.<br/>
-                    <strong>Look for:</strong> Options closest to top-right = best balance.
+                    <strong>Look for:</strong> Top-right = best balance.
                   </p>
                 </div>
 
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 10px 0' }}>Decision Confidence</h3>
-                  <div ref={comparisonChartRef} style={{ width: '100%', height: '240px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '10px', lineHeight: '1.3', margin: '8px 0 0 0' }}>
+                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 8px 0' }}>Decision Confidence</h3>
+                  <div ref={comparisonChartRef} style={{ width: '100%', height: '200px', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '6px 0 0 0' }}>
                     <strong>How to read:</strong> Taller bars = higher scores.<br/>
-                    <strong>Look for:</strong> Clear winner = high confidence.
+                    <strong>Look for:</strong> Clear winner.
                   </p>
                 </div>
 
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 10px 0' }}>Decision Stability</h3>
-                  <div ref={heatmapRef} style={{ width: '100%', height: '240px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '10px', lineHeight: '1.3', margin: '8px 0 0 0' }}>
+                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 8px 0' }}>Decision Stability</h3>
+                  <div ref={heatmapRef} style={{ width: '100%', height: '200px', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '6px 0 0 0' }}>
                     <strong>How to read:</strong> ✓ = stable, ⚠ = sensitive.<br/>
                     <strong>Look for:</strong> Categories with ⚠.
                   </p>
