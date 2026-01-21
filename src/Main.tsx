@@ -20,7 +20,8 @@ interface MainProps {
   demoMainConsideration?: string;
   demoChoiceConsiderations?: { [key: string]: string };
   autoOpenGemini?: boolean;
-  onDemoCompleted?: () => void;
+  onDemoCompleted?: (feedback: string) => void;
+  demoFeedback?: string;
 }
 
 const Main: React.FC<MainProps> = ({
@@ -36,7 +37,8 @@ const Main: React.FC<MainProps> = ({
   demoMainConsideration,
   demoChoiceConsiderations,
   autoOpenGemini = false,
-  onDemoCompleted
+  onDemoCompleted,
+  demoFeedback = ''
 }) => {
   // 1) OPTIONS - Add or delete choices
   const [options, setOptions] = useState(demoMode && demoOptions ? demoOptions : ['']);
@@ -248,6 +250,7 @@ const Main: React.FC<MainProps> = ({
         decisionName={decisionName}
         setDecisionName={setDecisionName}
         demoMode={demoMode}
+        demoFeedback={demoFeedback}
         onBackToMetrics={() => {
           setDecision(false);
           setImportance(false);

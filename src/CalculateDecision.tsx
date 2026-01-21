@@ -38,7 +38,7 @@ interface CalculateDecisionProps {
   demoMode?: boolean;
   demoFeedback?: string;
   onBackToMetrics?: () => void;
-  onDemoCompleted?: () => void;
+  onDemoCompleted?: (feedback: string) => void;
 }
 
 const CalculateDecision: React.FC<CalculateDecisionProps> = ({
@@ -393,14 +393,15 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     setBestDecision(options[bestOptionIndex]);
 
     // Always fetch fresh AI feedback
-    const fetchFeedback = async () => {
+    const fetchFeedback = async (): Promise<string> => {
       setIsLoadingFeedback(true);
+      let feedbackText = '';
       try {
         // Use demo feedback if in demo mode
         if (demoMode && demoFeedback) {
           setFeedback(demoFeedback);
           setIsLoadingFeedback(false);
-          return;
+          return demoFeedback;
         }
 
         const response = await fetch('https://wisest.onrender.com/wisest', {
@@ -433,25 +434,28 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
         }
 
         const data = await response.json();
-        setFeedback(data.feedback);
+        feedbackText = data.feedback;
+        setFeedback(feedbackText);
       } catch (error) {
-        setFeedback('Gemini API is not activated. To use this, please run it locally with API key.');
+        feedbackText = 'Gemini API is not activated. To use this, please run it locally with API key.';
+        setFeedback(feedbackText);
       } finally {
         setIsLoadingFeedback(false);
       }
+      return feedbackText;
     };
 
-    fetchFeedback();
+    fetchFeedback().then((feedbackText) => {
+      // Call onDemoCompleted after feedback is loaded (only on first visit)
+      if (demoMode && onDemoCompleted && !demoFeedback && feedbackText) {
+        onDemoCompleted(feedbackText);
+      }
+    });
 
     setTimeout(() => {
       setShowContent(true);
     }, 5000);
-
-    // Call onDemoCompleted if in demo mode
-    if (demoMode && onDemoCompleted) {
-      onDemoCompleted();
-    }
-  }, [options, categories, metricTypes, mainConsideration, choiceConsiderations, demoMode, onDemoCompleted]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [options, categories, metricTypes, mainConsideration, choiceConsiderations, demoMode, onDemoCompleted, demoFeedback]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 8) NORMALIZE DATA FOR CHARTS
   const normalizeForCharts = () => {

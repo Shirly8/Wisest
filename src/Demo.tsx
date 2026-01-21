@@ -7,6 +7,7 @@ interface DemoProps {
 }
 
 const DEMO_STORAGE_KEY = 'wisest_demo_completed';
+const DEMO_FEEDBACK_KEY = 'wisest_demo_feedback';
 
 const Demo: React.FC<DemoProps> = ({ reset, showDecisionHistory }) => {
   // Demo data for tech job comparison
@@ -59,23 +60,29 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
 
   const [selectedDecisionId, setSelectedDecisionId] = useState<string | null>(null);
   const [skipMetrics, setSkipMetrics] = useState(false);
+  const [demoFeedback, setDemoFeedback] = useState<string>('');
 
   // Check if demo has been completed before and skip to results
   useEffect(() => {
     const demoCompleted = localStorage.getItem(DEMO_STORAGE_KEY);
-    if (demoCompleted === 'true') {
+    const savedFeedback = localStorage.getItem(DEMO_FEEDBACK_KEY);
+
+    if (demoCompleted === 'true' && savedFeedback) {
       setSkipMetrics(true);
+      setDemoFeedback(savedFeedback);
     }
   }, []);
 
-  // Mark demo as completed when moving to results
-  const handleDemoCompleted = () => {
+  // Mark demo as completed and save feedback
+  const handleDemoCompleted = (feedback: string) => {
     localStorage.setItem(DEMO_STORAGE_KEY, 'true');
+    localStorage.setItem(DEMO_FEEDBACK_KEY, feedback);
   };
 
   // Reset demo when user clicks reset
   const handleReset = () => {
     localStorage.removeItem(DEMO_STORAGE_KEY);
+    localStorage.removeItem(DEMO_FEEDBACK_KEY);
     reset();
   };
 
@@ -93,6 +100,7 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
       demoMainConsideration={demoMainConsideration}
       demoChoiceConsiderations={demoChoiceConsiderations}
       autoOpenGemini={true}
+      demoFeedback={demoFeedback}
       onDemoCompleted={handleDemoCompleted}
     />
   );
