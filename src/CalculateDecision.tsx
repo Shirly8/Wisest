@@ -538,8 +538,9 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               color: '#4ECDC4',
               fontSize: '14px',
               fontWeight: '700',
-              margin: '12px 0 8px 0',
-              fontFamily: 'Poppins, sans-serif'
+              margin: '16px 0 10px 0',
+              fontFamily: 'Poppins, sans-serif',
+              letterSpacing: '0.3px'
             }}
           >
             {headingText}
@@ -555,11 +556,11 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
           <div
             key={`list-${i}`}
             style={{
-              marginLeft: '12px',
-              marginBottom: '8px',
+              marginLeft: '16px',
+              marginBottom: '10px',
               color: '#d0d0d0',
               fontSize: '12px',
-              lineHeight: '1.5',
+              lineHeight: '1.6',
               fontFamily: 'Poppins, sans-serif'
             }}
           >
@@ -570,19 +571,61 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
         continue;
       }
 
-      // Regular paragraph text
+      // Regular paragraph text - parse inline **bold** and *italic* styling
+      const renderParagraphWithFormatting = (text: string) => {
+        const parts: React.ReactNode[] = [];
+        let lastIndex = 0;
+
+        // Match **bold** and *italic*
+        const regex = /\*\*([^*]+)\*\*|\*([^*]+)\*/g;
+        let match;
+
+        while ((match = regex.exec(text)) !== null) {
+          // Add text before match
+          if (match.index > lastIndex) {
+            parts.push(text.substring(lastIndex, match.index));
+          }
+
+          // Add formatted text
+          if (match[1]) {
+            // **bold** text
+            parts.push(
+              <strong key={`bold-${match.index}`} style={{ color: '#4ECDC4', fontWeight: '600' }}>
+                {match[1]}
+              </strong>
+            );
+          } else if (match[2]) {
+            // *italic* text
+            parts.push(
+              <em key={`italic-${match.index}`} style={{ color: '#b8e6e0' }}>
+                {match[2]}
+              </em>
+            );
+          }
+
+          lastIndex = regex.lastIndex;
+        }
+
+        // Add remaining text
+        if (lastIndex < text.length) {
+          parts.push(text.substring(lastIndex));
+        }
+
+        return parts.length > 0 ? parts : text;
+      };
+
       elements.push(
         <p
           key={`para-${i}`}
           style={{
             color: '#d0d0d0',
             fontSize: '12px',
-            lineHeight: '1.5',
-            margin: '8px 0',
+            lineHeight: '1.6',
+            margin: '10px 0',
             fontFamily: 'Poppins, sans-serif'
           }}
         >
-          {line}
+          {renderParagraphWithFormatting(line)}
         </p>
       );
       i++;
