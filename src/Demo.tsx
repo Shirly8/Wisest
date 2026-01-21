@@ -6,6 +6,8 @@ interface DemoProps {
   showDecisionHistory: () => void;
 }
 
+const DEMO_STORAGE_KEY = 'wisest_demo_completed';
+
 const Demo: React.FC<DemoProps> = ({ reset, showDecisionHistory }) => {
   // Demo data for tech job comparison
   const demoOptions = ['Google', 'Stripe', 'Shopify', 'Apple'];
@@ -56,27 +58,42 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
   };
 
   const [selectedDecisionId, setSelectedDecisionId] = useState<string | null>(null);
+  const [skipMetrics, setSkipMetrics] = useState(false);
 
-  // Initialize Main component with demo data by setting the decision ID
-  // This will trigger the useEffect in Main to load the demo data
+  // Check if demo has been completed before and skip to results
   useEffect(() => {
-    // We're using null as the selectedDecisionId, but we could set it to a special demo ID
-    setSelectedDecisionId(null);
+    const demoCompleted = localStorage.getItem(DEMO_STORAGE_KEY);
+    if (demoCompleted === 'true') {
+      setSkipMetrics(true);
+    }
   }, []);
+
+  // Mark demo as completed when moving to results
+  const handleDemoCompleted = () => {
+    localStorage.setItem(DEMO_STORAGE_KEY, 'true');
+  };
+
+  // Reset demo when user clicks reset
+  const handleReset = () => {
+    localStorage.removeItem(DEMO_STORAGE_KEY);
+    reset();
+  };
 
   return (
     <Main
-      reset={reset}
+      reset={handleReset}
       selectedDecisionId={selectedDecisionId}
       setSelectedDecisionId={setSelectedDecisionId}
       showDecisionHistory={showDecisionHistory}
       demoMode={true}
+      skipMetricsPage={skipMetrics}
       demoOptions={demoOptions}
       demoCategories={demoCategories}
       demoMetricTypes={demoMetricTypes}
       demoMainConsideration={demoMainConsideration}
       demoChoiceConsiderations={demoChoiceConsiderations}
       autoOpenGemini={true}
+      onDemoCompleted={handleDemoCompleted}
     />
   );
 };

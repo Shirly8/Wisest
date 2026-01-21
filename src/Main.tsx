@@ -13,12 +13,14 @@ interface MainProps {
   setSelectedDecisionId: React.Dispatch<React.SetStateAction<string | null>>;
   showDecisionHistory: () => void;
   demoMode?: boolean;
+  skipMetricsPage?: boolean;
   demoOptions?: string[];
   demoCategories?: { title: string; metrics: number[]; importance: number }[];
   demoMetricTypes?: number[];
   demoMainConsideration?: string;
   demoChoiceConsiderations?: { [key: string]: string };
   autoOpenGemini?: boolean;
+  onDemoCompleted?: () => void;
 }
 
 const Main: React.FC<MainProps> = ({
@@ -27,12 +29,14 @@ const Main: React.FC<MainProps> = ({
   setSelectedDecisionId,
   showDecisionHistory,
   demoMode = false,
+  skipMetricsPage = false,
   demoOptions,
   demoCategories,
   demoMetricTypes,
   demoMainConsideration,
   demoChoiceConsiderations,
-  autoOpenGemini = false
+  autoOpenGemini = false,
+  onDemoCompleted
 }) => {
   // 1) OPTIONS - Add or delete choices
   const [options, setOptions] = useState(demoMode && demoOptions ? demoOptions : ['']);
@@ -243,8 +247,17 @@ const Main: React.FC<MainProps> = ({
         showDecisionHistory={showDecisionHistory}
         decisionName={decisionName}
         setDecisionName={setDecisionName}
+        demoMode={demoMode}
+        onBackToMetrics={() => {
+          setDecision(false);
+          setImportance(false);
+        }}
+        onDemoCompleted={onDemoCompleted}
       />
     ) : importance ? (
+      <Importance categories={categories} setCategories={setCategories} setImportance={setImportance} setDecision={setDecision}/>
+    ) : skipMetricsPage && demoMode ? (
+      // Auto-advance to importance page when skipMetricsPage is true in demo mode
       <Importance categories={categories} setCategories={setCategories} setImportance={setImportance} setDecision={setDecision}/>
     ) : (
     <div>

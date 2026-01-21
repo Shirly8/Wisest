@@ -37,6 +37,8 @@ interface CalculateDecisionProps {
   setDecisionName: React.Dispatch<React.SetStateAction<string>>;
   demoMode?: boolean;
   demoFeedback?: string;
+  onBackToMetrics?: () => void;
+  onDemoCompleted?: () => void;
 }
 
 const CalculateDecision: React.FC<CalculateDecisionProps> = ({
@@ -57,7 +59,9 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
   decisionName,
   setDecisionName,
   demoMode = false,
-  demoFeedback = ''
+  demoFeedback = '',
+  onBackToMetrics,
+  onDemoCompleted
 }) => {
   // 1) DECISION RESULTS
   const [bestDecision, setBestDecision] = useState<string>('');
@@ -442,7 +446,12 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     setTimeout(() => {
       setShowContent(true);
     }, 5000);
-  }, [options, categories, metricTypes, mainConsideration, choiceConsiderations]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Call onDemoCompleted if in demo mode
+    if (demoMode && onDemoCompleted) {
+      onDemoCompleted();
+    }
+  }, [options, categories, metricTypes, mainConsideration, choiceConsiderations, demoMode, onDemoCompleted]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 8) NORMALIZE DATA FOR CHARTS
   const normalizeForCharts = () => {
@@ -590,6 +599,42 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                   </p>
                 </div>
               </div>
+
+              {/* Back to Metrics Button */}
+              {onBackToMetrics && (
+                <div style={{ textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>
+                  <button
+                    onClick={onBackToMetrics}
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(78, 205, 196, 0.2) 0%, rgba(68, 160, 141, 0.2) 100%)',
+                      border: '2px solid #4ECDC4',
+                      color: '#4ECDC4',
+                      padding: '12px 32px',
+                      fontSize: '14px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      fontFamily: 'Poppins, sans-serif',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 4px 12px rgba(78, 205, 196, 0.2)'
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.target as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(78, 205, 196, 0.4) 0%, rgba(68, 160, 141, 0.4) 100%)';
+                      (e.target as HTMLButtonElement).style.boxShadow = '0 8px 20px rgba(78, 205, 196, 0.4)';
+                      (e.target as HTMLButtonElement).style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.target as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(78, 205, 196, 0.2) 0%, rgba(68, 160, 141, 0.2) 100%)';
+                      (e.target as HTMLButtonElement).style.boxShadow = '0 4px 12px rgba(78, 205, 196, 0.2)';
+                      (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
+                    }}
+                  >
+                    ← Back to Metrics
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* 30% Gemini Sidebar */}
