@@ -257,33 +257,6 @@ const Main: React.FC<MainProps> = ({
         }}
         onDemoCompleted={onDemoCompleted}
       />
-    ) : skipMetricsPage && demoMode ? (
-      // Auto-advance to final decision dashboard when skipMetricsPage is true in demo mode
-      <CalculateDecision
-        categories={categories}
-        options={options}
-        metricTypes={metricTypes}
-        setDecision={setDecision}
-        reset={reset}
-        choiceConsiderations={choiceConsiderations}
-        mainConsideration={mainConsiderations}
-        setCategories={setCategories}
-        setOptions={setOptions}
-        setMetricTypes={setMetricTypes}
-        setMainConsideration={setMainConsiderations}
-        setChoiceConsiderations={setChoiceConsiderations}
-        selectedDecisionId={selectedDecisionId}
-        showDecisionHistory={showDecisionHistory}
-        decisionName={decisionName}
-        setDecisionName={setDecisionName}
-        demoMode={demoMode}
-        demoFeedback={demoFeedback}
-        onBackToMetrics={() => {
-          setDecision(false);
-          setImportance(false);
-        }}
-        onDemoCompleted={onDemoCompleted}
-      />
     ) : importance ? (
       <Importance categories={categories} setCategories={setCategories} setImportance={setImportance} setDecision={setDecision}/>
     ) : (
