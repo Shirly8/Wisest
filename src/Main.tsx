@@ -125,6 +125,13 @@ const Main: React.FC<MainProps> = ({
   const [decision, setDecision] = useState(skipMetricsPage && demoMode);
   const [geminibox, setGeminibox] = useState(autoOpenGemini);
 
+  // Skip to decision page immediately in demo mode
+  useEffect(() => {
+    if (skipMetricsPage && demoMode) {
+      setDecision(true);
+    }
+  }, [skipMetricsPage, demoMode]);
+
   const toggleGemini = () => {
     setGeminibox(prevState => !prevState);
   };
