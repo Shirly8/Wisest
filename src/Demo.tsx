@@ -59,16 +59,14 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
   };
 
   const [selectedDecisionId, setSelectedDecisionId] = useState<string | null>(null);
-  const [skipMetrics, setSkipMetrics] = useState(false);
   const [demoFeedback, setDemoFeedback] = useState<string>('');
 
-  // Check if demo has been completed before and skip to results
+  // Check if demo has been completed before and load saved feedback
   useEffect(() => {
     const demoCompleted = localStorage.getItem(DEMO_STORAGE_KEY);
     const savedFeedback = localStorage.getItem(DEMO_FEEDBACK_KEY);
 
     if (demoCompleted === 'true' && savedFeedback) {
-      setSkipMetrics(true);
       setDemoFeedback(savedFeedback);
     }
   }, []);
@@ -93,7 +91,7 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
       setSelectedDecisionId={setSelectedDecisionId}
       showDecisionHistory={showDecisionHistory}
       demoMode={true}
-      skipMetricsPage={skipMetrics}
+      skipMetricsPage={true}
       demoOptions={demoOptions}
       demoCategories={demoCategories}
       demoMetricTypes={demoMetricTypes}
