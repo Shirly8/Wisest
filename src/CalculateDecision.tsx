@@ -523,24 +523,45 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
 
       // Skip empty lines
       if (!line) {
-        elements.push(<div key={`spacer-${i}`} style={{ height: '8px' }}></div>);
+        elements.push(<div key={`spacer-${i}`} style={{ height: '12px' }}></div>);
         i++;
         continue;
       }
 
-      // Check for bold headings (**text**)
+      // Check for main bold headings (**text**: as standalone line)
+      if (line.startsWith('**') && line.includes('**:')) {
+        const headingText = line.replace(/\*\*/g, '').replace(':', '');
+        elements.push(
+          <h3
+            key={`heading-${i}`}
+            style={{
+              color: '#2E98DD',
+              fontSize: '16px',
+              fontWeight: '700',
+              margin: '20px 0 12px 0',
+              fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+            }}
+          >
+            {headingText}:
+          </h3>
+        );
+        i++;
+        continue;
+      }
+
+      // Check for bold subheadings (**text**)
       if (line.startsWith('**') && line.endsWith('**')) {
         const headingText = line.slice(2, -2);
         elements.push(
           <h4
-            key={`heading-${i}`}
+            key={`subheading-${i}`}
             style={{
               color: '#4ECDC4',
-              fontSize: '14px',
+              fontSize: '13px',
               fontWeight: '700',
-              margin: '16px 0 10px 0',
-              fontFamily: 'Poppins, sans-serif',
-              letterSpacing: '0.3px'
+              margin: '14px 0 8px 0',
+              fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+              letterSpacing: '0.2px'
             }}
           >
             {headingText}
@@ -550,18 +571,18 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
         continue;
       }
 
-      // Check for numbered list items (1., 2., etc.)
-      if (/^\d+\./.test(line)) {
+      // Check for numbered/bullet list items (starts with * or 1., 2., etc.)
+      if (/^[\*\d+\.]/.test(line) || line.match(/^\d+\./)) {
         elements.push(
           <div
             key={`list-${i}`}
             style={{
               marginLeft: '16px',
-              marginBottom: '10px',
-              color: '#d0d0d0',
-              fontSize: '12px',
+              marginBottom: '8px',
+              color: '#c0c0c0',
+              fontSize: '13px',
               lineHeight: '1.6',
-              fontFamily: 'Poppins, sans-serif'
+              fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
             }}
           >
             {line}
@@ -576,8 +597,8 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
         const parts: React.ReactNode[] = [];
         let lastIndex = 0;
 
-        // Match **bold** and *italic*
-        const regex = /\*\*([^*]+)\*\*|\*([^*]+)\*/g;
+        // Match **bold** and *italic* - handle text without spaces
+        const regex = /\*\*([^\*\n]+)\*\*|\*([^\*\n]+)\*/g;
         let match;
 
         while ((match = regex.exec(text)) !== null) {
@@ -590,14 +611,14 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
           if (match[1]) {
             // **bold** text
             parts.push(
-              <strong key={`bold-${match.index}`} style={{ color: '#4ECDC4', fontWeight: '600' }}>
+              <strong key={`bold-${match.index}`} style={{ color: '#4ECDC4', fontWeight: '700' }}>
                 {match[1]}
               </strong>
             );
           } else if (match[2]) {
             // *italic* text
             parts.push(
-              <em key={`italic-${match.index}`} style={{ color: '#b8e6e0' }}>
+              <em key={`italic-${match.index}`} style={{ color: '#5A9FD4', fontStyle: 'italic' }}>
                 {match[2]}
               </em>
             );
@@ -618,11 +639,11 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
         <p
           key={`para-${i}`}
           style={{
-            color: '#d0d0d0',
-            fontSize: '12px',
-            lineHeight: '1.6',
-            margin: '10px 0',
-            fontFamily: 'Poppins, sans-serif'
+            color: '#b0b0b0',
+            fontSize: '13px',
+            lineHeight: '1.7',
+            margin: '8px 0',
+            fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
           }}
         >
           {renderParagraphWithFormatting(line)}
