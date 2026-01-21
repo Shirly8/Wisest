@@ -535,8 +535,11 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
           <h3
             key={`heading-${i}`}
             style={{
-              color: '#2E98DD',
-              fontSize: '16px',
+              background: 'linear-gradient(to right, #5A70B8, #2E98DD)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              fontSize: '18px',
               fontWeight: '700',
               margin: '20px 0 12px 0',
               fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
@@ -676,45 +679,47 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
         <Buffer />
       ) : (
         <div style={{backgroundColor: '#060724'}} id="content">
+          {/* Back to Metrics Button - Top Left Corner */}
+          {onBackToMetrics && (
+            <button
+              onClick={onBackToMetrics}
+              style={{
+                position: 'fixed',
+                top: '20px',
+                left: '20px',
+                background: '#FF6E70',
+                border: 'none',
+                color: 'white',
+                padding: '10px 20px',
+                fontSize: '14px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                fontFamily: 'Poppins, sans-serif',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 8px rgba(255, 110, 112, 0.3)',
+                zIndex: 1000
+              }}
+              onMouseEnter={(e) => {
+                (e.target as HTMLButtonElement).style.background = '#E55A5C';
+                (e.target as HTMLButtonElement).style.boxShadow = '0 4px 12px rgba(255, 110, 112, 0.5)';
+                (e.target as HTMLButtonElement).style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLButtonElement).style.background = '#FF6E70';
+                (e.target as HTMLButtonElement).style.boxShadow = '0 2px 8px rgba(255, 110, 112, 0.3)';
+                (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
+              }}
+            >
+              ← Back
+            </button>
+          )}
+
           {/* Main Container with 75/25 Split */}
-          <div style={{ display: 'flex', gap: '16px', padding: '20px', maxWidth: '100%', height: 'calc(100vh - 40px)' }}>
+          <div style={{ display: 'flex', gap: '16px', padding: '20px', maxWidth: '100%', height: 'calc(100vh - 40px)', marginTop: '0' }}>
 
             {/* 75% Main Content Section */}
-            <div style={{ flex: '0 0 75%', overflow: 'auto', position: 'relative' }}>
-              {/* Back to Metrics Button - Top Left */}
-              {onBackToMetrics && (
-                <button
-                  onClick={onBackToMetrics}
-                  style={{
-                    position: 'absolute',
-                    top: '-60px',
-                    left: '0',
-                    background: '#FF6E70',
-                    border: 'none',
-                    color: 'white',
-                    padding: '10px 20px',
-                    fontSize: '14px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: '600',
-                    fontFamily: 'Poppins, sans-serif',
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 2px 8px rgba(255, 110, 112, 0.3)'
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.target as HTMLButtonElement).style.background = '#E55A5C';
-                    (e.target as HTMLButtonElement).style.boxShadow = '0 4px 12px rgba(255, 110, 112, 0.5)';
-                    (e.target as HTMLButtonElement).style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.target as HTMLButtonElement).style.background = '#FF6E70';
-                    (e.target as HTMLButtonElement).style.boxShadow = '0 2px 8px rgba(255, 110, 112, 0.3)';
-                    (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
-                  }}
-                >
-                  ← Back to Metrics
-                </button>
-              )}
+            <div style={{ flex: '0 0 75%', overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
 
               {/* 10) FINAL DECISION DISPLAY */}
               <div className='final' style={{textAlign: 'center'}}>
@@ -723,10 +728,10 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               </div>
 
               {/* 11) DECISION BREAKDOWN ANALYSIS */}
-              <h2 style={{color: 'white', fontSize:'18px', marginTop: '1%', backgroundColor: '#FF6E70', padding: '12px'}}>Decision Breakdown Analysis</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '12px', margin: '0 -12px -12px -12px', minHeight: '420px' }}>
+              <h2 style={{color: 'white', fontSize:'18px', marginTop: '20px', marginBottom: '16px', backgroundColor: '#FF6E70', padding: '12px', margin: '20px 0 16px 0'}}>Decision Breakdown Analysis</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '0', height: '380px' }}>
 
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
                   <CategoryBreakdown
                     categories={categories}
                     options={options}
@@ -736,52 +741,52 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                   />
                 </div>
 
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
                   <OptionBreakdown
                     options={options}
                     preparePieChart={preparePieChart}
                   />
                 </div>
 
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
-                  <h3 style={{color: '#FF6E70', fontSize:'16px', marginBottom: '10px', textAlign: 'center', margin: '0 0 10px 0'}}>Risk Assessment</h3>
-                  <div ref={riskAssessmentRef} style={{ width: '100%', height: '300px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4', margin: '10px 0 0 0' }}>
-                    <strong>How to read:</strong> Taller bars = higher risk. Red = High, Yellow = Medium, Green = Low.<br/>
-                    <strong>Look for:</strong> Options with lower bars = safer choices for your priorities.
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
+                  <h3 style={{color: '#FF6E70', fontSize:'14px', textAlign: 'center', margin: '0 0 10px 0'}}>Risk Assessment</h3>
+                  <div ref={riskAssessmentRef} style={{ width: '100%', height: '240px', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '10px', lineHeight: '1.3', margin: '8px 0 0 0' }}>
+                    <strong>How to read:</strong> Taller bars = higher risk.<br/>
+                    <strong>Look for:</strong> Options with lower bars = safer choices.
                   </p>
                 </div>
 
               </div>
 
               {/* 12) STRATEGIC ANALYSIS DIAGRAMS */}
-              <h2 className="strategic-analysis-header" style={{padding: '12px', margin: '0'}}>Strategic Decision Analysis</h2>
+              <h2 className="strategic-analysis-header" style={{color: 'white', fontSize:'18px', backgroundColor: '#4ECDC4', padding: '12px', margin: '20px 0 16px 0'}}>Strategic Decision Analysis</h2>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', padding: '12px', minHeight: '420px' }}>
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px', margin: '0 0 10px 0' }}>Trade-off Analysis</h3>
-                  <div ref={radarChartRef} style={{ width: '100%', height: '280px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4', margin: '10px 0 0 0' }}>
-                    <strong>How to read:</strong> Each point = one option. Top-right = best in both categories.<br/>
-                    <strong>Look for:</strong> Options closest to top-right corner = best balance.
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', padding: '0', height: '380px' }}>
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 10px 0' }}>Trade-off Analysis</h3>
+                  <div ref={radarChartRef} style={{ width: '100%', height: '240px', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '10px', lineHeight: '1.3', margin: '8px 0 0 0' }}>
+                    <strong>How to read:</strong> Each point = one option.<br/>
+                    <strong>Look for:</strong> Options closest to top-right = best balance.
                   </p>
                 </div>
 
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px', margin: '0 0 10px 0' }}>Decision Confidence</h3>
-                  <div ref={comparisonChartRef} style={{ width: '100%', height: '280px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4', margin: '10px 0 0 0' }}>
-                    <strong>How to read:</strong> Taller bars = higher scores. Big gaps = confident choice.<br/>
-                    <strong>Look for:</strong> Clear winner with large score difference = high confidence.
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 10px 0' }}>Decision Confidence</h3>
+                  <div ref={comparisonChartRef} style={{ width: '100%', height: '240px', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '10px', lineHeight: '1.3', margin: '8px 0 0 0' }}>
+                    <strong>How to read:</strong> Taller bars = higher scores.<br/>
+                    <strong>Look for:</strong> Clear winner = high confidence.
                   </p>
                 </div>
 
-                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px', margin: '0 0 10px 0' }}>Decision Stability</h3>
-                  <div ref={heatmapRef} style={{ width: '100%', height: '280px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4', margin: '10px 0 0 0' }}>
-                    <strong>How to read:</strong> ✓ = stable, ⚠ = sensitive to changes.<br/>
-                    <strong>Look for:</strong> Categories with ⚠ - small changes could flip your decision.
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 10px 0' }}>Decision Stability</h3>
+                  <div ref={heatmapRef} style={{ width: '100%', height: '240px', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '10px', lineHeight: '1.3', margin: '8px 0 0 0' }}>
+                    <strong>How to read:</strong> ✓ = stable, ⚠ = sensitive.<br/>
+                    <strong>Look for:</strong> Categories with ⚠.
                   </p>
                 </div>
               </div>
@@ -791,7 +796,9 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
             <div style={{
               flex: '0 0 25%',
               display: 'flex',
-              flexDirection: 'column'
+              flexDirection: 'column',
+              maxHeight: 'calc(100vh - 80px)',
+              height: '100%'
             }}>
               <div style={{
                 background: 'linear-gradient(135deg, rgba(42, 70, 160, 0.2) 0%, rgba(46, 152, 221, 0.2) 100%)',
@@ -834,41 +841,18 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                 <div style={{
                   flex: 1,
                   overflowY: 'auto',
+                  overflowX: 'hidden',
                   paddingRight: '8px',
                   marginRight: '-8px',
                   scrollBehavior: 'smooth',
-                  minHeight: '300px'
+                  display: 'flex',
+                  flexDirection: 'column'
                 }}>
                   {isLoadingFeedback ? (
-                    <div style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: '100%',
-                      gap: '12px',
-                      color: '#2E98DD'
-                    }}>
-                      <div style={{
-                        display: 'inline-block',
-                        width: '24px',
-                        height: '24px',
-                        border: '3px solid #f3f3f3',
-                        borderTop: '3px solid #2E98DD',
-                        borderRadius: '50%',
-                        animation: 'spin 1s linear infinite'
-                      }}></div>
-                      <span style={{
-                        fontSize: '12px',
-                        textAlign: 'center',
-                        color: '#8ab4f8'
-                      }}>Analyzing your decision...</span>
-                    </div>
+                    <Buffer />
                   ) : (
                     <div style={{
-                      textAlign: 'left',
-                      overflowY: 'auto',
-                      paddingRight: '4px'
+                      textAlign: 'left'
                     }}>
                       {renderGeminiFeedback(feedback)}
                     </div>
