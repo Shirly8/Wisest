@@ -520,88 +520,171 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
         <Buffer />
       ) : (
         <div style={{backgroundColor: '#060724'}} id="content">
-          {/* 10) FINAL DECISION DISPLAY */}
-          <div className='final'>
-            <div className='final-subtitle'>The best decision for you is:</div>
-            <div className='final-decision'>{bestDecision}</div>
-          </div>
+          {/* Main Container with 70/30 Split */}
+          <div style={{ display: 'flex', gap: '20px', padding: '20px', maxWidth: '100%' }}>
 
-          {/* 11) DECISION BREAKDOWN ANALYSIS */}
-          <h2 style={{color: 'white', fontSize:'18px', marginTop: '1%', backgroundColor: '#FF6E70'}}>Decision Breakdown Analysis</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '10px', maxWidth: '1400px', margin: '0 auto' }}>
-            
-            <CategoryBreakdown 
-              categories={categories}
-              options={options}
-              metricTypes={metricTypes}
-              extractNumber={extractNumber}
-              calculatePercentage={calculatePercentage}
-            />
+            {/* 70% Main Content Section */}
+            <div style={{ flex: '0 0 70%', overflow: 'auto' }}>
+              {/* 10) FINAL DECISION DISPLAY */}
+              <div className='final'>
+                <div className='final-subtitle'>The best decision for you is:</div>
+                <div className='final-decision'>{bestDecision}</div>
+              </div>
 
-            <OptionBreakdown 
-              options={options}
-              preparePieChart={preparePieChart}
-            />
+              {/* 11) DECISION BREAKDOWN ANALYSIS */}
+              <h2 style={{color: 'white', fontSize:'18px', marginTop: '1%', backgroundColor: '#FF6E70'}}>Decision Breakdown Analysis</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '10px' }}>
 
-            <div style={{ border: '1px solid #FF6E70', borderRadius: '8px', padding: '15px', minHeight: '450px', display: 'flex', flexDirection: 'column' }}>
-              <h3 style={{color: '#FF6E70', fontSize:'16px', marginBottom: '10px', textAlign: 'center'}}>Risk Assessment</h3>
-              <div ref={riskAssessmentRef} style={{ width: '100%', height: '350px', flex: 1 }}></div>
-              <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
-                <strong>How to read:</strong> Taller bars = higher risk. Red = High, Yellow = Medium, Green = Low.<br/>
-                <strong>Look for:</strong> Options with lower bars = safer choices for your priorities.
-              </p>
-            </div>
+                <CategoryBreakdown
+                  categories={categories}
+                  options={options}
+                  metricTypes={metricTypes}
+                  extractNumber={extractNumber}
+                  calculatePercentage={calculatePercentage}
+                />
 
-          </div>
+                <OptionBreakdown
+                  options={options}
+                  preparePieChart={preparePieChart}
+                />
 
-          {/* 12) STRATEGIC ANALYSIS DIAGRAMS */}
-          <h2 className="strategic-analysis-header">Strategic Decision Analysis</h2>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', padding: '20px', maxWidth: '1400px', margin: '0 auto' }}>
-            <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', minHeight: '450px' }}>
-              <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px' }}>Trade-off Analysis</h3>
-              <div ref={radarChartRef} style={{ width: '100%', height: '300px' }}></div>
-              <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
-                <strong>How to read:</strong> Each point = one option. Top-right = best in both categories.<br/>
-                <strong>Look for:</strong> Options closest to top-right corner = best balance.
-              </p>
-            </div>
-
-            <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', minHeight: '450px' }}>
-              <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px' }}>Decision Confidence</h3>
-              <div ref={comparisonChartRef} style={{ width: '100%', height: '300px' }}></div>
-              <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
-                <strong>How to read:</strong> Taller bars = higher scores. Big gaps = confident choice.<br/>
-                <strong>Look for:</strong> Clear winner with large score difference = high confidence.
-              </p>
-            </div>
-
-            <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', minHeight: '450px' }}>
-              <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px' }}>Decision Stability</h3>
-              <div ref={heatmapRef} style={{ width: '100%', height: '300px' }}></div>
-              <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
-                <strong>How to read:</strong> ✓ = stable, ⚠ = sensitive to changes.<br/>
-                <strong>Look for:</strong> Categories with ⚠ - small changes could flip your decision.
-              </p>
-            </div>
-          </div>
-
-          {/* 13) GEMINI FEEDBACK */}
-          <div className="geminibackground">
-            <div className='gemini-header'>
-              <img src={gemini} className="gemini-logo" alt="gemini"></img>
-              <h1 className="gemini-title">Gemini Says</h1>
-            </div>
-
-            <div className="geminicontainer">
-              {isLoadingFeedback ? (
-                <div className="loading-container">
-                  <div className="loading-spinner"></div>
-                  <span className="loading-text">Gemini is analyzing your decision...</span>
+                <div style={{ border: '1px solid #FF6E70', borderRadius: '8px', padding: '15px', minHeight: '450px', display: 'flex', flexDirection: 'column' }}>
+                  <h3 style={{color: '#FF6E70', fontSize:'16px', marginBottom: '10px', textAlign: 'center'}}>Risk Assessment</h3>
+                  <div ref={riskAssessmentRef} style={{ width: '100%', height: '350px', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
+                    <strong>How to read:</strong> Taller bars = higher risk. Red = High, Yellow = Medium, Green = Low.<br/>
+                    <strong>Look for:</strong> Options with lower bars = safer choices for your priorities.
+                  </p>
                 </div>
-              ) : (
-                <pre style={{ fontSize: '14px', whiteSpace: 'pre-wrap' }}>{feedback}</pre>
-              )}
+
+              </div>
+
+              {/* 12) STRATEGIC ANALYSIS DIAGRAMS */}
+              <h2 className="strategic-analysis-header">Strategic Decision Analysis</h2>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', padding: '20px' }}>
+                <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', minHeight: '450px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px' }}>Trade-off Analysis</h3>
+                  <div ref={radarChartRef} style={{ width: '100%', height: '300px' }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
+                    <strong>How to read:</strong> Each point = one option. Top-right = best in both categories.<br/>
+                    <strong>Look for:</strong> Options closest to top-right corner = best balance.
+                  </p>
+                </div>
+
+                <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', minHeight: '450px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px' }}>Decision Confidence</h3>
+                  <div ref={comparisonChartRef} style={{ width: '100%', height: '300px' }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
+                    <strong>How to read:</strong> Taller bars = higher scores. Big gaps = confident choice.<br/>
+                    <strong>Look for:</strong> Clear winner with large score difference = high confidence.
+                  </p>
+                </div>
+
+                <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', minHeight: '450px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px' }}>Decision Stability</h3>
+                  <div ref={heatmapRef} style={{ width: '100%', height: '300px' }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4' }}>
+                    <strong>How to read:</strong> ✓ = stable, ⚠ = sensitive to changes.<br/>
+                    <strong>Look for:</strong> Categories with ⚠ - small changes could flip your decision.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 30% Gemini Sidebar */}
+            <div style={{
+              flex: '0 0 30%',
+              height: 'calc(100vh - 100px)',
+              position: 'sticky',
+              top: '0',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(42, 70, 160, 0.2) 0%, rgba(46, 152, 221, 0.2) 100%)',
+                border: '1px solid rgba(46, 152, 221, 0.4)',
+                borderRadius: '12px',
+                padding: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+              }}>
+                {/* Gemini Header */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  marginBottom: '15px',
+                  paddingBottom: '12px',
+                  borderBottom: '1px solid rgba(46, 152, 221, 0.3)'
+                }}>
+                  <img src={gemini} alt="gemini" style={{
+                    width: '28px',
+                    height: '28px',
+                    objectFit: 'contain'
+                  }}></img>
+                  <h3 style={{
+                    fontWeight: '500',
+                    background: 'linear-gradient(to right, #5A70B8, #2E98DD)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    fontSize: '18px',
+                    margin: '0'
+                  }}>Gemini Says</h3>
+                </div>
+
+                {/* Gemini Content */}
+                <div style={{
+                  flex: 1,
+                  overflowY: 'auto',
+                  paddingRight: '8px',
+                  marginRight: '-8px',
+                  scrollBehavior: 'smooth'
+                }}>
+                  {isLoadingFeedback ? (
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '100%',
+                      gap: '12px',
+                      color: '#2E98DD'
+                    }}>
+                      <div style={{
+                        display: 'inline-block',
+                        width: '24px',
+                        height: '24px',
+                        border: '3px solid #f3f3f3',
+                        borderTop: '3px solid #2E98DD',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite'
+                      }}></div>
+                      <span style={{
+                        fontSize: '12px',
+                        textAlign: 'center',
+                        color: '#8ab4f8'
+                      }}>Analyzing your decision...</span>
+                    </div>
+                  ) : (
+                    <pre style={{
+                      fontSize: '12px',
+                      lineHeight: '1.5',
+                      whiteSpace: 'pre-wrap',
+                      wordWrap: 'break-word',
+                      color: '#e0e0e0',
+                      margin: '0',
+                      fontFamily: 'Poppins, monospace',
+                      textAlign: 'left'
+                    }}>{feedback}</pre>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 

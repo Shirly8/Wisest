@@ -585,6 +585,25 @@ h2 {
   to { transform: rotate(360deg); }
 }
 
+/* Responsive layout for smaller screens */
+@media (max-width: 1200px) {
+  .main-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .main-content-section {
+    flex: 0 0 100% !important;
+    overflow: visible !important;
+  }
+
+  .gemini-sidebar {
+    flex: 0 0 100% !important;
+    height: auto !important;
+    position: static !important;
+  }
+}
+
 .loading-spinner {
   display: inline-block;
   width: 20px;
