@@ -122,7 +122,7 @@ const Main: React.FC<MainProps> = ({
 
   // 4) NAVIGATION STATES
   const [importance, setImportance] = useState(false);
-  const [decision, setDecision] = useState(false);
+  const [decision, setDecision] = useState(skipMetricsPage && demoMode);
   const [geminibox, setGeminibox] = useState(autoOpenGemini);
 
   const toggleGemini = () => {
