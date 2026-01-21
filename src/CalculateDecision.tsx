@@ -720,43 +720,13 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               <div className='final' style={{textAlign: 'center'}}>
                 <div className='final-subtitle'>The best decision for you is:</div>
                 <div className='final-decision'>{bestDecision}</div>
-                <button
-                  style={{
-                    marginTop: '24px',
-                    padding: '16px 48px',
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    color: 'white',
-                    background: 'linear-gradient(135deg, #FF6E70 0%, #E55A5C 100%)',
-                    border: 'none',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                    fontFamily: 'Poppins, sans-serif',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.8px',
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 8px 24px rgba(255, 110, 112, 0.4)'
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.target as HTMLButtonElement).style.background = 'linear-gradient(135deg, #FF8A87 0%, #F07773 100%)';
-                    (e.target as HTMLButtonElement).style.boxShadow = '0 12px 32px rgba(255, 110, 112, 0.6)';
-                    (e.target as HTMLButtonElement).style.transform = 'translateY(-3px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.target as HTMLButtonElement).style.background = 'linear-gradient(135deg, #FF6E70 0%, #E55A5C 100%)';
-                    (e.target as HTMLButtonElement).style.boxShadow = '0 8px 24px rgba(255, 110, 112, 0.4)';
-                    (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
-                  }}
-                >
-                  Choose {bestDecision}
-                </button>
               </div>
 
               {/* 11) DECISION BREAKDOWN ANALYSIS */}
               <h2 style={{color: 'white', fontSize:'18px', marginTop: '1%', backgroundColor: '#FF6E70', padding: '12px'}}>Decision Breakdown Analysis</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '12px', margin: '0 -12px -12px -12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '12px', margin: '0 -12px -12px -12px', minHeight: '420px' }}>
 
-                <div style={{ border: '1px solid #FF6E70', borderRadius: '8px', padding: '15px', height: '420px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
                   <CategoryBreakdown
                     categories={categories}
                     options={options}
@@ -766,14 +736,14 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                   />
                 </div>
 
-                <div style={{ border: '1px solid #FF6E70', borderRadius: '8px', padding: '15px', height: '420px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
                   <OptionBreakdown
                     options={options}
                     preparePieChart={preparePieChart}
                   />
                 </div>
 
-                <div style={{ border: '1px solid #FF6E70', borderRadius: '8px', padding: '15px', height: '420px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
                   <h3 style={{color: '#FF6E70', fontSize:'16px', marginBottom: '10px', textAlign: 'center', margin: '0 0 10px 0'}}>Risk Assessment</h3>
                   <div ref={riskAssessmentRef} style={{ width: '100%', height: '300px', flex: 1 }}></div>
                   <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4', margin: '10px 0 0 0' }}>
@@ -787,8 +757,8 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               {/* 12) STRATEGIC ANALYSIS DIAGRAMS */}
               <h2 className="strategic-analysis-header" style={{padding: '12px', margin: '0'}}>Strategic Decision Analysis</h2>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', padding: '12px' }}>
-                <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', height: '420px', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', padding: '12px', minHeight: '420px' }}>
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
                   <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px', margin: '0 0 10px 0' }}>Trade-off Analysis</h3>
                   <div ref={radarChartRef} style={{ width: '100%', height: '280px', flex: 1 }}></div>
                   <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4', margin: '10px 0 0 0' }}>
@@ -797,7 +767,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                   </p>
                 </div>
 
-                <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', height: '420px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
                   <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px', margin: '0 0 10px 0' }}>Decision Confidence</h3>
                   <div ref={comparisonChartRef} style={{ width: '100%', height: '280px', flex: 1 }}></div>
                   <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4', margin: '10px 0 0 0' }}>
@@ -806,7 +776,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                   </p>
                 </div>
 
-                <div style={{ border: '1px solid #4ECDC4', padding: '15px', borderRadius: '8px', backgroundColor: 'rgba(78, 205, 196, 0.1)', height: '420px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '15px', display: 'flex', flexDirection: 'column' }}>
                   <h3 style={{ color: '#4ECDC4', textAlign: 'center', marginBottom: '10px', fontSize: '16px', margin: '0 0 10px 0' }}>Decision Stability</h3>
                   <div ref={heatmapRef} style={{ width: '100%', height: '280px', flex: 1 }}></div>
                   <p style={{ color: '#999', textAlign: 'center', fontSize: '11px', marginTop: '10px', lineHeight: '1.4', margin: '10px 0 0 0' }}>
