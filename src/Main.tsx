@@ -22,6 +22,7 @@ interface MainProps {
   autoOpenGemini?: boolean;
   onDemoCompleted?: (feedback: string) => void;
   demoFeedback?: string;
+  onBackToMetrics?: () => void;
 }
 
 const Main: React.FC<MainProps> = ({
@@ -38,7 +39,8 @@ const Main: React.FC<MainProps> = ({
   demoChoiceConsiderations,
   autoOpenGemini = false,
   onDemoCompleted,
-  demoFeedback = ''
+  demoFeedback = '',
+  onBackToMetrics
 }) => {
   // 1) OPTIONS - Add or delete choices
   const [options, setOptions] = useState(demoMode && demoOptions ? demoOptions : ['']);
@@ -261,6 +263,10 @@ const Main: React.FC<MainProps> = ({
         onBackToMetrics={() => {
           setDecision(false);
           setImportance(false);
+          // Clear demo feedback when going back, so next submit calls actual API
+          if (onBackToMetrics) {
+            onBackToMetrics();
+          }
         }}
         onDemoCompleted={onDemoCompleted}
       />

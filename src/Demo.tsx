@@ -76,12 +76,17 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
   };
 
   const [selectedDecisionId, setSelectedDecisionId] = useState<string | null>(null);
-  // Always use the pre-saved feedback - no Gemini call needed for demo
-  const [demoFeedback] = useState<string>(DEMO_DEFAULT_FEEDBACK);
+  // Use pre-saved feedback initially, but clear it if user goes back and makes changes
+  const [demoFeedback, setDemoFeedback] = useState<string>(DEMO_DEFAULT_FEEDBACK);
 
   // Reset demo when user clicks reset
   const handleReset = () => {
     reset();
+  };
+
+  // Clear demo feedback when user goes back to metrics - forces actual API call on next submit
+  const handleBackToMetrics = () => {
+    setDemoFeedback('');
   };
 
   return (
@@ -99,6 +104,7 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
       demoChoiceConsiderations={demoChoiceConsiderations}
       autoOpenGemini={true}
       demoFeedback={demoFeedback}
+      onBackToMetrics={handleBackToMetrics}
     />
   );
 };
