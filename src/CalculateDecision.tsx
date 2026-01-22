@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import Buffer from './Buffer'
 import gemini from './images/gemini.png';
+import background2 from './images/background2.png';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import 'chart.js/auto';
@@ -452,9 +453,14 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
       }
     });
 
-    setTimeout(() => {
+    // Show content instantly for demo mode, otherwise wait for loading effect
+    if (demoMode) {
       setShowContent(true);
-    }, 5000);
+    } else {
+      setTimeout(() => {
+        setShowContent(true);
+      }, 5000);
+    }
   }, [options, categories, metricTypes, mainConsideration, choiceConsiderations, demoMode, onDemoCompleted, demoFeedback]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 8) NORMALIZE DATA FOR CHARTS
@@ -678,7 +684,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
       {!showContent && !demoMode ? (
         <Buffer />
       ) : (
-        <div style={{backgroundColor: '#060724'}} id="content">
+        <div style={{backgroundColor: '#060724', minHeight: '100vh'}} id="content">
           {/* Back to Metrics Button - Top Left Corner */}
           {onBackToMetrics && (
             <button
@@ -716,10 +722,25 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
           )}
 
           {/* Main Container with 75/25 Split */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0vw', padding: '1vw', width: '98vw', maxWidth: '98vw', marginTop: '0', boxSizing: 'border-box', margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0vw', padding: '0.1vw', width: '98vw', maxWidth: '98vw', marginTop: '0', boxSizing: 'border-box', margin: '0 auto' }}>
+
+            {/* Fixed Background at Bottom */}
+            <div style={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              height: '50vh',
+              backgroundImage: `url(${background2})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center bottom',
+              backgroundRepeat: 'no-repeat',
+              pointerEvents: 'none',
+              zIndex: 0
+            }}></div>
 
             {/* 75% Main Content Section */}
-            <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', minWidth: 0, boxSizing: 'border-box', marginRight: '1vw' }}>
+            <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', minWidth: 0, boxSizing: 'border-box', marginRight: '1vw', position: 'relative', zIndex: 1 }}>
 
               {/* 10) FINAL DECISION DISPLAY */}
               <div className='final' style={{textAlign: 'center'}}>
