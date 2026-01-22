@@ -90,81 +90,30 @@ def wisestfeedback():
     # Format scores for analysis
     score_analysis = ""
     for score_data in scores:
-        score_analysis += f"- {score_data['option']}: {score_data['score']:.2f}\n"
-    
-    # Determine decision context based on main consideration and options
-    decision_context = "practical"  # default
-    if any(word in main_consideration.lower() for word in ['business', 'company', 'market', 'strategy', 'investment', 'career']):
-        decision_context = "strategic"
-    elif any(word in main_consideration.lower() for word in ['happiness', 'fulfillment', 'life', 'relationship', 'personal', 'dream']):
-        decision_context = "personal"
-    elif any(word in main_consideration.lower() for word in ['convenience', 'time', 'cost', 'daily', 'routine']):
-        decision_context = "practical"
+        score_analysis += f"{score_data['option']}: {score_data['score']:.1f}, "
+    score_analysis = score_analysis.rstrip(", ")
 
-    # Adaptive language based on context
-    context_language = {
-        "strategic": {
-            "advantages": "Strategic Advantages",
-            "risks": "Risk Mitigation", 
-            "action": "Implementation Priority",
-            "metric": "Success Metrics"
-        },
-        "personal": {
-            "advantages": "Key Benefits",
-            "risks": "Potential Challenges",
-            "action": "Next Steps", 
-            "metric": "Fulfillment Indicators"
-        },
-        "practical": {
-            "advantages": "Key Advantages",
-            "risks": "Things to Watch",
-            "action": "Priority Action",
-            "metric": "Success Indicators"
-        }
-    }
-    
-    lang = context_language[decision_context]
-    
     prompt = f'''
-You are an intelligent decision advisor with deep knowledge of companies, industries, products, services, and real-world experiences. Provide your independent recommendation for this decision.
+You are a supportive life coach helping someone make a decision. Be warm, direct, and encouraging.
 
-**DECISION CONTEXT:**
-- Options: {', '.join(options)}
-- Main goal: {main_consideration}
-- Decision type: {decision_context.title()} decision
-- Their thoughts: {choice_consideration}
+**THE DECISION:**
+Options: {', '.join(options)}
+Goal: {main_consideration}
+Their thoughts: {choice_consideration}
 
-**MATHEMATICAL ANALYSIS:**
-The decision system calculated these scores based on their priorities:
-{score_analysis}
-- Calculated best option: {best_decision}
+**DATA SAYS:** {best_decision} scored highest ({score_analysis})
 
-**YOUR TASK:**
-Make your own independent recommendation. You may agree or disagree with the calculated best option. Use your judgment to determine what's truly best for them.
+**YOUR RESPONSE (keep it SHORT - under 250 words):**
 
-**RESPONSE FORMAT:**
-**Choose [YOUR RECOMMENDED OPTION]**
+**My Take:** [1-2 sentences on whether you agree with {best_decision} or recommend something different]
 
-**Why This Decision**: [Direct reasoning. If it differs from the calculated best option, explain why your judgment overrides the scores]
+**Why {best_decision} works:** [2-3 bullet points, max 10 words each]
 
-**{lang['advantages']}**: [2-3 key benefits relevant to this decision type]
+**Watch out for:** [1 brief sentence on the main risk]
 
-**{lang['risks']}**: [How to handle potential downsides or challenges]
+**Your next move:** [1 specific action to take TODAY]
 
-**{lang['action']}**: [Specific next step to take]
-
-**{lang['metric']}**: [How to measure if this was the right choice]
-
-**IMPORTANT GUIDELINES:**
-- Use {decision_context} language appropriate for this decision type
-- Consider the calculated scores as ONE input, but make your own independent judgment
-- If you disagree with the calculated best option, clearly explain why your recommendation is better
-- Leverage your knowledge about the specific options involved
-- Be direct and concise (under 500 words total)
-- Provide actionable, practical advice
-- Consider both mathematical analysis and real-world factors
-
-Remember: You are the expert advisor - trust your judgment even if it differs from the calculations.
+**TONE:** Speak like a trusted friend giving advice over coffee. Be real, not corporate. Use "you" language. End with something encouraging.
 '''
 
     try:

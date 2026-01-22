@@ -98,7 +98,7 @@ const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoic
     <p>Let Gemini AI help you make the best decision. Describe your goals, challenges, hesitations, suggestsions and let our AI assists you.</p>
   
   <div className="geminicontainer2">
-    <h1 style = {{fontSize: '15px', width: '20%'}}> Main Consideration </h1>
+    <h1 style = {{fontSize: '15px', width: '15%'}}> Main Consideration </h1>
     <textarea 
       ref={mainTextareaRef}
       className = 'geminitext' 
@@ -109,9 +109,9 @@ const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoic
     </div>
 
     <div className="geminicontainer2">
-    <h1 style = {{fontSize: '15px', width: '17%'}}> Choice Analysis </h1>
+    <h1 style = {{fontSize: '15px', width: '15%'}}> Choice Analysis </h1>
 
-    <div style = {{width: "90%", margin: '0%'}}>
+    <div style = {{width: "95%", margin: '0%'}}>
     <select className = "geminioptions"  onChange = {handleOptionChange}>
       <option value = ""> Select your choices </option>
       {options.map((option,index) => (

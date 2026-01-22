@@ -716,10 +716,10 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
           )}
 
           {/* Main Container with 75/25 Split */}
-          <div style={{ display: 'flex', gap: '16px', padding: '20px', maxWidth: '100%', height: 'calc(100vh - 40px)', marginTop: '0' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0vw', padding: '1vw', width: '98vw', maxWidth: '98vw', marginTop: '0', boxSizing: 'border-box', margin: '0 auto' }}>
 
             {/* 75% Main Content Section */}
-            <div style={{ flex: '0 0 75%', overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', minWidth: 0, boxSizing: 'border-box', marginRight: '1vw' }}>
 
               {/* 10) FINAL DECISION DISPLAY */}
               <div className='final' style={{textAlign: 'center'}}>
@@ -728,10 +728,10 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               </div>
 
               {/* 11) DECISION BREAKDOWN ANALYSIS */}
-              <h2 style={{color: 'white', fontSize:'18px', backgroundColor: '#FF6E70', padding: '12px', margin: '20px 0 12px 0'}}>Decision Breakdown Analysis</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '0', height: '340px', marginBottom: '32px' }}>
+              <h2 style={{color: 'white', fontSize:'18px', backgroundColor: '#FF6E70', padding: '12px', margin: '-20px 0 12px 0', borderRadius: '4px'}}>Decision Breakdown Analysis</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
 
-                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '400px' }}>
                   <CategoryBreakdown
                     categories={categories}
                     options={options}
@@ -739,52 +739,60 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                     extractNumber={extractNumber}
                     calculatePercentage={calculatePercentage}
                   />
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
+                    <strong>How to read:</strong> Longer bars = better performance.<br/>
+                    <strong>Look for:</strong> Long bars in important categories.
+                  </p>
                 </div>
 
-                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '400px' }}>
                   <OptionBreakdown
                     options={options}
                     preparePieChart={preparePieChart}
                   />
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
+                    <strong>How to read:</strong> Each slice = category contribution.<br/>
+                    <strong>Look for:</strong> Larger slices = stronger performance.
+                  </p>
                 </div>
 
-                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px' }}>
-                  <h3 style={{color: '#FF6E70', fontSize:'14px', textAlign: 'center', margin: '0 0 8px 0'}}>Risk Assessment</h3>
-                  <div ref={riskAssessmentRef} style={{ width: '100%', height: '200px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '6px 0 0 0' }}>
-                    <strong>How to read:</strong> Taller bars = higher risk.<br/>
-                    <strong>Look for:</strong> Options with lower bars = safer.
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '400px' }}>
+                  <h3 style={{color: '#FF6E70', fontSize:'14px', textAlign: 'center', margin: '0 0 4px 0'}}>Risk Assessment</h3>
+                  <div ref={riskAssessmentRef} style={{ width: '100%', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
+                    <strong>How to read:</strong> Longer bars = higher risk.<br/>
+                    <strong>Look for:</strong> Options with shorter bars = safer.
                   </p>
                 </div>
 
               </div>
 
               {/* 12) STRATEGIC ANALYSIS DIAGRAMS */}
-              <h2 className="strategic-analysis-header" style={{color: 'white', fontSize:'18px', backgroundColor: '#4ECDC4', padding: '12px', margin: '0 0 12px 0'}}>Strategic Decision Analysis</h2>
+              <h2 className="strategic-analysis-header" style={{color: 'white', fontSize:'18px', backgroundColor: '#4ECDC4', padding: '12px', margin: '0 0 12px 0', borderRadius: '4px'}}>Strategic Decision Analysis</h2>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', padding: '0', height: '340px' }}>
-                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 8px 0' }}>Trade-off Analysis</h3>
-                  <div ref={radarChartRef} style={{ width: '100%', height: '200px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '6px 0 0 0' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '400px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 4px 0' }}>Trade-off Analysis</h3>
+                  <div ref={radarChartRef} style={{ width: '100%', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
                     <strong>How to read:</strong> Each point = one option.<br/>
                     <strong>Look for:</strong> Top-right = best balance.
                   </p>
                 </div>
 
-                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 8px 0' }}>Decision Confidence</h3>
-                  <div ref={comparisonChartRef} style={{ width: '100%', height: '200px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '6px 0 0 0' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '400px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 4px 0' }}>Decision Confidence</h3>
+                  <div ref={comparisonChartRef} style={{ width: '100%', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
                     <strong>How to read:</strong> Taller bars = higher scores.<br/>
                     <strong>Look for:</strong> Clear winner.
                   </p>
                 </div>
 
-                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 8px 0' }}>Decision Stability</h3>
-                  <div ref={heatmapRef} style={{ width: '100%', height: '200px', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '6px 0 0 0' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '400px' }}>
+                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 4px 0' }}>Decision Stability</h3>
+                  <div ref={heatmapRef} style={{ width: '100%', flex: 1 }}></div>
+                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
                     <strong>How to read:</strong> ✓ = stable, ⚠ = sensitive.<br/>
                     <strong>Look for:</strong> Categories with ⚠.
                   </p>
@@ -792,13 +800,16 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               </div>
             </div>
 
-            {/* 25% Gemini Sidebar - Full Height */}
+            {/* 25% Gemini Sidebar */}
             <div style={{
-              flex: '0 0 25%',
+              flex: '0 0 23%',
               display: 'flex',
               flexDirection: 'column',
-              maxHeight: 'calc(100vh - 80px)',
-              height: '100%'
+              minWidth: 0,
+              boxSizing: 'border-box',
+              maxHeight: '91vh',
+              position: 'sticky',
+              top: '1vw'
             }}>
               <div style={{
                 background: 'linear-gradient(135deg, rgba(42, 70, 160, 0.2) 0%, rgba(46, 152, 221, 0.2) 100%)',
@@ -808,6 +819,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
+                maxHeight: '92vh',
                 backdropFilter: 'blur(10px)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
               }}>

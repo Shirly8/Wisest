@@ -12,16 +12,16 @@ export const OptionBreakdown: React.FC<OptionBreakdownProps> = ({
   preparePieChart
 }) => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <h3 style={{ color: '#FF6E70', fontSize: '16px', marginBottom: '10px', textAlign: 'center' }}>Option Breakdown</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', flex: 1 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <h3 style={{ color: '#FF6E70', fontSize: '14px', marginBottom: '2px', textAlign: 'center' }}>Option Breakdown</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0px', flex: 1, overflow: 'hidden' }}>
         {options.map((option, index) => (
-          <div key={index} style={{ padding: '6px', textAlign: 'center' }}>
-            <h4 style={{ color: '#FF6E70', fontSize: '12px', marginBottom: '6px', lineHeight: '1.2' }}>{option}</h4>
-            <div style={{ width: '100%', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div style={{ width: '100%', height: '90px' }}>
-                <Pie 
-                  data={preparePieChart(index)} 
+          <div key={index} style={{ padding: '1px', textAlign: 'center', minWidth: 0 }}>
+            <h4 style={{ color: '#FF6E70', fontSize: '10px', marginBottom: '1px', lineHeight: '1', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{option}</h4>
+            <div style={{ width: '100%', height: '110px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ width: '100%', maxWidth: '110px', height: '105px' }}>
+                <Pie
+                  data={preparePieChart(index)}
                   options={{
                     responsive: true,
                     maintainAspectRatio: false,
@@ -37,10 +37,6 @@ export const OptionBreakdown: React.FC<OptionBreakdownProps> = ({
           </div>
         ))}
       </div>
-      <p style={{ color: '#999', textAlign: 'center', fontSize: '10px', marginTop: '8px', lineHeight: '1.3' }}>
-        <strong>How to read:</strong> Each slice = contribution from one category.<br/>
-        <strong>Look for:</strong> Larger slices = categories where this option excels.
-      </p>
     </div>
   );
 }; 

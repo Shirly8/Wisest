@@ -16,17 +16,21 @@ export const createSensitivityAnalysis = (
   extractNumber: (value: string | number) => number
 ) => {
   if (!containerRef.current) return;
-  
+
   d3.select(containerRef.current).selectAll("*").remove();
-  
-  const margin = {top: 30, right: 30, bottom: 40, left: 60};
-  const width = 400 - margin.left - margin.right;
-  const height = 300 - margin.top - margin.bottom;
-  
+
+  const margin = {top: 25, right: 15, bottom: 45, left: 45};
+  const totalWidth = 340;
+  const totalHeight = 280;
+  const width = totalWidth - margin.left - margin.right;
+  const height = totalHeight - margin.top - margin.bottom;
+
   const svg = d3.select(containerRef.current)
     .append("svg")
-    .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("viewBox", `0 0 ${totalWidth} ${totalHeight}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .style("width", "100%")
+    .style("height", "100%")
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
   
@@ -138,8 +142,11 @@ export const createSensitivityAnalysis = (
   // 5) ADD AXES
   svg.append("g")
     .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(x));
-  
+    .call(d3.axisBottom(x))
+    .selectAll("text")
+    .attr("font-size", "8px")
+    .attr("fill", "#999");
+
   svg.append("g")
     .call(d3.axisLeft(y));
 }; 

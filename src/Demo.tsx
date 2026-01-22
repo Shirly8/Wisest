@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Main from './Main';
 
 interface DemoProps {
@@ -6,8 +6,25 @@ interface DemoProps {
   showDecisionHistory: () => void;
 }
 
-const DEMO_STORAGE_KEY = 'wisest_demo_completed';
-const DEMO_FEEDBACK_KEY = 'wisest_demo_feedback';
+// Pre-saved Gemini response for demo - no API call needed
+const DEMO_DEFAULT_FEEDBACK = `**Choose Stripe**
+
+**Why This Decision:**
+While Google presents a strong and stable path, your explicit goal of pursuing the "highest growth potential" and "highest opportunity to become an engineering manager," coupled with a willingness to "sacrifice short-term gains for longer-term benefits," makes Stripe the superior strategic choice. Stripe's high-pressure, fast-paced environment directly aligns with sacrificing short-term comforts (like work-life balance) for accelerated skill development, rapid impact, and significantly enhanced long-term career trajectory. This environment often provides quicker pathways to leadership roles for ambitious individuals compared to more established, bureaucratic organizations. The equity upside in a high-growth fintech company also offers a greater potential for long-term financial gain, which is a key component of 'growth potential'.
+
+**Strategic Advantages:**
+1. **Accelerated Leadership Trajectory**: The rapid expansion and demanding nature of Stripe's environment will compel you to take on significant responsibility quickly, fostering leadership skills and providing more immediate opportunities to step into engineering management roles.
+2. **Significant Equity Upside**: As a fast-growing, privately held fintech leader, Stripe offers substantial long-term financial growth potential through its equity, far exceeding the typical stock performance of mature public companies.
+3. **Intensive Skill Development**: The high-pressure, modern tech stack environment ensures an unparalleled learning curve, pushing you to master new technologies and problem-solving at an accelerated pace, which is invaluable for future management.
+
+**Risk Mitigation:**
+To counter the high-pressure environment, proactively develop strong time management and prioritization skills. Establish clear communication channels with your manager regarding workload and expectations. For San Francisco's high living costs, consider optimizing housing choices and leveraging the strong compensation package effectively. Actively seek out mentors within Stripe who have successfully navigated the demanding culture.
+
+**Implementation Priority:**
+Thoroughly research Stripe's specific engineering teams and ongoing projects to identify areas that align with your technical interests and leadership aspirations, then tailor your application and interview preparation to demonstrate your potential for rapid impact and growth in such an environment.
+
+**Success Metrics:**
+Measure success by your rate of promotion or increase in responsibility (e.g., leading project initiatives, mentoring junior engineers), the tangible impact of your contributions on Stripe's products or infrastructure, and the growth in value of your equity holdings over time.`;
 
 const Demo: React.FC<DemoProps> = ({ reset, showDecisionHistory }) => {
   // Demo data for tech job comparison
@@ -59,28 +76,11 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
   };
 
   const [selectedDecisionId, setSelectedDecisionId] = useState<string | null>(null);
-  const [demoFeedback, setDemoFeedback] = useState<string>('');
-
-  // Check if demo has been completed before and load saved feedback
-  useEffect(() => {
-    const demoCompleted = localStorage.getItem(DEMO_STORAGE_KEY);
-    const savedFeedback = localStorage.getItem(DEMO_FEEDBACK_KEY);
-
-    if (demoCompleted === 'true' && savedFeedback) {
-      setDemoFeedback(savedFeedback);
-    }
-  }, []);
-
-  // Mark demo as completed and save feedback
-  const handleDemoCompleted = (feedback: string) => {
-    localStorage.setItem(DEMO_STORAGE_KEY, 'true');
-    localStorage.setItem(DEMO_FEEDBACK_KEY, feedback);
-  };
+  // Always use the pre-saved feedback - no Gemini call needed for demo
+  const [demoFeedback] = useState<string>(DEMO_DEFAULT_FEEDBACK);
 
   // Reset demo when user clicks reset
   const handleReset = () => {
-    localStorage.removeItem(DEMO_STORAGE_KEY);
-    localStorage.removeItem(DEMO_FEEDBACK_KEY);
     reset();
   };
 
@@ -99,7 +99,6 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
       demoChoiceConsiderations={demoChoiceConsiderations}
       autoOpenGemini={true}
       demoFeedback={demoFeedback}
-      onDemoCompleted={handleDemoCompleted}
     />
   );
 };

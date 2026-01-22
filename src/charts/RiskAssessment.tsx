@@ -14,17 +14,21 @@ export const createRiskAssessment = (
   metricTypes: number[]
 ) => {
   if (!containerRef.current) return;
-  
+
   d3.select(containerRef.current).selectAll("*").remove();
-  
-  const margin = {top: 20, right: 20, bottom: 60, left: 60};
-  const width = 400 - margin.left - margin.right;
-  const height = 350 - margin.top - margin.bottom;
-  
+
+  const margin = {top: 15, right: 15, bottom: 35, left: 45};
+  const totalWidth = 340;
+  const totalHeight = 280;
+  const width = totalWidth - margin.left - margin.right;
+  const height = totalHeight - margin.top - margin.bottom;
+
   const svg = d3.select(containerRef.current)
     .append("svg")
-    .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("viewBox", `0 0 ${totalWidth} ${totalHeight}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .style("width", "100%")
+    .style("height", "100%")
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
   
