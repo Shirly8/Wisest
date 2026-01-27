@@ -19,33 +19,32 @@ const Importance: React.FC<ImportanceProps> = ({ categories, setCategories, setI
   return (
     <div>
       <header>
-      <img src = {logo} className = 'App-logo' alt="logo"></img>
+      <img src = {logo} className = 'App-logo clickable-logo' alt="logo" onClick={() => setImportance(false)} title="Back to Options"></img>
       </header>
 
       <div className = 'OptionContainer'>
-      <h1 style = {{fontSize:'30px'}}>Category Importance: </h1>
-      <h2>Rank the importance of each category on the scale from 1 to 10. How much do you value each category?</h2>
+      <h1>Category Importance</h1>
+      <h2>Rank the importance of each category from 1 to 10</h2>
 
       {categories.map ((category, index) => (
           <div key={index} className = "rankingslider">
-
-          <div style = {{width: '10%'}}>
-         <h3 >{category.title}</h3>
-          </div>
-          <div style={{ width: '80%' }}>
+            <div className="importance-label">
+              <h3>{category.title}</h3>
+            </div>
+            <div className="importance-slider-container">
               <input
-              type = "range"
-              min ="0"
-              max = "10"
-              value = {category.importance}
-              onChange = {(e) => handleImportance(index, Number(e.target.value))}
-              className = "scale"
+                type = "range"
+                min ="0"
+                max = "10"
+                value = {category.importance}
+                onChange = {(e) => handleImportance(index, Number(e.target.value))}
+                className = "scale"
               />
-                 </div>
-
-              <span className = "scaleText"> <h3>{category.importance}</h3></span>
-              </div>
-              
+            </div>
+            <div className="importance-value">
+              <h3>{category.importance}</h3>
+            </div>
+          </div>
           ))}
 
           <button className = 'home-secondary-button' onClick = {() => setImportance(false)}>Back</button>

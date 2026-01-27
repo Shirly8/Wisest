@@ -722,7 +722,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
           )}
 
           {/* Main Container with 75/25 Split */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0vw', padding: '0.1vw', width: '98vw', maxWidth: '98vw', marginTop: '0', boxSizing: 'border-box', margin: '0 auto' }}>
+          <div className="decision-container" style={{ display: 'flex', justifyContent: 'space-between', gap: '0vw', padding: '0.1vw', width: '98vw', maxWidth: '98vw', marginTop: '0', boxSizing: 'border-box', margin: '0 auto' }}>
 
             {/* Fixed Background at Bottom */}
             <div style={{
@@ -740,7 +740,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
             }}></div>
 
             {/* 75% Main Content Section */}
-            <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', minWidth: 0, boxSizing: 'border-box', marginRight: '1vw', position: 'relative', zIndex: 1 }}>
+            <div className="decision-main-content" style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', minWidth: 0, boxSizing: 'border-box', marginRight: '1vw', position: 'relative', zIndex: 1 }}>
 
               {/* 10) FINAL DECISION DISPLAY */}
               <div className='final' style={{textAlign: 'center'}}>
@@ -750,7 +750,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
 
               {/* 11) DECISION BREAKDOWN ANALYSIS */}
               <h2 style={{color: 'white', fontSize:'18px', backgroundColor: '#FF6E70', padding: '12px', margin: '-20px 0 12px 0', borderRadius: '4px'}}>Decision Breakdown Analysis</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+              <div className="decision-charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
 
                 <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '400px' }}>
                   <CategoryBreakdown
@@ -791,7 +791,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               {/* 12) STRATEGIC ANALYSIS DIAGRAMS */}
               <h2 className="strategic-analysis-header" style={{color: 'white', fontSize:'18px', backgroundColor: '#4ECDC4', padding: '12px', margin: '0 0 12px 0', borderRadius: '4px'}}>Strategic Decision Analysis</h2>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+              <div className="decision-charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
                 <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '400px' }}>
                   <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 4px 0' }}>Trade-off Analysis</h3>
                   <div ref={radarChartRef} style={{ width: '100%', flex: 1 }}></div>
@@ -822,7 +822,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
             </div>
 
             {/* 25% Gemini Sidebar */}
-            <div style={{
+            <div className="decision-gemini-sidebar" style={{
               flex: '0 0 23%',
               display: 'flex',
               flexDirection: 'column',

@@ -275,31 +275,33 @@ const Main: React.FC<MainProps> = ({
     ) : (
     <div>
       <header>
-        <img src = {logo} className = 'App-logo' alt='logo'></img>
+        <img src = {logo} className = 'App-logo clickable-logo' alt='logo' onClick={reset} title="Back to Home"></img>
       </header>
 
       <div className = 'OptionContainer'>
-        <h1 style = {{fontSize:'30px'}}>List your options: </h1>
+        <h1>List your options</h1>
 
-        {/* 7) OPTIONS INPUT */}
-        {options.map((option,index) => (
-          <div key = {index} className = 'optionbox'>
-            <input
-              value = {option}
-              placeholder= {`Choice ${index+1}`}
-              onChange = {(e) => handleOptionChange(index, e.target.value)}
-              className = "optionText"
-            />
+        {/* 7) OPTIONS INPUT - Scrollable Container */}
+        <div className="options-scroll-container">
+          {options.map((option,index) => (
+            <div key = {index} className = 'optionbox'>
+              <input
+                value = {option}
+                placeholder= {`Choice ${index+1}`}
+                onChange = {(e) => handleOptionChange(index, e.target.value)}
+                className = "optionText"
+              />
 
-            <button className = "addremove" onClick = {() => addOption()}>+</button>
-            <button className = "addremove" onClick = {() => deleteOption(index)}>-</button>
-          </div>
-        ))}
+              <button className = "addremove" onClick = {() => addOption()}>+</button>
+              <button className = "addremove" onClick = {() => deleteOption(index)}>-</button>
+            </div>
+          ))}
+        </div>
 
         {/* 8) CATEGORIES SECTION */}
         <div>
-          <h1 style = {{fontSize:'30px'}}>Category: </h1>
-          <h2> Define custom categories and metrics for each option: </h2>
+          <h1>Categories</h1>
+          <h2>Define custom categories and metrics for each option</h2>
 
           <div className='categoryboxes'>
           {categories.map((category, index) => (

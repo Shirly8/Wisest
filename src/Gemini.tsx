@@ -20,14 +20,29 @@ const ChoiceTextarea: React.FC<{
   return (
     <div>
       <h4 className="geminiheading">{option}</h4>
-      <textarea 
-        ref={textareaRef}
-        className="geminitext" 
-        placeholder="Select your choices and list considerations you have for each options. Highlight key differences, pros and cons for this choice."
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
-      <button className="geminibutton" style={{border: 'none'}} onClick={onDelete}>X</button>
+      <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+        <textarea
+          ref={textareaRef}
+          className="geminitext"
+          placeholder="Select your choices and list considerations you have for each options. Highlight key differences, pros and cons for this choice."
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        />
+        <button
+          className="geminibutton"
+          style={{
+            border: 'none',
+            padding: '8px 12px',
+            flexShrink: 0,
+            alignSelf: 'flex-start',
+            marginTop: 0,
+            marginBottom: 0
+          }}
+          onClick={onDelete}
+        >
+          X
+        </button>
+      </div>
     </div>
   );
 };
@@ -92,16 +107,16 @@ const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoic
   return (
     <div className = "geminibackground">
        <div className = 'feedback'>
-        <img src = {gemini} style = {{width: '7%', height:'6%'}} alt="gemini"></img>
+        <img src = {gemini} style = {{width: '40px', height:'40px'}} alt="gemini"></img>
         <h1 className = "Gemini">Gemini AI</h1>
       </div>
     <p>Let Gemini AI help you make the best decision. Describe your goals, challenges, hesitations, suggestsions and let our AI assists you.</p>
-  
+
   <div className="geminicontainer2">
-    <h1 style = {{fontSize: '15px', width: '15%'}}> Main Consideration </h1>
-    <textarea 
+    <h1 style = {{fontSize: '14px', minWidth: '180px', flexShrink: 0, margin: 0}}> Main Consideration </h1>
+    <textarea
       ref={mainTextareaRef}
-      className = 'geminitext' 
+      className = 'geminitext'
       placeholder= 'Tell us about your overall goals and considerations in making your decision. What do you really want? What do you value in your decision?'
       value = {MainConsiderations}
       onChange = {handleMainConsiderationsChange}
@@ -109,9 +124,9 @@ const Gemini: React.FC<GeminiProps> = ({options, setMainConsiderations, setChoic
     </div>
 
     <div className="geminicontainer2">
-    <h1 style = {{fontSize: '15px', width: '15%'}}> Choice Analysis </h1>
+    <h1 style = {{fontSize: '14px', minWidth: '180px', flexShrink: 0, margin: 0}}> Choice Analysis </h1>
 
-    <div style = {{width: "95%", margin: '0%'}}>
+    <div style = {{width: "100%", margin: '0%', flex: 1}}>
     <select className = "geminioptions"  onChange = {handleOptionChange}>
       <option value = ""> Select your choices </option>
       {options.map((option,index) => (

@@ -187,74 +187,88 @@ const DecisionHistory: React.FC<DecisionHistoryProps> = ({ onSelectDecision, onB
 
   return (
     <div className="decision-history">
-      <div className="header">
-        <h1>Your Decision History</h1>
-        <button className="home-secondary-button" onClick={onBack}>Back to Start</button>
+      <button className="history-back-button" onClick={onBack}>← Back</button>
+
+      <div className="history-header">
+        <div className="history-title-section">
+          <h1 className="history-title">Your Decisions</h1>
+          <p className="history-subtitle">{decisions.length} {decisions.length === 1 ? 'decision' : 'decisions'} saved</p>
+        </div>
       </div>
 
       {decisions.length === 0 ? (
         <div className="empty-state">
+          <div className="empty-icon">📊</div>
           <h2>No decisions yet</h2>
           <p>Start making your first decision to see it here!</p>
-          <button className="home-secondary-button" onClick={onBack}>Create New Decision</button>
+          <button className="home-start-now-button" onClick={onBack}>Create Your First Decision</button>
         </div>
       ) : (
-        <div className="decisions-grid">
+        <div className="decisions-list">
           {decisions.map((decision) => (
-            <div 
-              key={decision.id} 
-              className="decision-card"
+            <div
+              key={decision.id}
+              className="decision-item"
               onClick={() => handleDecisionClick(decision.id)}
             >
-              <div className="decision-header">
-                {editingDecision === decision.id ? (
-                  <input
-                    type="text"
-                    value={editingTitle}
-                    onChange={(e) => setEditingTitle(e.target.value)}
-                    onBlur={() => handleRename(decision.id)}
-                    onKeyPress={(e) => handleKeyPress(e, decision.id)}
-                    autoFocus
-                  />
-                ) : (
-                  <h3 onDoubleClick={() => handleDoubleClick(decision)}>{getDecisionDisplayName(decision)}</h3>
+              <div className="decision-main">
+                <div className="decision-title-row">
+                  {editingDecision === decision.id ? (
+                    <input
+                      type="text"
+                      className="decision-title-input"
+                      value={editingTitle}
+                      onChange={(e) => setEditingTitle(e.target.value)}
+                      onBlur={() => handleRename(decision.id)}
+                      onKeyPress={(e) => handleKeyPress(e, decision.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      autoFocus
+                    />
+                  ) : (
+                    <h3 className="decision-title" onDoubleClick={(e) => { e.stopPropagation(); handleDoubleClick(decision); }}>
+                      {getDecisionDisplayName(decision)}
+                    </h3>
+                  )}
+                  <button
+                    className="decision-delete-button"
+                    onClick={(e) => deleteDecision(decision.id, e)}
+                    disabled={deletingDecision === decision.id}
+                    title="Delete decision"
+                  >
+                    {deletingDecision === decision.id ? '...' : '✕'}
+                  </button>
+                </div>
+
+                {/* Categories */}
+                {decision.categories && decision.categories.length > 0 && (
+                  <div className="decision-categories">
+                    {decision.categories.map((cat, idx) => (
+                      <span key={idx} className="category-tag">{cat.name}</span>
+                    ))}
+                  </div>
                 )}
-                <button 
-                  className="delete-button"
-                  onClick={(e) => deleteDecision(decision.id, e)}
-                  disabled={deletingDecision === decision.id}
-                >
-                  {deletingDecision === decision.id ? 'Deleting...' : '🗑️'}
-                </button>
-              </div>
-              {/* Decision Between */}
-              {decision.options && decision.options.length > 0 && (
-                <div className="decision-detail">
-                  <strong>Decision Between:</strong> {decision.options.map(opt => opt.name).join(', ')}
+
+                <div className="decision-meta">
+                  <span className="decision-date">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    {formatDate(decision.created_at)}
+                  </span>
+
+                  {/* Best Choice */}
+                  {decision.best_choice && (
+                    <span className="decision-result">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      {decision.best_choice}
+                    </span>
+                  )}
                 </div>
-              )}
-              
-              {/* Categories */}
-              {decision.categories && decision.categories.length > 0 && (
-                <div className="decision-detail">
-                  <strong>Categories:</strong> {decision.categories.map(cat => 
-                    `${cat.name} (${cat.higher_is_better ? 'higher is better' : 'lower is better'})`
-                  ).join(', ')}
-                </div>
-              )}
-              
-              {/* Best Choice */}
-              {decision.best_choice && (
-                <div className="decision-detail best-choice">
-                  <strong>Best Choice:</strong> {decision.best_choice}
-                </div>
-              )}
-              
-              <div className="decision-meta">
-                <span className="date">Created: {formatDate(decision.created_at)}</span>
-                {decision.ai_feedback && (
-                  <span className="has-feedback">✓ AI Feedback Available</span>
-                )}
               </div>
             </div>
           ))}
