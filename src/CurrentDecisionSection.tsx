@@ -26,23 +26,23 @@ const CurrentDecisionSection: React.FC<CurrentDecisionSectionProps> = ({
   onBack
 }) => {
   return (
-    <div style={{ 
-      backgroundColor: 'rgba(255, 255, 255, 0.05)', 
-      borderRadius: '8px', 
-      padding: '15px', 
+    <div style={{
+      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+      borderRadius: '8px',
+      padding: '15px',
       margin: '15px auto',
       maxWidth: '1000px',
       backdropFilter: 'blur(10px)',
       border: '1px solid rgba(255, 255, 255, 0.1)'
     }}>
-      
-      <div style={{ 
-        display: 'flex', 
+
+      <div className="current-decision-actions" style={{
+        display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         gap: '20px'
       }}>
-        
+
         {/* STATUS INDICATOR */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{
@@ -51,8 +51,8 @@ const CurrentDecisionSection: React.FC<CurrentDecisionSectionProps> = ({
             borderRadius: '50%',
             backgroundColor: selectedDecisionId ? '#c13a34' : '#f97f78'
           }}></div>
-          <span style={{ 
-            color: 'rgba(255, 255, 255, 0.8)', 
+          <span style={{
+            color: 'rgba(255, 255, 255, 0.8)',
             fontSize: '12px',
             fontWeight: '500'
           }}>

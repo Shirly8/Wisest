@@ -750,6 +750,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
 
               {/* 11) DECISION BREAKDOWN ANALYSIS */}
               <h2 style={{color: 'white', fontSize:'18px', backgroundColor: '#FF6E70', padding: '12px', margin: '-20px 0 12px 0', borderRadius: '4px'}}>Decision Breakdown Analysis</h2>
+              <p style={{display: 'none', color: '#FF6E70', fontSize: '10px', fontWeight: '700', textAlign: 'center', margin: '8px 0 12px 0', letterSpacing: '1.2px', animation: 'pulse-text 2s ease-in-out infinite'}} className="carousel-swipe-hint">← SWIPE TO VIEW →</p>
               <div className="decision-charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
 
                 <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '400px' }}>
@@ -790,6 +791,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
 
               {/* 12) STRATEGIC ANALYSIS DIAGRAMS */}
               <h2 className="strategic-analysis-header" style={{color: 'white', fontSize:'18px', backgroundColor: '#4ECDC4', padding: '12px', margin: '0 0 12px 0', borderRadius: '4px'}}>Strategic Decision Analysis</h2>
+              <p style={{display: 'none', color: '#4ECDC4', fontSize: '10px', fontWeight: '700', textAlign: 'center', margin: '8px 0 12px 0', letterSpacing: '1.2px', animation: 'pulse-text 2s ease-in-out infinite'}} className="carousel-swipe-hint">← SWIPE TO VIEW →</p>
 
               <div className="decision-charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
                 <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '400px' }}>

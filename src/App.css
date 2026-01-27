@@ -570,6 +570,32 @@ h2 {
   transition: all 0.3s ease;
 }
 
+/* Mobile: Improve spacing and sizing on smaller screens */
+@media (max-width: 900px) {
+  .rankingslider {
+    flex-wrap: wrap;
+    padding: 16px 12px;
+    gap: 12px;
+  }
+
+  .importance-label {
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+
+  .importance-label h3 {
+    font-size: 14px;
+  }
+
+  .importance-value {
+    flex: 0 0 50px;
+  }
+
+  .importance-value h3 {
+    font-size: 16px;
+  }
+}
+
 .rankingslider:hover {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(193, 58, 52, 0.3);
@@ -595,6 +621,14 @@ h2 {
   flex: 1;
   min-width: 800px;
   padding: 0 24px;
+}
+
+/* Mobile: Remove min-width constraint to allow flexibility on smaller screens */
+@media (max-width: 900px) {
+  .importance-slider-container {
+    min-width: 0;
+    padding: 0 12px;
+  }
 }
 
 .importance-value {
@@ -1006,6 +1040,7 @@ h2 {
 
   .StartImage {
     width: 100vw;
+    height: 45vh;
     margin-top: -60px;
     object-fit: cover;
   }
@@ -1942,6 +1977,21 @@ h2 {
   max-height: calc(100vh - 200px);
 }
 
+/* Mobile optimization for home page container */
+@media (max-width: 768px) {
+  .home-main-container {
+    padding: 10px 20px;
+    max-height: calc(100vh - 150px);
+  }
+}
+
+@media (max-width: 480px) {
+  .home-main-container {
+    padding: 10px 12px;
+    max-height: auto;
+  }
+}
+
 /* Two Column Layout */
 .home-two-column {
   display: flex;
@@ -2022,6 +2072,12 @@ h2 {
   gap: 12px;
 }
 
+@media (max-width: 768px) {
+  .home-right-section {
+    gap: 10px;
+  }
+}
+
 .home-description {
   font-size: 0.8em !important;
   font-weight: 300;
@@ -2058,6 +2114,20 @@ h2 {
   justify-content: center;
 }
 
+@media (max-width: 768px) {
+  .feature-card-mini {
+    padding: 10px 8px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .feature-card-mini {
+    padding: 8px 6px;
+    border-radius: 8px;
+  }
+}
+
 .feature-card-mini:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(193, 58, 52, 0.3);
@@ -2077,6 +2147,28 @@ h2 {
   color: white;
   margin: 0;
   letter-spacing: 0.3px;
+}
+
+@media (max-width: 768px) {
+  .feature-icon-large {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+
+  .feature-card-mini h3 {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .feature-icon-large {
+    font-size: 20px;
+    margin-bottom: 3px;
+  }
+
+  .feature-card-mini h3 {
+    font-size: 9px;
+  }
 }
 
 .feature-card-mini p {
@@ -2941,32 +3033,743 @@ h2 {
   }
 }
 
-/* Responsive design */
+/* Responsive design for charts - Mobile optimization with horizontal carousel */
+@media (max-width: 1024px) {
+  .decision-charts-grid {
+    display: flex !important;
+    overflow-x: auto;
+    overflow-y: visible;
+    gap: 16px !important;
+    padding: 0 !important;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    margin: 0 !important;
+    position: relative;
+  }
+
+  .decision-charts-grid > div {
+    flex: 0 0 90vw;
+    min-width: 90vw;
+    max-width: 90vw;
+    height: auto !important;
+    max-height: 480px !important;
+    margin-left: 5vw;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* First item - no left margin for proper alignment */
+  .decision-charts-grid > div:first-child {
+    margin-left: 5vw;
+  }
+
+  /* Last item - add right margin for balance */
+  .decision-charts-grid > div:last-child {
+    margin-right: 5vw;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .decision-charts-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .decision-charts-grid {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Dashboard result styling */
+  .final-decision {
+    font-size: 72px;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+
+  .final-subtitle {
+    font-size: 16px;
+  }
+
+  /* Dashboard section titles */
+  h2[style*="color: 'white'"],
+  h2[style*="color: white"] {
+    font-size: 16px !important;
+  }
+
+  .decision-main-content {
+    width: 100% !important;
+  }
+
+  /* Carousel swipe hint - show only on mobile */
+  .carousel-swipe-hint {
+    display: block !important;
+  }
+
+  @keyframes pulse-text {
+    0%, 100% {
+      opacity: 0.8;
+      letter-spacing: 1.2px;
+    }
+    50% {
+      opacity: 1;
+      letter-spacing: 1.5px;
+    }
+  }
+
+  /* Carousel scroll indicator dots */
+  .carousel-indicator-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+    margin-bottom: 16px;
+  }
+
+  .carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 110, 112, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .carousel-dot.active {
+    background: #FF6E70;
+    width: 12px;
+    border-radius: 4px;
+  }
+
+  /* Gemini sidebar - 90% viewport width on mobile, 90% height with fixed header/footer */
+  .decision-gemini-sidebar {
+    width: 90vw !important;
+    margin: 20px auto !important;
+    max-height: 90vh !important;
+    height: 1000px;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative;
+  }
+
+  /* Gemini header - fixed at top */
+  .decision-gemini-sidebar > div:nth-child(1) {
+    flex-shrink: 0 !important;
+    padding-bottom: 12px !important;
+    border-bottom: 1px solid rgba(46, 152, 221, 0.3) !important;
+    position: sticky !important;
+    top: 0 !important;
+    background: rgba(6, 7, 36, 0.98) !important;
+    z-index: 20 !important;
+  }
+
+  /* Gemini content - scrollable middle */
+  .decision-gemini-sidebar > div:nth-child(2) {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    min-height: 0 !important;
+    padding: 16px 0 !important;
+  }
+
+  /* Reanalyze section - fixed at bottom */
+  .decision-gemini-sidebar > div:nth-child(3) {
+    flex-shrink: 0 !important;
+    margin-top: 12px !important;
+    padding-top: 12px !important;
+    border-top: 1px solid rgba(46, 152, 221, 0.3) !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    background: rgba(6, 7, 36, 0.98) !important;
+    z-index: 20 !important;
+  }
+
+  /* Carousel navigation buttons */
+  .carousel-nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 110, 112, 0.9);
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    z-index: 10;
+    transition: all 0.3s ease;
+  }
+
+  .carousel-nav-button:hover {
+    background: rgba(255, 110, 112, 1);
+    box-shadow: 0 4px 12px rgba(255, 110, 112, 0.4);
+  }
+
+  .carousel-nav-prev {
+    left: 8px;
+  }
+
+  .carousel-nav-next {
+    right: 8px;
+  }
+
+  /* Action buttons section at bottom */
+  .decision-actions-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 32px;
+    margin-bottom: 32px;
+    padding: 20px 16px;
+    width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    justify-items: center;
+    background: rgba(6, 7, 36, 0.8);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 110, 112, 0.2);
+    
+  }
+
+  .decision-actions-section button {
+    width: 100%;
+    font-size: 13px !important;
+    padding: 12px 14px !important;
+    border-radius: 8px !important;
+    min-height: 44px;
+    white-space: nowrap;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .decision-actions-section button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 110, 112, 0.3);
+  }
+}
+
 @media (max-width: 768px) {
   .landing-title {
     font-size: 3rem;
   }
-  
+
   .landing-subtitle {
     font-size: 1.5rem;
   }
-  
+
   .landing-description {
     font-size: 1.1rem;
   }
-  
+
   .landing-features {
     gap: 20px;
   }
-  
+
   .feature-highlight {
     min-width: 120px;
     padding: 15px;
   }
-  
+
   .user-actions {
     flex-direction: column;
     align-items: center;
+  }
+
+  /* Mobile chart sizing - horizontal carousel layout */
+  .decision-charts-grid {
+    display: flex !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 14px !important;
+    padding: 0 !important;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  /* Target chart container divs - carousel items */
+  .decision-charts-grid > div {
+    flex: 0 0 90vw;
+    min-width: 90vw;
+    max-width: 90vw;
+    height: auto !important;
+    max-height: 400px !important;
+    margin-left: 5vw;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    overflow: hidden;
+  }
+
+  /* First item - no left margin for proper alignment */
+  .decision-charts-grid > div:first-child {
+    margin-left: 5vw;
+  }
+
+  /* Last item - add right margin for balance */
+  .decision-charts-grid > div:last-child {
+    margin-right: 5vw;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .decision-charts-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .decision-charts-grid {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Increase helper text readability on mobile */
+  .decision-charts-grid p {
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Chart titles inside carousel items */
+  .decision-charts-grid h3 {
+    font-size: 13px !important;
+  }
+
+  /* Gemini sidebar - 90% viewport width, 80% height with fixed header/footer */
+  .decision-gemini-sidebar {
+    width: 90vw !important;
+    margin: 20px auto !important;
+    max-width: 90vw !important;
+    max-height: 80vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: visible !important;
+  }
+
+  /* Gemini header - fixed at top */
+  .decision-gemini-sidebar > div:nth-child(1) {
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    top: 0 !important;
+    background: rgba(6, 7, 36, 0.98) !important;
+    z-index: 20 !important;
+    padding-bottom: 12px !important;
+  }
+
+  /* Gemini response content - scrollable middle */
+  .decision-gemini-sidebar > div:nth-child(2) {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    min-height: 0 !important;
+  }
+
+  /* Gemini reanalyze section - fixed at bottom */
+  .decision-gemini-sidebar > div:nth-child(3) {
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    background: rgba(6, 7, 36, 0.98) !important;
+    z-index: 20 !important;
+    padding-top: 12px !important;
+  }
+
+  /* Action buttons section at bottom - 2 columns */
+  .decision-actions-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    padding: 16px 12px;
+    width: 100%;
+    max-width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .decision-actions-section button {
+    width: 100%;
+    font-size: 13px !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    min-height: 44px;
+    white-space: nowrap;
+  }
+
+  /* Action buttons styling for mobile - 2 column grid layout */
+  .current-decision-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    justify-items: center !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin: 0 auto !important;
+  }
+
+  .current-decision-actions button {
+    font-size: 10px !important;
+    padding: 12px 13px !important;
+    border-radius: 8px !important;
+    min-height: 44px !important;
+    width: 100% !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Metrics page (Main.tsx) - Mobile optimization */
+  .OptionContainer {
+    width: 90vw !important;
+    max-width: 90vw !important;
+    margin: 0 auto !important;
+    padding: 16px 12px !important;
+  }
+
+  .optionbox {
+    width: 100% !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .optionText {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 !important;
+  }
+
+  .options-scroll-container {
+    margin: 0 auto !important;
+    width: 90vw !important;
+    max-width: 90vw !important;
+  }
+
+  .categoryboxes {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: unset !important;
+    width: 90vw !important;
+    max-width: 90vw !important;
+    margin: 0 auto !important;
+    padding: 0 12px !important;
+    gap: 16px !important;
+  }
+
+  .individualbox {
+    width: 100% !important;
+  }
+
+  .categoryText {
+    width: 90% !important;
+    margin: 0 auto !important;
+  }
+
+  .dropdown {
+    width: 90% !important;
+    margin: 0 auto !important;
+  }
+
+  .MetricOptions {
+    width: 100% !important;
+  }
+
+  /* Home page mobile responsiveness */
+  .home-two-column {
+    margin-top: 30px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .home-left-section {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .home-right-section {
+    margin-top: -50px;
+    flex: 1;
+  }
+
+  .home-main-title {
+    font-size: 1.8rem;
+    display: none;
+  }
+
+  .home-description {
+    font-size: 0.95rem;
+  }
+
+  .home-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  /* Tablet chart sizing and optimization */
+  .final-decision {
+    font-size: 60px;
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+
+  .final-subtitle {
+    font-size: 16px;
+  }
+
+  /* Dashboard header */
+  h2[style*="Decision Breakdown"],
+  h2[style*="Strategic"] {
+    font-size: 16px !important;
+  }
+
+  /* Gemini sidebar on tablet */
+  .decision-gemini-sidebar {
+    max-height: none;
+  }
+
+  /* Carousel scroll indicator hint */
+  .decision-charts-grid::before {
+    display: none;
+  }
+
+  .carousel-indicator-dots {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small mobile devices - carousel layout */
+  .decision-charts-grid {
+    display: flex !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 12px !important;
+    padding: 0 !important;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  /* Chart containers on very small screens */
+  .decision-charts-grid > div {
+    flex: 0 0 90vw;
+    min-width: 90vw;
+    max-width: 90vw;
+    height: auto !important;
+    max-height: 350px !important;
+    margin-left: 5vw;
+    padding: 8px !important;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* First item - no left margin for proper alignment */
+  .decision-charts-grid > div:first-child {
+    margin-left: 5vw;
+  }
+
+  /* Last item - add right margin for balance */
+  .decision-charts-grid > div:last-child {
+    margin-right: 5vw;
+  }
+
+  /* Hide scrollbar */
+  .decision-charts-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .decision-charts-grid {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Helper text - ensure readability */
+  .decision-charts-grid p {
+    font-size: 10px !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Gemini sidebar - 90% viewport width, 80% height with fixed header/footer */
+  .decision-gemini-sidebar {
+    width: 90vw !important;
+    margin: 16px auto !important;
+    max-width: 90vw !important;
+    max-height: 80vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .decision-gemini-sidebar > div:nth-child(1) {
+    flex-shrink: 0 !important;
+    padding-bottom: 12px !important;
+    border-bottom: 1px solid rgba(46, 152, 221, 0.3) !important;
+    position: sticky !important;
+    top: 0 !important;
+    background: rgba(6, 7, 36, 0.98) !important;
+    z-index: 20 !important;
+  }
+
+  .decision-gemini-sidebar > div:nth-child(2) {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
+  }
+
+  .decision-gemini-sidebar > div:nth-child(3) {
+    flex-shrink: 0 !important;
+    margin-top: 8px !important;
+    padding-top: 8px !important;
+    border-top: 1px solid rgba(46, 152, 221, 0.3) !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    background: rgba(6, 7, 36, 0.98) !important;
+    z-index: 20 !important;
+  }
+
+  /* Action buttons section at bottom */
+  .decision-actions-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 12px 8px;
+    width: 100%;
+    max-width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .decision-actions-section button {
+    width: 100%;
+    font-size: 12px !important;
+    padding: 10px 12px !important;
+    border-radius: 6px !important;
+    min-height: 40px;
+    white-space: nowrap;
+  }
+
+  .decision-container {
+    width: 100% !important;
+    padding: 8px !important;
+  }
+
+  /* Decision result text - bigger and bolder on small screens */
+  .final-decision {
+    font-size: 48px !important;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .final-subtitle {
+    font-size: 14px !important;
+  }
+
+  /* Dashboard section headers */
+  .strategic-analysis-header {
+    font-size: 16px !important;
+  }
+
+  h2[style*="fontSize"] {
+    font-size: 14px !important;
+  }
+
+  /* Final panel styling */
+  .final {
+    padding: 40px 20px !important;
+    min-height: 200px;
+  }
+
+  /* Gemini sidebar on mobile - 80% view height */
+  .decision-gemini-sidebar {
+    width: 90vw !important;
+    margin: 16px auto !important;
+    max-width: 90vw !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* Home page - stack everything vertically */
+  .home-main-title {
+    font-size: 1.5rem;
+  }
+
+  .home-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .home-features-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .home-cta-primary,
+  .home-cta-secondary {
+    font-size: 11px;
+    padding: 8px 16px;
+  }
+
+  .home-learn-more-link {
+    font-size: 10px;
+    padding: 8px 16px;
+  }
+
+  /* Metrics page (Main.tsx) - Extra small mobile optimization */
+  .OptionContainer {
+    width: 90vw !important;
+    max-width: 90vw !important;
+    margin: 0 auto !important;
+    padding: 12px 8px !important;
+  }
+
+  .optionbox {
+    width: 100% !important;
+    gap: 6px !important;
+    padding: 6px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .optionText {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 14px !important;
+    height: 40px !important;
+  }
+
+  .options-scroll-container {
+    width: 90vw !important;
+    max-width: 90vw !important;
+    margin: 0 auto !important;
+  }
+
+  .categoryboxes {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 90vw !important;
+    max-width: 90vw !important;
+    margin: 0 auto !important;
+    padding: 0 8px !important;
+    gap: 12px !important;
+  }
+
+  .categoryText {
+    width: 85% !important;
+    margin: 0 auto !important;
+    font-size: 13px !important;
+  }
+
+  .dropdown {
+    width: 85% !important;
+    margin: 0 auto !important;
+    font-size: 12px !important;
   }
 }
 
