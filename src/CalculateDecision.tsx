@@ -841,7 +841,8 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                 padding: '20px',
                 display: 'flex',
                 flexDirection: 'column',
-                height: '100%',
+                flex: 1,
+                minHeight: 0,
                 backdropFilter: 'blur(10px)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
               }}>
@@ -874,6 +875,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                 {/* Gemini Content - Scrollable */}
                 <div style={{
                   flex: 1,
+                  minHeight: 0,
                   overflowY: 'auto',
                   overflowX: 'hidden',
                   paddingRight: '8px',
