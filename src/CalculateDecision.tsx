@@ -753,7 +753,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               <p style={{display: 'none', color: '#FF6E70', fontSize: '10px', fontWeight: '700', textAlign: 'center', margin: '8px 0 12px 0', letterSpacing: '1.2px', animation: 'pulse-text 2s ease-in-out infinite'}} className="carousel-swipe-hint">← SWIPE TO VIEW →</p>
               <div className="decision-charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
 
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '400px' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '390px' }}>
                   <CategoryBreakdown
                     categories={categories}
                     options={options}
@@ -767,7 +767,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                   </p>
                 </div>
 
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '400px' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '390px' }}>
                   <OptionBreakdown
                     options={options}
                     preparePieChart={preparePieChart}
@@ -778,7 +778,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                   </p>
                 </div>
 
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '400px' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '390px' }}>
                   <h3 style={{color: '#FF6E70', fontSize:'14px', textAlign: 'center', margin: '0 0 4px 0'}}>Risk Assessment</h3>
                   <div ref={riskAssessmentRef} style={{ width: '100%', flex: 1 }}></div>
                   <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
@@ -794,7 +794,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               <p style={{display: 'none', color: '#4ECDC4', fontSize: '10px', fontWeight: '700', textAlign: 'center', margin: '8px 0 12px 0', letterSpacing: '1.2px', animation: 'pulse-text 2s ease-in-out infinite'}} className="carousel-swipe-hint">← SWIPE TO VIEW →</p>
 
               <div className="decision-charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '400px' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '390px' }}>
                   <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 4px 0' }}>Trade-off Analysis</h3>
                   <div ref={radarChartRef} style={{ width: '100%', flex: 1 }}></div>
                   <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
@@ -803,7 +803,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                   </p>
                 </div>
 
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '400px' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '390px' }}>
                   <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 4px 0' }}>Decision Confidence</h3>
                   <div ref={comparisonChartRef} style={{ width: '100%', flex: 1 }}></div>
                   <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
@@ -812,7 +812,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                   </p>
                 </div>
 
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '400px' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '390px' }}>
                   <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 4px 0' }}>Decision Stability</h3>
                   <div ref={heatmapRef} style={{ width: '100%', flex: 1 }}></div>
                   <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
