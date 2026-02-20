@@ -828,16 +828,18 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               flex: '0 0 23%',
               display: 'flex',
               flexDirection: 'column',
+              justifyContent: 'center',
               minWidth: 0,
               boxSizing: 'border-box',
               height: '100vh',
               position: 'sticky',
-              top: '0'
+              top: '0',
+              padding: '16px 0'
             }}>
               <div style={{
                 background: 'linear-gradient(135deg, rgba(42, 70, 160, 0.2) 0%, rgba(46, 152, 221, 0.2) 100%)',
                 border: '1px solid rgba(46, 152, 221, 0.4)',
-                borderRadius: '0',
+                borderRadius: '12px',
                 padding: '20px',
                 display: 'flex',
                 flexDirection: 'column',
