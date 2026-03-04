@@ -23,12 +23,14 @@ def query_rag(query_text):
     db = initialize_chroma()
     
     #Generate query embedding using Cohere (384 dims for embed-english-light-v3.0)
+    print(f"[RAG] Generating embedding for query: {query_text[:50]}...")
     response = cohere_client.embed(
         texts=[query_text],
         model="embed-english-light-v3.0",
         input_type="search_query"
     )
     query_embedding = response.embeddings[0]
+    print(f"[RAG] Embedding generated: {len(query_embedding)} dims")
 
     # Search database using HTTP call instead of RPC wrapper
     rpc_url = f"{os.environ.get('SUPABASE_URL')}/rest/v1/rpc/match_documents"
@@ -37,6 +39,7 @@ def query_rag(query_text):
         "Authorization": f"Bearer {os.environ.get('SUPABASE_SERVICE_KEY')}",
         "Content-Type": "application/json",
     }
+    print(f"[RAG] Calling RPC at {rpc_url}")
     rpc_response = requests.post(
         rpc_url,
         headers=headers,
@@ -44,7 +47,9 @@ def query_rag(query_text):
     )
 
     print(f"[RAG] RPC status: {rpc_response.status_code}")
+    print(f"[RAG] RPC response: {rpc_response.text[:200]}")
     results_data = rpc_response.json() if rpc_response.status_code == 200 else []
+    print(f"[RAG] Results count: {len(results_data)}")
 
     if not results_data:
         print(f"[RAG] No results found for query: {query_text}")
