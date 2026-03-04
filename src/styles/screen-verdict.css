@@ -151,7 +151,7 @@
 .s4-ft{
   display:flex;align-items:center;justify-content:center;gap:var(--sp-4);
   padding:var(--sp-5) var(--gut);border-top:1px solid var(--e1);flex-shrink:0;
-  margin-top:var(--sp-8);
+  margin-top:var(--sp-8);flex-wrap:wrap;
 }
 
 /* Skip animation button */
@@ -167,4 +167,14 @@
 @media(max-width:500px){
   .s4-vpills{gap:var(--sp-3)}
   .dash-panels{grid-template-columns:1fr}
+  .s4-header{padding:var(--sp-4)}
+  .oracle-panel{padding:var(--sp-4)}
+  .op-head{flex-wrap:wrap;gap:var(--sp-2)}
+  .conf-bar{height:16px}
+  .risk-bar{height:18px}
+
+  .s4-ft{gap:var(--sp-2);padding:var(--sp-3) var(--gut);margin-top:var(--sp-4)}
+  .s4-ft .btn{padding:clamp(0.5rem, 1.5vw, 0.7rem) clamp(0.8rem, 2vw, 1.2rem);font-size:0.85rem}
+  .s4-ft .btn-g{flex:0 0 calc(50% - var(--sp-1))}
+  .s4-ft .btn-p{flex:0 0 calc(50% - var(--sp-1))}
 }

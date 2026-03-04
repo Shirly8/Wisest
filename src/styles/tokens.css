@@ -57,3 +57,40 @@
   --cin:    cubic-bezier(0.87,0,0.13,1);
   --tf: 140ms;--tb: 300ms;--ts: 680ms;
 }
+
+/* ════════════════════════════════════════
+   MOBILE OPTIMIZATIONS
+════════════════════════════════════════ */
+
+/* Tablets & small screens */
+@media(max-width:768px){
+  :root {
+    --gut: clamp(0.75rem, 3vw, 1.5rem);
+    --sp-8: 1.25rem;
+  }
+}
+
+/* Mobile phones */
+@media(max-width:500px){
+  :root {
+    --gut: clamp(0.75rem, 3vw, 1rem);
+    --sp-8: 1rem;
+    --sp-6: 1rem;
+    --sp-5: 0.75rem;
+    --s-xl: 1.25rem;
+    --s-2xl: clamp(1.25rem, 2.5vw, 1.75rem);
+    --s-hero: clamp(2.5rem, 7vw, 4rem);
+  }
+}
+
+/* Very small phones */
+@media(max-width:380px){
+  :root {
+    --gut: 0.75rem;
+    --sp-8: 0.75rem;
+    --sp-6: 0.75rem;
+    --sp-5: 0.5rem;
+    --sp-4: 0.75rem;
+    --s-xl: 1.1rem;
+  }
+}

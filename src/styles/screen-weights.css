@@ -84,3 +84,11 @@
   .wt-row{grid-template-columns:1fr auto;row-gap:var(--sp-3)}
   .wt-name,.wt-dir{grid-column:1/-1}
 }
+
+@media(max-width:500px){
+  .s3-wrap{padding:var(--sp-4)}
+  .slider{height:20px}
+  .oracle-scale-label{font-size:0.9rem}
+  .wt-row{gap:var(--sp-2)}
+  .choice-item{gap:var(--sp-1)}
+}

@@ -1,7 +1,7 @@
 /* ════ BUTTONS ════ */
 .btn{
   display:inline-flex;align-items:center;gap:var(--sp-3);
-  padding:.8rem 1.75rem;border:none;cursor:pointer;border-radius:1px;
+  padding:clamp(0.6rem, 2vw, 0.8rem) clamp(1rem, 3vw, 1.75rem);border:none;cursor:pointer;border-radius:1px;
   font:500 var(--s-sm)/1 var(--fb);letter-spacing:.03em;
   transition:opacity var(--tb),transform var(--tb) var(--expo),box-shadow var(--tb);
   text-decoration:none;position:relative;overflow:hidden;
@@ -37,5 +37,5 @@
 }
 .btn-add:hover{border-color:var(--silver);color:var(--silver)}
 
-.btn-hero{padding:1rem 2.5rem;font-size:var(--s-base)}
-.btn-base-large{padding:1rem 2rem;font-size:var(--s-base)}
+.btn-hero{padding:clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem);font-size:var(--s-base)}
+.btn-base-large{padding:clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 2rem);font-size:var(--s-base)}

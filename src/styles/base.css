@@ -39,3 +39,10 @@ body::after{
 
 /* ════ RESPONSIVE ════ */
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ════ MOBILE TEXT CONTRAST ════ */
+@media(max-width:500px){
+  .t-sm{color:rgba(196,212,240,0.75)}
+  .t-sub{color:var(--t1)}
+  .t-lbl{color:rgba(196,212,240,0.5)}
+}

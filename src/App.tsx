@@ -45,13 +45,9 @@ const HomePage: React.FC = () => {
     if (landZoomedRef.current) return;
     landZoomedRef.current = true;
     setTimeout(() => {
-      if (userEmail) {
-        navigate('/decision-maker');
-      } else {
-        signInWithGoogle();
-      }
+      navigate('/decision-maker');
     }, 460);
-  }, [navigate, userEmail]);
+  }, [navigate]);
 
   const triggerShake = useCallback(() => {
     const orbWrap = orbWrapRef.current;

@@ -18,3 +18,19 @@
 .ndot{width:5px;height:5px;border-radius:50%;background:var(--e2);transition:background var(--tb),transform var(--tb)}
 .ndot.on{background:var(--silver);transform:scale(1.3)}
 .ncrumb{font:400 .6rem/1 var(--fm);color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-left:var(--sp-2)}
+
+/* ════ MOBILE OPTIMIZATIONS ════ */
+@media(max-width:768px){
+  .nav{padding:var(--sp-4) var(--gut)}
+  .logo-name{font-size:0.9rem}
+  .ncrumb{font-size:0.55rem;margin-left:var(--sp-1)}
+}
+
+@media(max-width:500px){
+  .nav{padding:var(--sp-3) var(--gut);gap:var(--sp-2)}
+  .logo-bead{width:20px;height:20px;font-size:0.5rem}
+  .logo-name{font-size:0.85rem}
+  .nsteps{gap:var(--sp-2)}
+  .ndot{width:4px;height:4px}
+  .ncrumb{font-size:0.5rem;display:none}
+}
