@@ -230,6 +230,70 @@ def chat():
             'answer': "I'm having trouble accessing my knowledge base right now. Please try again later!"
         }), 500
 
+# Debug endpoint for RAG diagnostics
+@app.route('/debug/rag', methods=['GET'])
+def debug_rag():
+    """Diagnostic endpoint to test RAG components"""
+    import os
+    from dotenv import load_dotenv
+
+    load_dotenv()
+
+    diagnostics = {
+        'status': 'running',
+        'env_vars': {
+            'SUPABASE_URL': bool(os.environ.get('SUPABASE_URL')),
+            'SUPABASE_SERVICE_KEY': bool(os.environ.get('SUPABASE_SERVICE_KEY')),
+            'COHERE_API_KEY': bool(os.environ.get('COHERE_API_KEY')),
+            'GROQ_API_KEY': bool(os.environ.get('GROQ_API_KEY')),
+        }
+    }
+
+    # Test Cohere API
+    try:
+        import requests
+        resp = requests.post(
+            "https://api.cohere.ai/v1/embed",
+            headers={"Authorization": f"Bearer {os.environ.get('COHERE_API_KEY')}", "Content-Type": "application/json"},
+            json={"texts": ["test"], "model": "embed-english-light-v3.0", "input_type": "search_query"},
+            timeout=5
+        )
+        diagnostics['cohere_api'] = {'status': resp.status_code, 'working': resp.status_code == 200}
+    except Exception as e:
+        diagnostics['cohere_api'] = {'status': 'error', 'error': str(e)}
+
+    # Test Groq API
+    try:
+        resp = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={"Authorization": f"Bearer {os.environ.get('GROQ_API_KEY')}", "Content-Type": "application/json"},
+            json={"messages": [{"role": "user", "content": "test"}], "model": "llama-3.1-8b-instant"},
+            timeout=5
+        )
+        diagnostics['groq_api'] = {'status': resp.status_code, 'working': resp.status_code == 200}
+    except Exception as e:
+        diagnostics['groq_api'] = {'status': 'error', 'error': str(e)}
+
+    # Test Supabase RPC
+    try:
+        resp = requests.post(
+            f"{os.environ.get('SUPABASE_URL')}/rest/v1/rpc/match_documents",
+            headers={
+                "apikey": os.environ.get('SUPABASE_SERVICE_KEY'),
+                "Authorization": f"Bearer {os.environ.get('SUPABASE_SERVICE_KEY')}",
+                "Content-Type": "application/json",
+            },
+            json={"query_embedding": [0.1]*384, "match_count": 1},
+            timeout=5
+        )
+        diagnostics['rpc_api'] = {'status': resp.status_code, 'working': resp.status_code == 200}
+        if resp.status_code == 200:
+            diagnostics['rpc_api']['result_count'] = len(resp.json())
+    except Exception as e:
+        diagnostics['rpc_api'] = {'status': 'error', 'error': str(e)}
+
+    return jsonify(diagnostics)
+
 # Health check endpoint for deployment platforms
 @app.route('/health', methods=['GET'])
 def health_check():
