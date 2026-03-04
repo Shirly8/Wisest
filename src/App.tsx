@@ -131,6 +131,10 @@ const HomePage: React.FC = () => {
                 Shake to consult
                 <ArrowSvg />
               </button>
+              <button className="btn btn-g btn-hero" onClick={() => navigate('/demo')}>
+                See demo
+                <ArrowSvg />
+              </button>
             </div>
           </div>
 
