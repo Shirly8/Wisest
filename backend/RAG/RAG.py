@@ -7,7 +7,6 @@ from langchain.schema.document import Document
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import time
-import cohere
 
 load_dotenv()
 
@@ -16,9 +15,7 @@ SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_KEY = os.environ.get('SUPABASE_SERVICE_KEY', os.environ.get('SUPABASE_ANON_KEY'))
 DATA_PATH = 'Shirly8/ShirleyHuang-Data'  # GitHub repo
 db = None
-
-# Initialize Cohere client for embeddings (FREE: 100 calls/min, 384 dims - same as old model!)
-cohere_client = cohere.Client(os.environ.get('COHERE_API_KEY'))
+COHERE_API_KEY = os.environ.get('COHERE_API_KEY')
 
 
 # Function processes all documents from GitHub RAG folder only
@@ -103,12 +100,17 @@ def get_embedding():
     """Wrapper to match original interface - returns function that generates embeddings"""
     def embed_text(text):
         # Cohere embed-english-light-v3.0: 384 dimensions (same as old all-MiniLM-L6-v2!)
-        response = cohere_client.embed(
-            texts=[text],
-            model="embed-english-light-v3.0",
-            input_type="search_document"
+        response = requests.post(
+            "https://api.cohere.ai/v1/embed",
+            headers={"Authorization": f"Bearer {COHERE_API_KEY}", "Content-Type": "application/json"},
+            json={
+                "texts": [text],
+                "model": "embed-english-light-v3.0",
+                "input_type": "search_document"
+            }
         )
-        return response.embeddings[0]
+        response.raise_for_status()
+        return response.json()["embeddings"][0]
     return embed_text
 
 

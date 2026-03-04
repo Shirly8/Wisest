@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wisest — 3D Oracle Sphere</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; background: #030208; overflow: hidden; }
+  canvas { display: block; }
+
+  /* Film grain */
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 10; opacity: .028;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 200px;
+  }
+
+  /* Triangle window overlay — sits on top of canvas */
+  #overlay {
+    position: fixed; inset: 0; pointer-events: none; z-index: 5;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #tri-container {
+    position: relative;
+    /* sized by JS to match projected window circle */
+    width: 120px; height: 120px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #tri-svg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    filter: drop-shadow(0 0 8px rgba(90,140,255,.5));
+  }
+  #tri-text {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; text-align: center;
+    padding: 22% 8% 26%;
+    width: 100%; height: 100%;
+  }
+  .tri-eight {
+    font: 900 2.4rem/1 Georgia, serif;
+    color: rgba(75,115,220,.45);
+    text-shadow: 0 0 22px rgba(60,95,200,.5);
+    transition: opacity .4s, transform .5s cubic-bezier(.16,1,.3,1);
+  }
+  .tri-eight.gone { opacity: 0; transform: scale(1.5); }
+  .tri-ans {
+    display: none;
+    font: 600 italic .72rem/1.1 Georgia, serif;
+    color: #8BBEFF;
+    text-shadow: 0 0 12px rgba(110,170,255,.98), 0 0 32px rgba(70,115,255,.5);
+    letter-spacing: .01em;
+  }
+  .tri-ans.show {
+    display: block;
+    animation: riseUp .8s cubic-bezier(.16,1,.3,1) .4s both;
+  }
+  .tri-sub {
+    display: none;
+    font: 400 .45rem/1 'Courier New', monospace;
+    color: rgba(140,190,255,.6);
+    letter-spacing: .08em; text-transform: uppercase;
+  }
+  .tri-sub.show {
+    display: block;
+    animation: riseUp .8s cubic-bezier(.16,1,.3,1) .55s both;
+  }
+  @keyframes riseUp { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:none } }
+
+  /* Shake button hint */
+  #hint {
+    position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    font: 400 .65rem/1 'Courier New', monospace;
+    color: rgba(180,200,240,.28); letter-spacing: .14em; text-transform: uppercase;
+    animation: breathe 3s ease-in-out infinite;
+    pointer-events: none; z-index: 10;
+  }
+  @keyframes breathe { 0%,100%{opacity:.28} 50%{opacity:.6} }
+
+  /* Star burst particles */
+  .star {
+    position: fixed; width: 2px; height: 2px;
+    background: #8BBEFF; border-radius: 50%;
+    pointer-events: none; z-index: 15;
+    animation: starfly 1.1s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  @keyframes starfly {
+    0%   { transform: translate(0,0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx),var(--dy)) scale(0); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- THREE.JS CANVAS -->
+<canvas id="c"></canvas>
+
+<!-- TRIANGLE WINDOW OVERLAY -->
+<div id="overlay">
+  <div id="tri-container">
+    <svg id="tri-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#121C56" stop-opacity=".97"/>
+          <stop offset="100%" stop-color="#090E32" stop-opacity=".97"/>
+        </linearGradient>
+        <filter id="tglow">
+          <feGaussianBlur stdDeviation="1.5" result="b"/>
+          <feComposite in="SourceGraphic" in2="b" operator="over"/>
+        </filter>
+      </defs>
+      <polygon points="50,12 88,82 12,82"
+        fill="url(#tg)"
+        stroke="rgba(75,125,230,.25)" stroke-width=".6"
+        filter="url(#tglow)"/>
+    </svg>
+    <div id="tri-text">
+      <div class="tri-eight" id="tri-eight">8</div>
+      <div class="tri-ans"   id="tri-ans"></div>
+      <div class="tri-sub"   id="tri-sub"></div>
+    </div>
+  </div>
+</div>
+
+<div id="hint">click · drag · shake</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ══════════════════════════════════════════════
+   SCENE SETUP
+══════════════════════════════════════════════ */
+const canvas   = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene  = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+camera.position.set(0, 0, 4.2);
+
+function resize(){
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+resize();
+addEventListener('resize', resize);
+
+/* ══════════════════════════════════════════════
+   LIGHTING — cold studio overhead
+══════════════════════════════════════════════ */
+
+// Ambient: very dark cold fill
+const ambient = new THREE.AmbientLight(0x1a1540, 0.35);
+scene.add(ambient);
+
+// Key light: cold overhead spot — the one "real" light source
+const key = new THREE.SpotLight(0xC8D8FF, 3.5);
+key.position.set(1.5, 3.5, 2.5);
+key.angle      = Math.PI / 7;
+key.penumbra   = 0.45;
+key.decay      = 1.8;
+key.distance   = 14;
+key.castShadow = true;
+scene.add(key);
+scene.add(key.target); // target stays at origin
+
+// Rim light: faint cold violet from below-left
+const rim = new THREE.PointLight(0x3020A0, 0.6, 8);
+rim.position.set(-2, -2, 1.5);
+scene.add(rim);
+
+// Fill: very subtle blue from the right
+const fill = new THREE.PointLight(0x2040C0, 0.25, 10);
+fill.position.set(2.5, 0, 1);
+scene.add(fill);
+
+/* ══════════════════════════════════════════════
+   THE SPHERE — wet lacquer obsidian
+══════════════════════════════════════════════ */
+const orbGeo = new THREE.SphereGeometry(1, 128, 128);
+
+const orbMat = new THREE.MeshPhysicalMaterial({
+  color:        0x0A0818,      // very dark blue-black base
+  metalness:    0.0,
+  roughness:    0.0,           // perfectly smooth — wet lacquer
+  reflectivity: 1.0,
+  clearcoat:    1.0,           // clear coat = that wet shine layer
+  clearcoatRoughness: 0.0,
+  envMapIntensity: 1.4,
+
+  // transmission: 0 — fully opaque
+  // The "lacquer" look comes from the clearcoat + very low roughness
+});
+
+const orb = new THREE.Mesh(orbGeo, orbMat);
+orb.castShadow    = true;
+orb.receiveShadow = false;
+scene.add(orb);
+
+/* ══════════════════════════════════════════════
+   ENV MAP — fake reflection environment
+   Gives the clearcoat something to reflect
+══════════════════════════════════════════════ */
+const pmremGen = new THREE.PMREMGenerator(renderer);
+pmremGen.compileEquirectangularShader();
+
+// Build a simple gradient env map procedurally
+const envScene = new THREE.Scene();
+// top hemisphere: cold dark indigo
+const envTop = new THREE.Mesh(
+  new THREE.SphereGeometry(5, 32, 16, 0, Math.PI*2, 0, Math.PI/2),
+  new THREE.MeshBasicMaterial({ color: 0x060415, side: THREE.BackSide })
+);
+// bottom hemisphere: near black
+const envBot = new THREE.Mesh(
+  new THREE.SphereGeometry(5, 32, 16, 0, Math.PI*2, Math.PI/2, Math.PI/2),
+  new THREE.MeshBasicMaterial({ color: 0x020108, side: THREE.BackSide })
+);
+// bright cold light patch at top (what the sphere reflects as specular)
+const envLight = new THREE.Mesh(
+  new THREE.SphereGeometry(0.5, 16, 16),
+  new THREE.MeshBasicMaterial({ color: 0xB0C8FF })
+);
+envLight.position.set(1.2, 3, 1.5);
+envScene.add(envTop, envBot, envLight);
+
+const envRT  = pmremGen.fromScene(envScene);
+scene.environment = envRT.texture;
+orbMat.envMap = envRT.texture;
+orbMat.needsUpdate = true;
+
+/* ══════════════════════════════════════════════
+   THE DARK WINDOW (inner circle on the orb)
+   Rendered as a slightly inset disc on the sphere surface
+══════════════════════════════════════════════ */
+const winGeo = new THREE.CircleGeometry(0.42, 64);
+const winMat = new THREE.MeshPhysicalMaterial({
+  color:     0x080E28,
+  roughness: 0.05,
+  metalness: 0.0,
+  clearcoat: 0.8,
+  clearcoatRoughness: 0.05,
+  transparent: false,
+});
+const winMesh = new THREE.Mesh(winGeo, winMat);
+// Place it on the front face of the sphere, slightly offset forward
+winMesh.position.set(0, 0, 0.985);
+scene.add(winMesh);
+
+/* ══════════════════════════════════════════════
+   ATMOSPHERE RINGS (pulsing halos around orb)
+══════════════════════════════════════════════ */
+const rings = [];
+[1.18, 1.40, 1.68].forEach((r, i) => {
+  const geo = new THREE.RingGeometry(r, r + 0.006, 96);
+  const mat = new THREE.MeshBasicMaterial({
+    color: 0x5070CC,
+    transparent: true,
+    opacity: 0,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.z = -0.01;
+  mesh.userData = { phase: i * (Math.PI * 2 / 3), baseR: r };
+  scene.add(mesh);
+  rings.push(mesh);
+});
+
+/* ══════════════════════════════════════════════
+   DROP SHADOW (plane below the orb)
+══════════════════════════════════════════════ */
+const shadowGeo = new THREE.PlaneGeometry(4, 4);
+const shadowMat = new THREE.MeshBasicMaterial({
+  color: 0x000000,
+  transparent: true,
+  opacity: 0.55,
+  depthWrite: false,
+});
+// Radial gradient texture via canvas
+const shadowCv = document.createElement('canvas');
+shadowCv.width = shadowCv.height = 256;
+const sCtx = shadowCv.getContext('2d');
+const sg = sCtx.createRadialGradient(128,128,0, 128,128,128);
+sg.addColorStop(0,   'rgba(0,0,0,0.7)');
+sg.addColorStop(0.5, 'rgba(0,0,0,0.25)');
+sg.addColorStop(1,   'rgba(0,0,0,0)');
+sCtx.fillStyle = sg;
+sCtx.fillRect(0,0,256,256);
+shadowMat.map = new THREE.CanvasTexture(shadowCv);
+const shadow = new THREE.Mesh(shadowGeo, shadowMat);
+shadow.position.set(0, -1.35, 0);
+shadow.rotation.x = -Math.PI / 2;
+scene.add(shadow);
+
+/* ══════════════════════════════════════════════
+   STAGE GLOW — background radial light
+   (canvas 2D overlay behind the Three scene)
+══════════════════════════════════════════════ */
+const gCanvas = document.createElement('canvas');
+gCanvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:1';
+document.body.prepend(gCanvas);
+function drawGlow(){
+  gCanvas.width  = innerWidth;
+  gCanvas.height = innerHeight;
+  const gc = gCanvas.getContext('2d');
+  const cx = innerWidth/2, cy = innerHeight/2;
+  const r  = Math.min(innerWidth, innerHeight) * 0.5;
+  const g  = gc.createRadialGradient(cx,cy,0, cx,cy,r);
+  g.addColorStop(0,   'rgba(35,28,100,.28)');
+  g.addColorStop(0.45,'rgba(20,15,65,.12)');
+  g.addColorStop(1,   'rgba(0,0,0,0)');
+  gc.fillStyle = g;
+  gc.fillRect(0,0,innerWidth,innerHeight);
+}
+drawGlow();
+addEventListener('resize', drawGlow);
+
+/* ══════════════════════════════════════════════
+   TRIANGLE OVERLAY — project 3D window pos to 2D
+══════════════════════════════════════════════ */
+const triCtr = document.getElementById('tri-container');
+const tmpVec = new THREE.Vector3();
+
+function projectWindow(){
+  // Project the center of the window disc to screen space
+  tmpVec.set(0, 0, 0.985);
+  tmpVec.project(camera);
+  const x = ( tmpVec.x * .5 + .5) * innerWidth;
+  const y = (-tmpVec.y * .5 + .5) * innerHeight;
+
+  // Project the edge point to get the radius in pixels
+  const edgePt = new THREE.Vector3(0.42, 0, 0.985);
+  edgePt.project(camera);
+  const ex = ( edgePt.x * .5 + .5) * innerWidth;
+  const ey = (-edgePt.y * .5 + .5) * innerHeight;
+  const px = Math.sqrt((ex-x)**2 + (ey-y)**2);
+
+  // 56% of the circle = triangle content area
+  const size = px * 1.18 * 2;
+
+  triCtr.style.width   = size + 'px';
+  triCtr.style.height  = size + 'px';
+  triCtr.style.transform = `translate(${x - size/2}px, ${y - size/2}px)`;
+  triCtr.style.position  = 'absolute';
+  triCtr.style.left = '0';
+  triCtr.style.top  = '0';
+}
+
+/* ══════════════════════════════════════════════
+   MOUSE / TOUCH PARALLAX + DRAG ROTATE
+══════════════════════════════════════════════ */
+const mouse  = { x: 0, y: 0 };
+const target = { rx: 0, ry: 0 };
+const curr   = { rx: 0, ry: 0 };
+let isDragging = false, prevMouse = {x:0,y:0};
+
+addEventListener('mousemove', e => {
+  mouse.x = (e.clientX / innerWidth)  * 2 - 1;
+  mouse.y = (e.clientY / innerHeight) * 2 - 1;
+  if(isDragging){
+    const dx = e.clientX - prevMouse.x;
+    const dy = e.clientY - prevMouse.y;
+    target.ry += dx * 0.012;
+    target.rx += dy * 0.012;
+    prevMouse = {x:e.clientX, y:e.clientY};
+  }
+});
+addEventListener('mousedown', e => {
+  isDragging = true; prevMouse = {x:e.clientX, y:e.clientY};
+});
+addEventListener('mouseup', () => isDragging = false);
+addEventListener('touchmove', e => {
+  if(!e.touches.length) return;
+  const t = e.touches[0];
+  mouse.x = (t.clientX / innerWidth)  * 2 - 1;
+  mouse.y = (t.clientY / innerHeight) * 2 - 1;
+},{passive:true});
+
+/* ══════════════════════════════════════════════
+   SHAKE MECHANIC
+══════════════════════════════════════════════ */
+let shaking = false;
+let shakeTime = 0;
+const SHAKE_DUR = 0.95;
+
+const ANSWERS = [
+  'It is certain','Without a doubt','Signs point to yes',
+  'Most likely','Yes definitely','Cannot predict now',
+  'Reply hazy','Ask again later','Outlook good',
+  'My sources say no','Very doubtful','Concentrate and ask again'
+];
+
+function doShake(){
+  if(shaking) return;
+  shaking = true;
+  shakeTime = 0;
+
+  // Hide triangle content
+  document.getElementById('tri-eight').classList.remove('gone');
+  document.getElementById('tri-ans').classList.remove('show');
+  document.getElementById('tri-sub').classList.remove('show');
+  document.getElementById('tri-ans').style.display = 'none';
+  document.getElementById('tri-sub').style.display = 'none';
+}
+
+function updateShake(dt){
+  if(!shaking) return;
+  shakeTime += dt;
+  const t = shakeTime / SHAKE_DUR;
+
+  // Shake curve — multiple axis jolts
+  const sx = Math.sin(t * Math.PI * 8)  * Math.exp(-t * 3) * 0.25;
+  const sy = Math.sin(t * Math.PI * 11) * Math.exp(-t * 3) * 0.18;
+  orb.position.x = sx;
+  orb.position.y = sy;
+  winMesh.position.x = sx;
+  winMesh.position.y = sy;
+
+  if(shakeTime >= SHAKE_DUR){
+    shaking = false;
+    orb.position.set(0,0,0);
+    winMesh.position.set(0,0,0.985);
+    revealAnswer();
+  }
+}
+
+function revealAnswer(){
+  const ans = ANSWERS[Math.floor(Math.random() * ANSWERS.length)];
+  const eightEl = document.getElementById('tri-eight');
+  const ansEl   = document.getElementById('tri-ans');
+  const subEl   = document.getElementById('tri-sub');
+
+  eightEl.classList.add('gone');
+
+  setTimeout(()=>{
+    ansEl.textContent = ans;
+    subEl.textContent = 'The oracle has spoken';
+    ansEl.style.display = '';
+    subEl.style.display = '';
+    // Force reflow then add class
+    void ansEl.offsetWidth;
+    ansEl.classList.add('show');
+    subEl.classList.add('show');
+
+    // Star burst from window center
+    const rect = triCtr.getBoundingClientRect();
+    const cx = rect.left + rect.width  / 2;
+    const cy = rect.top  + rect.height / 2;
+    for(let i=0;i<14;i++){
+      const s = document.createElement('div'); s.className='star';
+      const a = (i/14)*Math.PI*2 + (Math.random()-.5)*.5;
+      const d = 55 + Math.random()*100;
+      s.style.left=cx+'px'; s.style.top=cy+'px';
+      s.style.setProperty('--dx', Math.cos(a)*d+'px');
+      s.style.setProperty('--dy', Math.sin(a)*d+'px');
+      s.style.animationDelay = (Math.random()*.08)+'s';
+      document.body.appendChild(s);
+      s.addEventListener('animationend',()=>s.remove());
+    }
+  }, 220);
+}
+
+// Click the sphere to shake
+addEventListener('click', e => {
+  // Raycast to check if click hit the sphere
+  const raycaster = new THREE.Raycaster();
+  const ndc = new THREE.Vector2(
+    (e.clientX/innerWidth)*2 -1,
+    -(e.clientY/innerHeight)*2+1
+  );
+  raycaster.setFromCamera(ndc, camera);
+  const hits = raycaster.intersectObject(orb);
+  if(hits.length > 0) doShake();
+});
+
+/* ══════════════════════════════════════════════
+   ATMOSPHERE PARTICLE CANVAS (behind Three.js)
+══════════════════════════════════════════════ */
+const atmCv = document.createElement('canvas');
+atmCv.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:2';
+document.body.prepend(atmCv);
+const atmCtx = atmCv.getContext('2d');
+
+class SmokePt {
+  constructor(s){ this.reset(s) }
+  reset(s){
+    const a=Math.random()*Math.PI*2;
+    const r=Math.min(innerWidth,innerHeight)*0.28*(0.4+Math.random()*0.9);
+    this.x=innerWidth/2+Math.cos(a)*r;
+    this.y=innerHeight/2+Math.sin(a)*r*0.75;
+    this.vx=(Math.random()-.5)*.28;
+    this.vy=-(0.18+Math.random()*.38);
+    this.sz=10+Math.random()*44;
+    this.a=0; this.ma=.015+Math.random()*.028;
+    this.life=0; this.ml=90+Math.random()*190;
+    this.hue=228+Math.random()*25;
+    if(s) this.life=Math.random()*this.ml;
+  }
+  tick(){
+    this.life++;this.x+=this.vx;this.y+=this.vy;this.sz+=.09;
+    const t=this.life/this.ml;
+    this.a=t<.2?(t/.2)*this.ma:(1-(t-.2)/.8)*this.ma;
+    if(this.life>=this.ml)this.reset(false);
+  }
+  draw(){
+    atmCtx.save();atmCtx.globalAlpha=this.a;
+    const g=atmCtx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.sz);
+    g.addColorStop(0,`hsla(${this.hue},45%,36%,1)`);
+    g.addColorStop(1,'transparent');
+    atmCtx.fillStyle=g;atmCtx.beginPath();
+    atmCtx.arc(this.x,this.y,this.sz,0,Math.PI*2);atmCtx.fill();
+    atmCtx.restore();
+  }
+}
+class StarDot {
+  constructor(){ this.reset() }
+  reset(){ this.x=Math.random()*innerWidth;this.y=Math.random()*innerHeight;this.a=0;this.ma=.05+Math.random()*.15;this.life=0;this.ml=150+Math.random()*280;this.sz=.3+Math.random()*.7;if(Math.random()>.35)this.life=Math.random()*this.ml; }
+  tick(){ this.life++;this.a=Math.sin(this.life/this.ml*Math.PI)*this.ma;if(this.life>=this.ml)this.reset(); }
+  draw(){ atmCtx.save();atmCtx.globalAlpha=this.a;atmCtx.fillStyle='rgba(185,205,255,1)';atmCtx.beginPath();atmCtx.arc(this.x,this.y,this.sz,0,Math.PI*2);atmCtx.fill();atmCtx.restore(); }
+}
+
+function resizeAtm(){ atmCv.width=innerWidth; atmCv.height=innerHeight; }
+resizeAtm(); addEventListener('resize', resizeAtm);
+
+const smk = Array.from({length:18}, ()=>new SmokePt(true));
+const sts  = Array.from({length:90},  ()=>new StarDot());
+
+/* ══════════════════════════════════════════════
+   RENDER LOOP
+══════════════════════════════════════════════ */
+let last = performance.now();
+
+function lerp(a,b,t){ return a+(b-a)*t; }
+
+renderer.setAnimationLoop(()=>{
+  const now = performance.now();
+  const dt  = Math.min((now - last)/1000, 0.05);
+  last = now;
+  const t = now * 0.001;
+
+  // ── Smooth parallax tilt (non-drag)
+  if(!isDragging){
+    target.ry += (mouse.x * 0.22 - target.ry) * 0.06;
+    target.rx += (mouse.y * 0.15 - target.rx) * 0.06;
+  }
+  curr.rx = lerp(curr.rx, target.rx, 0.08);
+  curr.ry = lerp(curr.ry, target.ry, 0.08);
+
+  orb.rotation.x = curr.rx;
+  orb.rotation.y = curr.ry;
+  // Window stays facing camera (doesn't rotate with sphere)
+  winMesh.rotation.x = 0;
+  winMesh.rotation.y = 0;
+
+  // ── Subtle idle float
+  if(!shaking){
+    orb.position.y     = Math.sin(t * 0.7) * 0.035;
+    winMesh.position.y = orb.position.y;
+  }
+
+  // ── Shake physics
+  updateShake(dt);
+
+  // ── Atmosphere rings pulse
+  rings.forEach(r=>{
+    const p = (Math.sin(t*0.55 + r.userData.phase) + 1) / 2;
+    r.material.opacity = p * 0.14;
+    // Slight scale pulse
+    const s = r.userData.baseR * (1 + p * 0.04) / r.userData.baseR;
+    r.scale.setScalar(s);
+    r.rotation.z += 0.001;
+  });
+
+  // ── Atmosphere particles
+  atmCtx.clearRect(0,0,atmCv.width,atmCv.height);
+  sts.forEach(s=>{s.tick();s.draw()});
+  smk.forEach(s=>{s.tick();s.draw()});
+
+  // ── Project triangle overlay
+  projectWindow();
+
+  // ── Render scene
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>
