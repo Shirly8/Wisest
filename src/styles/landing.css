@@ -61,6 +61,7 @@
 .hero-cta{
   opacity:0;animation:fadeUp .55s var(--expo) .88s forwards;
   display:flex;flex-direction:column;align-items:center;gap:var(--sp-3);
+  position:relative;z-index:20;
 }
 .shake-nudge{
   font:400 .6rem/1 var(--fm);color:var(--t3);letter-spacing:.12em;text-transform:uppercase;
