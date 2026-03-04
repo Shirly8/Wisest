@@ -1,4 +1,5 @@
 import React from 'react';
+import './styles/utilities.css';
 
 interface MetricOptionsProps {
   index: number;
@@ -8,87 +9,58 @@ interface MetricOptionsProps {
   categories: { title: string; metrics: (number | string)[]; importance: number }[];
   handleMetricChange: (index: number, optionIndex: number, value: string) => void;
   addCategory: () => void;
-  deleteCategory: (index:number) => void;
+  deleteCategory: (index: number) => void;
 }
 
-const MetricOptions: React.FC<MetricOptionsProps> = ({ index, options, metricTypes, categories, handleMetricChange, addCategory, deleteCategory}) => {
+const MetricOptions: React.FC<MetricOptionsProps> = ({ index, options, metricTypes, categories, handleMetricChange }) => {
   const category = categories[index];
 
-  // 1) YES/NO RADIO BUTTONS
-  const renderYesNoButtons = (optionIndex: number) => (
-    <div>
-      <label>
-        Yes
-        <input
-          type="radio"
-          value="Yes"
-          checked={category.metrics[optionIndex] === 1}
-          onChange={(e) => handleMetricChange(index, optionIndex, e.target.value)}
-          className='yesnobutton'
-        />
-      </label>
-      <label>
-        No
-        <input
-          type="radio"
-          value="No"
-          checked={category.metrics[optionIndex] === 0}
-          onChange={(e) => handleMetricChange(index, optionIndex, e.target.value)}
-          className = 'yesnobutton'
-        />
-      </label>
-    </div>
-  );
-
   return (
-    <div style = {{margin: '3%'}}>
-      {/* 2) METRICS INPUT */}
-      <div style = {{marginBottom: '7px'}}>
-        <label style = {{fontWeight: '900'}}>Metrics: </label>
-      </div>
-      {options.map((option, optionindex) => (
-        <div key = {optionindex}>
-          <div>
-            {option === '' ? (
-              <span style = {{color: '#FB7F79'}}> Choice #{optionindex + 1} </span> 
-            ): (
-             <span style = {{color: '#FB7F79'}}> {option} </span> 
-            )}
-          </div>
+    <div>
+      <div className="t-lbl mb-6px">Values per offering</div>
+      <div className="vg">
+        {options.map((option, optionindex) => (
+          <React.Fragment key={optionindex}>
+            <span className="vo">{option || '\u2014'}</span>
 
-          {/* 3) SCALING 1 TO 10 */}
-          {metricTypes[index] === 4 && (
-            <div className='scale'>
+            {(metricTypes[index] === 0 || metricTypes[index] === 1) && (
               <input
-                type="range"
-                min="1"
-                max="10"
-                value={category.metrics[optionindex] || 5}
+                className="fi-n"
+                type="number"
+                value={categories[index].metrics[optionindex] || ''}
+                placeholder="0"
                 onChange={(e) => handleMetricChange(index, optionindex, e.target.value)}
               />
-              <label>{categories[index].metrics[optionindex]}</label>
-            </div>
-          )}
+            )}
 
-          {/* 4) YES/NO BUTTONS */}
-          {(metricTypes[index] === 2 || metricTypes[index] === 3) && renderYesNoButtons(optionindex)}
+            {(metricTypes[index] === 2 || metricTypes[index] === 3) && (
+              <div className="metric-toggle">
+                <label>
+                  <input type="radio" value="Yes"
+                    checked={category.metrics[optionindex] === 1}
+                    onChange={(e) => handleMetricChange(index, optionindex, e.target.value)} />
+                  Yes
+                </label>
+                <label>
+                  <input type="radio" value="No"
+                    checked={category.metrics[optionindex] === 0}
+                    onChange={(e) => handleMetricChange(index, optionindex, e.target.value)} />
+                  No
+                </label>
+              </div>
+            )}
 
-          {/* 5) NUMBER INPUT */}
-          {(metricTypes[index] === 1 || metricTypes[index] === 0) && (
-            <input
-              type="text"
-              value={categories[index].metrics[optionindex] || ''}
-              onChange={(e) => handleMetricChange(index, optionindex, e.target.value)}
-              className='numberInput'
-            />
-          )}
-        </div>
-      ))}
-      
-      {/* 6) CATEGORY ACTIONS */}
-      <div style={{ display: 'flex', gap: '5px', marginTop: '10px', justifyContent: 'center' }}>
-        <button className = "home-secondary-button" style={{ fontSize: '12px', padding: '8px 20px', borderRadius: '0', border: 'none', minWidth: '80px' }} onClick = {() => addCategory()}> Add</button>
-        <button className = "home-secondary-button" style={{ fontSize: '12px', padding: '8px 20px', borderRadius: '0', border: 'none', minWidth: '80px' }} onClick = {() => deleteCategory(index)}> Delete </button>
+            {metricTypes[index] === 4 && (
+              <div className="oracle-scale">
+                <input type="range" min="1" max="10"
+                  value={category.metrics[optionindex] || 5}
+                  style={{ '--pct': `${((Number(category.metrics[optionindex]) || 5) - 1) / 9 * 100}%` } as React.CSSProperties}
+                  onChange={(e) => handleMetricChange(index, optionindex, e.target.value)} />
+                <span className="oracle-scale-val">{category.metrics[optionindex] || 5}</span>
+              </div>
+            )}
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );

@@ -1,0 +1,13 @@
+/* ════ PANEL ════ */
+.panel{background:var(--surface);border:1px solid var(--e1);border-radius:1px;padding:var(--sp-5)}
+
+/* Chart panels */
+.cpanel{background:var(--surface);border:1px solid var(--e1);border-radius:1px;padding:var(--sp-5) var(--sp-6)}
+.cp-h{
+  font:400 var(--s-xs)/1 var(--fm);color:var(--t3);text-transform:uppercase;letter-spacing:.1em;
+  margin-bottom:var(--sp-5);display:flex;align-items:center;gap:var(--sp-3);
+}
+.cp-h::before{content:'';width:2px;height:9px;background:var(--iris);border-radius:2px;flex-shrink:0}
+
+/* Error text */
+.err{font:400 var(--s-xs)/1 var(--fm);color:rgba(220,155,110,.75)}

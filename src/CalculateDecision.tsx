@@ -1,23 +1,15 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import Buffer from './Buffer'
-import gemini from './images/gemini.png';
-import background2 from './images/background2.png';
+import './styles/screen-verdict.css';
+import './styles/sphere-3d.css';
+import './styles/utilities.css';
+import Nav from './components/Nav';
+import Sphere3D from './components/Sphere3D';
+import { useOrbParallax } from './hooks/useOrbParallax';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import 'chart.js/auto';
 import { supabase } from './supabaseClient';
 import SignInModal from './SignInModal';
-import CurrentDecisionSection from './CurrentDecisionSection';
 import DecisionNamingModal from './DecisionNamingModal';
-
-import { 
-  createTradeoffAnalysis, 
-  createConfidenceAnalysis, 
-  createSensitivityAnalysis, 
-  createRiskAssessment,
-  CategoryBreakdown,
-  OptionBreakdown
-} from './charts';
 
 interface CalculateDecisionProps {
   categories: { title: string; metrics: number[]; importance: number }[];
@@ -43,1008 +35,666 @@ interface CalculateDecisionProps {
 }
 
 const CalculateDecision: React.FC<CalculateDecisionProps> = ({
-  categories,
-  options,
-  metricTypes,
-  setDecision,
-  reset,
-  mainConsideration,
-  choiceConsiderations,
-  setCategories,
-  setOptions,
-  setMetricTypes,
-  setMainConsideration,
-  setChoiceConsiderations,
-  selectedDecisionId,
-  showDecisionHistory,
-  decisionName,
-  setDecisionName,
-  demoMode = false,
-  demoFeedback = '',
-  onBackToMetrics,
-  onDemoCompleted
+  categories, options, metricTypes, setDecision, reset,
+  mainConsideration, choiceConsiderations,
+  setCategories, setOptions: _setOptions, setMetricTypes: _setMetricTypes,
+  setMainConsideration, setChoiceConsiderations: _setChoiceConsiderations,
+  selectedDecisionId, showDecisionHistory,
+  decisionName, setDecisionName,
+  demoMode = false, demoFeedback = '',
+  onBackToMetrics, onDemoCompleted
 }) => {
-  // 1) DECISION RESULTS
-  const [bestDecision, setBestDecision] = useState<string>('');
-  const [showContent, setShowContent] = useState<boolean>(false);
-  const [feedback, setFeedback] = useState<string>('');
-  const [isLoadingFeedback, setIsLoadingFeedback] = useState<boolean>(false);
+  const [bestDecision, setBestDecision] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
+  const [followUpInput, setFollowUpInput] = useState('');
+  const [followUpResponse, setFollowUpResponse] = useState('');
+  const [dashboardVisible, setDashboardVisible] = useState(false);
 
-  // 2) D3 VISUALIZATIONS
-  const radarChartRef = useRef<HTMLDivElement>(null);
-  const comparisonChartRef = useRef<HTMLDivElement>(null);
-  const heatmapRef = useRef<HTMLDivElement>(null);
-  const riskAssessmentRef = useRef<HTMLDivElement>(null);
+  // Auth & save
+  const [saveStatus, setSaveStatus] = useState('');
+  const [showSignInModal, setShowSignInModal] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showDecisionNameInput, setShowDecisionNameInput] = useState(false);
 
-  // 3) STATE MANAGEMENT
-  const [saveStatus, setSaveStatus] = useState<string>('');
-  const [showSignInModal, setShowSignInModal] = useState<boolean>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [showDecisionNameInput, setShowDecisionNameInput] = useState<boolean>(false);
-  
+  // Scroll refs
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const orbScaleRef = useRef<HTMLDivElement>(null);
+  const eyeRef = useRef<HTMLDivElement>(null);
+  const nudgeRef = useRef<HTMLDivElement>(null);
+  const vnameRef = useRef<HTMLDivElement>(null);
+  const vpillsRef = useRef<HTMLDivElement>(null);
+  const dashRef = useRef<HTMLDivElement>(null);
+  const revDoneRef = useRef(false);
+  const sphere3dRef = useRef<HTMLDivElement>(null);
+
   function extractNumber(value: string | number | undefined): number {
-    if (value === undefined || value === null) {
-      return 0;
-    }
-    const stringValue = value.toString();
-    const numericValue = stringValue.match(/-?\d+(\.\d+)?/);
+    if (value === undefined || value === null) return 0;
+    const numericValue = value.toString().match(/-?\d+(\.\d+)?/);
     return numericValue ? parseFloat(numericValue[0]) : 0;
   }
 
-  // 4) AUTHENTICATION
+  // Auth
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setIsAuthenticated(!!user);
     };
-    
     checkAuth();
-    
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsAuthenticated(!!session?.user);
       if (event === 'SIGNED_IN' && showSignInModal) {
         setShowSignInModal(false);
-        setTimeout(() => {
-          saveToDatabase();
-        }, 1000);
+        setTimeout(() => saveToDatabase(), 1000);
       }
     });
-    
     return () => subscription.unsubscribe();
   }, [showSignInModal]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleDecisionNaming = () => {
-    if (decisionName.trim()) {
-      setShowDecisionNameInput(false);
-      saveToDatabase();
-    }
-  };
+  // Score calculation
+  const calculateScore = useCallback(() => {
+    const minVal = categories.map(c => Math.min(...c.metrics.map(extractNumber)));
+    const maxVal = categories.map(c => Math.max(...c.metrics.map(extractNumber)));
+    return options.map((_, oi) => {
+      let score = 0;
+      categories.forEach((cat, ci) => {
+        let mv = extractNumber(cat.metrics[oi]);
+        if (metricTypes[ci] === 1) mv = mv === 0 ? 0.1 : 1 / mv;
+        const range = maxVal[ci] - minVal[ci];
+        let nm;
+        if (range === 0) nm = 0.5;
+        else {
+          if (metricTypes[ci] === 1) {
+            const orig = extractNumber(cat.metrics[oi]);
+            nm = 1 - (orig - minVal[ci]) / range;
+          } else {
+            nm = (mv - minVal[ci]) / range;
+          }
+          nm = Math.max(0, Math.min(1, nm));
+        }
+        score += nm * Math.pow(cat.importance, 2);
+      });
+      return score;
+    });
+  }, [categories, options, metricTypes]);
 
-  const handleSaveClick = () => {
-    if (demoMode) {
-      alert('This is a demo. Create your own decision to save!');
-      return;
+  // Main calc + fetch feedback
+  const [scores, setScores] = useState<number[]>([]);
+  const [sortedIndices, setSortedIndices] = useState<number[]>([]);
+  const [maxPossible, setMaxPossible] = useState(1);
+
+  useEffect(() => {
+    const sc = calculateScore();
+    setScores(sc);
+    const mp = categories.reduce((a, c) => a + Math.pow(c.importance, 2), 0) || 1;
+    setMaxPossible(mp);
+    const sorted = sc.map((_, i) => i).sort((a, b) => sc[b] - sc[a]);
+    setSortedIndices(sorted);
+    const bestIdx = sorted[0];
+    setBestDecision(options[bestIdx]);
+
+    const fetchFeedback = async () => {
+      if (demoMode && demoFeedback) { setFeedback(demoFeedback); return demoFeedback; }
+      setIsLoadingFeedback(true);
+      try {
+        const response = await fetch('https://wisest.onrender.com/wisest', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            options, categories: categories.map(c => ({ title: c.title, metrics: c.metrics, importance: c.importance })),
+            scores: sc.map((s, i) => ({ option: options[i], score: s })),
+            best_decision: options[bestIdx],
+            main_Consideration: mainConsideration,
+            choice_Considerations: options.map(o => ({ option: o, consideration: choiceConsiderations[o] }))
+          }),
+        });
+        if (!response.ok) throw new Error('Network error');
+        const data = await response.json();
+        setFeedback(data.feedback);
+        return data.feedback;
+      } catch {
+        const msg = 'The oracle cannot be reached. Check your connection.';
+        setFeedback(msg);
+        return msg;
+      } finally { setIsLoadingFeedback(false); }
+    };
+
+    fetchFeedback().then(fb => {
+      if (demoMode && onDemoCompleted && !demoFeedback && fb) onDemoCompleted(fb);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Orb parallax
+  useOrbParallax(['s4-ball'], ['s4-spec']);
+
+  // Shake detection on verdict screen
+  const triggerSphereShake = useCallback(() => {
+    if (revDoneRef.current) return;
+    revDoneRef.current = true;
+
+    const sphere = sphere3dRef.current;
+    const scaleEl = orbScaleRef.current;
+    const eyeEl = eyeRef.current;
+    const nudgeEl = nudgeRef.current;
+    const vnameEl = vnameRef.current;
+    const vpillEl = vpillsRef.current;
+
+    if (sphere) {
+      sphere.classList.remove('shaking');
+      void (sphere as any).offsetWidth;
+      sphere.classList.add('shaking');
     }
-    if (!isAuthenticated) {
-      setShowSignInModal(true);
-    } else {
-      if (!decisionName && !selectedDecisionId) {
-        setShowDecisionNameInput(true);
-        return;
+
+    // Animate sphere scale
+    if (scaleEl) {
+      scaleEl.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+      scaleEl.style.transform = 'scale(1.5)';
+    }
+
+    // Fade out eye and nudge
+    if (eyeEl) eyeEl.style.opacity = '0';
+    if (nudgeEl) nudgeEl.style.opacity = '0';
+
+    // Reveal verdict after shake
+    setTimeout(() => {
+      const eight = document.getElementById('s4-eight');
+      const ans = document.getElementById('s4-ans');
+      const sub = document.getElementById('s4-sub');
+
+      if (eight) eight.classList.add('gone');
+      if (ans) {
+        const wn = bestDecision;
+        ans.textContent = wn.length > 10 ? wn.slice(0, 10) + '\u2026' : wn;
+        ans.classList.add('show');
       }
-      saveToDatabase();
+      if (sub) {
+        const wpct = scores.length > 0 ? (scores[sortedIndices[0]] / maxPossible * 100).toFixed(1) : '0';
+        const margin = sortedIndices.length > 1 ? ((scores[sortedIndices[0]] - scores[sortedIndices[1]]) / maxPossible * 100) : 0;
+        const conf = margin > 15 ? 'Certain' : margin > 7 ? 'Likely' : 'Unclear';
+        sub.textContent = `${wpct}% \u00b7 ${conf}`;
+        sub.classList.add('show');
+      }
+      burstStars(sphere!);
+    }, 400);
+
+    // Show verdict name and pills
+    setTimeout(() => {
+      if (vnameEl) {
+        vnameEl.style.opacity = '1';
+        vnameEl.style.clipPath = 'inset(0 0 0 0)';
+      }
+      if (vpillEl) {
+        vpillEl.style.opacity = '1';
+        vpillEl.style.transform = 'translateY(0)';
+      }
+    }, 550);
+
+    // Show dashboard
+    setTimeout(() => {
+      const dash = dashRef.current;
+      if (dash && !dash.classList.contains('shown')) {
+        dash.classList.add('shown');
+        setDashboardVisible(true);
+      }
+    }, 950);
+  }, [bestDecision, scores, sortedIndices, maxPossible]);
+
+  useEffect(() => {
+    let lastShakeTime = 0;
+    const handleDeviceMotion = (event: DeviceMotionEvent) => {
+      const accel = event.accelerationIncludingGravity;
+      if (!accel) return;
+      const x = accel.x ?? 0;
+      const y = accel.y ?? 0;
+      const z = accel.z ?? 0;
+      const acceleration = Math.sqrt(x * x + y * y + z * z);
+      if (acceleration > 25) {
+        const now = Date.now();
+        if (now - lastShakeTime > 500) {
+          lastShakeTime = now;
+          triggerSphereShake();
+        }
+      }
+    };
+
+    if (typeof window !== 'undefined' && 'DeviceMotionEvent' in window) {
+      window.addEventListener('devicemotion', handleDeviceMotion);
+      return () => window.removeEventListener('devicemotion', handleDeviceMotion);
+    }
+  }, [triggerSphereShake]);
+
+
+  const burstStars = (ballEl: HTMLElement) => {
+    const r = ballEl.getBoundingClientRect();
+    const bx = r.left + r.width / 2, by = r.top + r.height / 2;
+    for (let i = 0; i < 16; i++) {
+      const s = document.createElement('div'); s.className = 'star';
+      const a = (i / 16) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+      const d = 60 + Math.random() * 115;
+      s.style.left = bx + 'px'; s.style.top = by + 'px';
+      s.style.setProperty('--dx', Math.cos(a) * d + 'px');
+      s.style.setProperty('--dy', Math.sin(a) * d + 'px');
+      s.style.animationDelay = (Math.random() * 0.1) + 's';
+      document.body.appendChild(s);
+      s.addEventListener('animationend', () => s.remove());
     }
   };
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-  };
-
-  const handleViewHistory = () => {
-    if (showDecisionHistory) {
-      showDecisionHistory();
+  // Animate score bars when dashboard visible
+  useEffect(() => {
+    if (dashboardVisible) {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.querySelectorAll<HTMLElement>('.sbar-f[data-w]').forEach(el => {
+          el.style.transform = `scaleX(${Number(el.dataset.w) / 100})`;
+        });
+        const confFill = document.querySelector<HTMLElement>('.conf-fill[data-w]');
+        if (confFill) confFill.style.width = confFill.dataset.w + '%';
+      }));
     }
+  }, [dashboardVisible]);
+
+  // Skip animation for demo
+  const skipAnimation = () => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   };
 
-  // 5) DATABASE OPERATIONS
+  // DB save logic
   const saveDecision = async (userId: string) => {
-    const decisionTitle = decisionName || mainConsideration || `Decision ${new Date().toLocaleDateString()}`;
-    const decisionDescription = `Decision between: ${options.join(', ')}`;
-
+    const title = decisionName || mainConsideration || `Decision ${new Date().toLocaleDateString()}`;
+    const desc = `Decision between: ${options.join(', ')}`;
     if (selectedDecisionId) {
-      const { data, error } = await supabase
-        .from('decisions')
-        .update({
-          title: decisionTitle,
-          description: decisionDescription,
-          ai_feedback: feedback,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', selectedDecisionId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+      const { data, error } = await supabase.from('decisions').update({ title, description: desc, ai_feedback: feedback, updated_at: new Date().toISOString() }).eq('id', selectedDecisionId).select().single();
+      if (error) throw error; return data;
     }
-
-    const { data: existingDecisions, error: checkError } = await supabase
-      .from('decisions')
-      .select(`
-        id,
-        decision_options(name),
-        decision_categories(name, importance)
-      `)
-      .eq('user_id', userId)
-      .eq('title', decisionTitle);
-
-    if (checkError) throw checkError;
-
-    if (existingDecisions && existingDecisions.length > 0) {
-      const existingDecision = existingDecisions[0];
-      
-      const { data, error } = await supabase
-        .from('decisions')
-        .update({
-          description: decisionDescription,
-          ai_feedback: feedback,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', existingDecision.id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+    const { data: existing } = await supabase.from('decisions').select('id').eq('user_id', userId).eq('title', title);
+    if (existing && existing.length > 0) {
+      const { data, error } = await supabase.from('decisions').update({ description: desc, ai_feedback: feedback, updated_at: new Date().toISOString() }).eq('id', existing[0].id).select().single();
+      if (error) throw error; return data;
     }
-
-    const { data, error } = await supabase
-      .from('decisions')
-      .insert({
-        user_id: userId,
-        title: decisionTitle,
-        description: decisionDescription,
-        ai_feedback: feedback
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  };
-
-  const saveOptions = async (decisionId: string) => {
-    const optionIds: string[] = [];
-    
-    for (let i = 0; i < options.length; i++) {
-      const { data, error } = await supabase
-        .from('decision_options')
-        .insert({
-          decision_id: decisionId,
-          name: options[i],
-          note: choiceConsiderations[options[i]] || null
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      optionIds.push(data.id);
-    }
-    
-    return optionIds;
-  };
-
-  const saveCategoriesAndValues = async (decisionId: string, optionIds: string[]) => {
-    for (let categoryIndex = 0; categoryIndex < categories.length; categoryIndex++) {
-      const category = categories[categoryIndex];
-      
-      const { data: categoryData, error: categoryError } = await supabase
-        .from('decision_categories')
-        .insert({
-          decision_id: decisionId,
-          name: category.title,
-          importance: category.importance,
-          higher_is_better: metricTypes[categoryIndex] === 0
-        })
-        .select()
-        .single();
-
-      if (categoryError) throw categoryError;
-
-      for (let optionIndex = 0; optionIndex < options.length; optionIndex++) {
-        const value = extractNumber(category.metrics[optionIndex]);
-        const { error: valueError } = await supabase
-          .from('decision_values')
-          .insert({
-            decision_id: decisionId,
-            category_id: categoryData.id,
-            option_id: optionIds[optionIndex],
-            value: value
-          });
-
-        if (valueError) throw valueError;
-      }
-    }
+    const { data, error } = await supabase.from('decisions').insert({ user_id: userId, title, description: desc, ai_feedback: feedback }).select().single();
+    if (error) throw error; return data;
   };
 
   const saveToDatabase = useCallback(async () => {
     setSaveStatus('Saving...');
-    
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setSaveStatus('Please sign in to save decisions');
-        return;
-      }
-
+      if (!user) { setSaveStatus('Please sign in'); return; }
       const decisionData = await saveDecision(user.id);
-
-      if (selectedDecisionId || decisionData.updated_at) {
-        const decisionId = selectedDecisionId || decisionData.id;
-        await supabase.from('decision_values').delete().eq('decision_id', decisionId);
-        await supabase.from('decision_categories').delete().eq('decision_id', decisionId);
-        await supabase.from('decision_options').delete().eq('decision_id', decisionId);
+      const decisionId = selectedDecisionId || decisionData.id;
+      await supabase.from('decision_values').delete().eq('decision_id', decisionId);
+      await supabase.from('decision_categories').delete().eq('decision_id', decisionId);
+      await supabase.from('decision_options').delete().eq('decision_id', decisionId);
+      const optionIds: string[] = [];
+      for (let i = 0; i < options.length; i++) {
+        const { data } = await supabase.from('decision_options').insert({ decision_id: decisionData.id, name: options[i], note: choiceConsiderations[options[i]] || null }).select().single();
+        if (data) optionIds.push(data.id);
       }
-
-      const optionIds = await saveOptions(decisionData.id);
-      await saveCategoriesAndValues(decisionData.id, optionIds);
-
-      setSaveStatus(selectedDecisionId || decisionData.updated_at ? 'Decision updated successfully! 🎉' : 'Decision saved successfully! 🎉');
-      setTimeout(() => setSaveStatus(''), 5000);
-      
-    } catch (error) {
-      setSaveStatus('Failed to save decision. Please try again.');
-      setTimeout(() => setSaveStatus(''), 5000);
-    }
+      for (let ci = 0; ci < categories.length; ci++) {
+        const { data: catData } = await supabase.from('decision_categories').insert({ decision_id: decisionData.id, name: categories[ci].title, importance: categories[ci].importance, higher_is_better: metricTypes[ci] === 0 }).select().single();
+        if (catData) {
+          for (let oi = 0; oi < options.length; oi++) {
+            await supabase.from('decision_values').insert({ decision_id: decisionData.id, category_id: catData.id, option_id: optionIds[oi], value: extractNumber(categories[ci].metrics[oi]) });
+          }
+        }
+      }
+      setSaveStatus('Saved!');
+      setTimeout(() => setSaveStatus(''), 4000);
+    } catch { setSaveStatus('Failed to save.'); setTimeout(() => setSaveStatus(''), 4000); }
   }, [selectedDecisionId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 6) SCORE CALCULATION
-  const calculateScore = () => {
-    const minVal = categories.map(category => Math.min(...category.metrics.map(extractNumber)));
-    const maxVal = categories.map(category => Math.max(...category.metrics.map(extractNumber)));
+  const handleSaveClick = () => {
+    if (demoMode) return;
+    if (!isAuthenticated) { setShowSignInModal(true); return; }
+    if (!decisionName && !selectedDecisionId) { setShowDecisionNameInput(true); return; }
+    saveToDatabase();
+  };
 
-    const scores = options.map((_, optionIndex) => {
-      let eachScore = 0;
-      
-      categories.forEach((category, categoryIndex) => {
-        let metricValue = extractNumber(category.metrics[optionIndex]);
+  const handleExportPDF = () => {
+    const el = document.getElementById('verdict-content');
+    if (el) html2canvas(el).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF();
+      const w = pdf.internal.pageSize.getWidth();
+      const h = (canvas.height * w) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, w, h);
+      pdf.save('Wisest-Decision.pdf');
+    });
+  };
 
-        if (metricTypes[categoryIndex] === 1) {
-          metricValue = metricValue === 0 ? 0.1 : 1 / metricValue;
-        }
-
-        const range = maxVal[categoryIndex] - minVal[categoryIndex];
-        let normalizedMetric;
-        
-        if (range === 0) {
-          normalizedMetric = 0.5;
-        } else {
-          if (metricTypes[categoryIndex] === 1) {
-            const originalValue = extractNumber(category.metrics[optionIndex]);
-            const originalNormalized = (originalValue - minVal[categoryIndex]) / range;
-            normalizedMetric = 1 - originalNormalized;
-          } else {
-            normalizedMetric = (metricValue - minVal[categoryIndex]) / range;
-          }
-          normalizedMetric = Math.max(0, Math.min(1, normalizedMetric));
-        }
-        
-        const exponentialWeight = Math.pow(category.importance, 2);
-        const categoryScore = normalizedMetric * exponentialWeight;
-        eachScore += categoryScore;
+  // Follow-up AI
+  const askFollowUp = async () => {
+    if (!followUpInput.trim()) return;
+    setFollowUpResponse('The oracle contemplates\u2026');
+    try {
+      const response = await fetch('https://wisest.onrender.com/wisest', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          options, categories: categories.map(c => ({ title: c.title, metrics: c.metrics, importance: c.importance })),
+          scores: scores.map((s, i) => ({ option: options[i], score: s })),
+          best_decision: bestDecision,
+          main_Consideration: mainConsideration + '\n\nAdditional question: ' + followUpInput,
+          choice_Considerations: options.map(o => ({ option: o, consideration: choiceConsiderations[o] }))
+        }),
       });
-      
-      return eachScore;
-    });
-
-    return scores;
+      const data = await response.json();
+      setFollowUpResponse(data.feedback);
+    } catch { setFollowUpResponse('The oracle cannot be reached.'); }
   };
 
-  const calculatePercentage = (score: number, maxScore: number) => {
-    return Math.round((score / maxScore) * 100);
-  };
+  // Render feedback sections
+  const renderFeedback = (text: string) => {
+    if (!text) return null;
+    const sections: { label: string; body: string }[] = [];
+    const LABELS = ['WHY THIS CHOICE', 'WATCH OUT FOR', 'THE EDGE IT HAS', 'MY TAKE', 'Why', 'Watch out', 'Strategic Advantages', 'Risk Mitigation', 'Implementation Priority', 'Success Metrics'];
 
-  const preparePieChart = (optionIndex: number) => {
-    const labels = categories.map(category => category.title);
-    const data = categories.map(category => {
-      let metricValue = extractNumber(category.metrics[optionIndex]);
-      
-      if (metricTypes[categories.indexOf(category)] === 1) {
-        metricValue = metricValue === 0 ? 0.1 : 1 / metricValue;
-      }
-      
-      const minVal = Math.min(...category.metrics.map(extractNumber));
-      const maxVal = Math.max(...category.metrics.map(extractNumber));
-      const range = maxVal - minVal;
-      
-      let normalizedMetric;
-      if (range === 0) {
-        normalizedMetric = 0.5;
-      } else {
-        normalizedMetric = (metricValue - minVal) / range;
-        normalizedMetric = Math.max(0, Math.min(1, normalizedMetric));
-      }
-      
-      return normalizedMetric * Math.pow(category.importance, 2);
-    });
-
-    const colors = [
-      '#FF6E70', '#C13B34',  '#EF5D7B', '#BB1933', '#EB4A25', '#6F032B' , '#FF0662'
-    ];
-
-    const generateColor = (index: number) => `hsl(${(index * 360) / categories.length}, 100%, 50%)`;
-
-    return {
-      labels,
-      datasets: [
-        {
-          data,
-          backgroundColor: categories.map((_, index) => colors[index] || generateColor(index))
-        }
-      ]
-    };
-  };
-
-  // 7) MAIN CALCULATION EFFECT
-  useEffect(() => {
-    const scores = calculateScore();
-    const final = Math.max(...scores);
-    const bestOptionIndex = scores.indexOf(final);
-
-    setBestDecision(options[bestOptionIndex]);
-
-    // Always fetch fresh AI feedback
-    const fetchFeedback = async (): Promise<string> => {
-      let feedbackText = '';
-      try {
-        // Use demo feedback if in demo mode
-        if (demoMode && demoFeedback) {
-          setFeedback(demoFeedback);
-          return demoFeedback;
-        }
-
-        setIsLoadingFeedback(true);
-
-        const response = await fetch('https://wisest.onrender.com/wisest', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            options: options,
-            categories: categories.map(category => ({
-              title: category.title,
-              metrics: category.metrics,
-              importance: category.importance
-            })),
-            scores: scores.map((score, index) => ({
-              option: options[index],
-              score: score
-            })),
-            best_decision: options[bestOptionIndex],
-            main_Consideration: mainConsideration,
-            choice_Considerations: options.map((option) => ({
-              option: option,
-              consideration: choiceConsiderations[option]
-            }))
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        feedbackText = data.feedback;
-        setFeedback(feedbackText);
-      } catch (error) {
-        feedbackText = 'Gemini API is not activated. To use this, please run it locally with API key.';
-        setFeedback(feedbackText);
-      } finally {
-        setIsLoadingFeedback(false);
-      }
-      return feedbackText;
-    };
-
-    fetchFeedback().then((feedbackText) => {
-      // Call onDemoCompleted after feedback is loaded (only on first visit)
-      if (demoMode && onDemoCompleted && !demoFeedback && feedbackText) {
-        onDemoCompleted(feedbackText);
-      }
-    });
-
-    // Show content instantly for demo mode, otherwise wait for loading effect
-    if (demoMode) {
-      setShowContent(true);
-    } else {
-      setTimeout(() => {
-        setShowContent(true);
-      }, 5000);
+    // Try to parse sections
+    let found = false;
+    for (const lbl of LABELS) {
+      const regex = new RegExp(`\\*\\*${lbl}[^*]*\\*\\*:?`, 'i');
+      if (regex.test(text)) { found = true; break; }
     }
-  }, [options, categories, metricTypes, mainConsideration, choiceConsiderations, demoMode, onDemoCompleted, demoFeedback]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 8) NORMALIZE DATA FOR CHARTS
-  const normalizeForCharts = () => {
-    return categories.map(category => {
-      const values = category.metrics.map(extractNumber);
-      const minVal = Math.min(...values);
-      const maxVal = Math.max(...values);
-      const range = maxVal - minVal;
-      
-      const normalizedMetrics = values.map(value => {
-        if (range === 0) return 5; // Default to middle if no range
-        
-        let normalized;
-        if (metricTypes[categories.indexOf(category)] === 1) {
-          // Inverse metric (lower is better)
-          normalized = 10 - ((value - minVal) / range) * 10;
+    if (found) {
+      // Parse markdown bold headings
+      const lines = text.split('\n');
+      let currentLabel = '';
+      let currentBody = '';
+      for (const line of lines) {
+        const match = line.match(/^\*\*([^*]+)\*\*:?\s*(.*)/);
+        if (match) {
+          if (currentLabel) sections.push({ label: currentLabel, body: currentBody.trim() });
+          currentLabel = match[1];
+          currentBody = match[2] || '';
         } else {
-          // Normal metric (higher is better)
-          normalized = ((value - minVal) / range) * 10;
+          currentBody += '\n' + line;
         }
-        
-        return Math.max(0, Math.min(10, normalized));
-      });
-      
-      return {
-        ...category,
-        metrics: normalizedMetrics
-      };
-    });
+      }
+      if (currentLabel) sections.push({ label: currentLabel, body: currentBody.trim() });
+    }
+
+    if (sections.length > 0) {
+      return sections.map((s, i) => (
+        <div key={i} className="ai-reading-section">
+          <div className="ai-reading-label">{s.label}</div>
+          <div className="ai-reading-text">{s.body}</div>
+        </div>
+      ));
+    }
+
+    // Fallback: plain text
+    return <div className="ai-reading-text">{text}</div>;
   };
 
-  // 9) D3 VISUALIZATIONS
-  useEffect(() => {
-    if (showContent) {
-      setTimeout(() => {
-        const normalizedCategories = normalizeForCharts();
-        createTradeoffAnalysis(radarChartRef, normalizedCategories, options, bestDecision);
-        createConfidenceAnalysis(comparisonChartRef, normalizedCategories, options, bestDecision, calculateScore);
-        createSensitivityAnalysis(heatmapRef, normalizedCategories, options, metricTypes, calculateScore, extractNumber);
-        createRiskAssessment(riskAssessmentRef, normalizedCategories, options, metricTypes);
-      }, 100);
-    }
-  }, [showContent, categories, options, metricTypes]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Computed values
+  const winnerScore = scores.length > 0 && sortedIndices.length > 0 ? scores[sortedIndices[0]] : 0;
+  const maxScore = scores.length > 0 ? Math.max(...scores) : 1;
+  const wpct = maxPossible > 0 ? (winnerScore / maxPossible * 100) : 0;
+  const margin = sortedIndices.length > 1 ? ((scores[sortedIndices[0]] - scores[sortedIndices[1]]) / maxPossible * 100) : 0;
+  const confWord = margin > 15 ? 'Certain' : margin > 7 ? 'Likely' : 'Unclear';
+  const confMsg = confWord === 'Certain' ? 'The oracle is decided. Act without hesitation.'
+    : confWord === 'Likely' ? 'The signs favour this path. Worth verifying one criterion.'
+    : 'The veil is thin. Revisit your weights carefully.';
 
-  const sortedCategories = [...categories].sort((a, b) => b.importance - a.importance);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const sortedOptionsByCategory = sortedCategories.map(category => {
-    return options
-      .map((option, optionIndex) => ({
-        option,
-        score: category.metrics[optionIndex]
-      }))
-      .sort((a, b) => b.score - a.score);
+  // Risk Assessment — measure volatility/stability
+  const riskScores = options.map((_, oi) => {
+    let variance = 0;
+    categories.forEach((cat, ci) => {
+      let mv = extractNumber(cat.metrics[oi]);
+      if (metricTypes[ci] === 1) mv = mv === 0 ? 0.1 : 1 / mv;
+      const catMetrics = categories[ci].metrics.map(m => extractNumber(m));
+      const range = (Math.max(...catMetrics) - Math.min(...catMetrics)) || 1;
+      const normalized = Math.abs((mv - Math.min(...catMetrics)) / range - 0.5);
+      variance += normalized * Math.pow(cat.importance, 2);
+    });
+    return variance;
   });
 
-  // Helper function to parse and render Gemini feedback with markdown styling
-  const renderGeminiFeedback = (text: string) => {
-    const lines = text.split('\n');
-    const elements: React.ReactNode[] = [];
-    let i = 0;
-
-    while (i < lines.length) {
-      const line = lines[i].trim();
-
-      // Skip empty lines
-      if (!line) {
-        elements.push(<div key={`spacer-${i}`} style={{ height: '12px' }}></div>);
-        i++;
-        continue;
-      }
-
-      // Check for main bold headings (**text**: as standalone line)
-      if (line.startsWith('**') && line.includes('**:')) {
-        const headingText = line.replace(/\*\*/g, '').replace(':', '');
-        elements.push(
-          <h3
-            key={`heading-${i}`}
-            style={{
-              background: 'linear-gradient(to right, #5A70B8, #2E98DD)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              fontSize: '18px',
-              fontWeight: '700',
-              margin: '20px 0 12px 0',
-              fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
-            }}
-          >
-            {headingText}:
-          </h3>
-        );
-        i++;
-        continue;
-      }
-
-      // Check for bold subheadings (**text**)
-      if (line.startsWith('**') && line.endsWith('**')) {
-        const headingText = line.slice(2, -2);
-        elements.push(
-          <h4
-            key={`subheading-${i}`}
-            style={{
-              color: '#4ECDC4',
-              fontSize: '13px',
-              fontWeight: '700',
-              margin: '14px 0 8px 0',
-              fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
-              letterSpacing: '0.2px'
-            }}
-          >
-            {headingText}
-          </h4>
-        );
-        i++;
-        continue;
-      }
-
-      // Check for numbered/bullet list items (starts with * or 1., 2., etc.)
-      if (/^[*\d+.]/.test(line) || line.match(/^\d+\./)) {
-        elements.push(
-          <div
-            key={`list-${i}`}
-            style={{
-              marginLeft: '16px',
-              marginBottom: '8px',
-              color: '#c0c0c0',
-              fontSize: '13px',
-              lineHeight: '1.6',
-              fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
-            }}
-          >
-            {line}
-          </div>
-        );
-        i++;
-        continue;
-      }
-
-      // Regular paragraph text - parse inline **bold** and *italic* styling
-      const renderParagraphWithFormatting = (text: string) => {
-        const parts: React.ReactNode[] = [];
-        let lastIndex = 0;
-
-        // Match **bold** and *italic* - handle text without spaces
-        const regex = /\*\*([^*\n]+)\*\*|\*([^*\n]+)\*/g;
-        let match;
-
-        while ((match = regex.exec(text)) !== null) {
-          // Add text before match
-          if (match.index > lastIndex) {
-            parts.push(text.substring(lastIndex, match.index));
-          }
-
-          // Add formatted text
-          if (match[1]) {
-            // **bold** text
-            parts.push(
-              <strong key={`bold-${match.index}`} style={{ color: '#4ECDC4', fontWeight: '700' }}>
-                {match[1]}
-              </strong>
-            );
-          } else if (match[2]) {
-            // *italic* text
-            parts.push(
-              <em key={`italic-${match.index}`} style={{ color: '#5A9FD4', fontStyle: 'italic' }}>
-                {match[2]}
-              </em>
-            );
-          }
-
-          lastIndex = regex.lastIndex;
-        }
-
-        // Add remaining text
-        if (lastIndex < text.length) {
-          parts.push(text.substring(lastIndex));
-        }
-
-        return parts.length > 0 ? parts : text;
-      };
-
-      elements.push(
-        <p
-          key={`para-${i}`}
-          style={{
-            color: '#b0b0b0',
-            fontSize: '13px',
-            lineHeight: '1.7',
-            margin: '8px 0',
-            fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
-          }}
-        >
-          {renderParagraphWithFormatting(line)}
-        </p>
-      );
-      i++;
-    }
-
-    return elements;
-  };
-
-  const handleSave = () => {
-    const input = document.getElementById('content');
-    if (input) {
-      html2canvas(input).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF();
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save('Bestdecision.pdf');
-      });
-    }
-  };
-
   return (
-    <div>
-      {!showContent && !demoMode ? (
-        <Buffer />
-      ) : (
-        <div style={{backgroundColor: '#060724', minHeight: '100vh'}} id="content">
-          {/* Back to Metrics Button - Top Left Corner */}
-          {onBackToMetrics && (
-            <button
-              onClick={onBackToMetrics}
-              style={{
-                position: 'fixed',
-                top: '20px',
-                left: '20px',
-                background: '#FF6E70',
-                border: 'none',
-                color: 'white',
-                padding: '10px 20px',
-                fontSize: '14px',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontFamily: 'Poppins, sans-serif',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 8px rgba(255, 110, 112, 0.3)',
-                zIndex: 1000
-              }}
-              onMouseEnter={(e) => {
-                (e.target as HTMLButtonElement).style.background = '#E55A5C';
-                (e.target as HTMLButtonElement).style.boxShadow = '0 4px 12px rgba(255, 110, 112, 0.5)';
-                (e.target as HTMLButtonElement).style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLButtonElement).style.background = '#FF6E70';
-                (e.target as HTMLButtonElement).style.boxShadow = '0 2px 8px rgba(255, 110, 112, 0.3)';
-                (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
-              }}
-            >
-              ← Back
-            </button>
-          )}
+    <div className="scr" id="verdict-content">
+      <Nav currentStep={3} stepLabel="III. The verdict" onLogoClick={reset}
+        rightAction={onBackToMetrics
+          ? <button className="btn btn-g btn-sm" onClick={onBackToMetrics}>&larr; Adjust</button>
+          : <button className="btn btn-g btn-sm" onClick={() => setDecision(false)}>&larr; Adjust</button>
+        } />
 
-          {/* Main Container with 75/25 Split */}
-          <div className="decision-container" style={{ display: 'flex', justifyContent: 'space-between', gap: '0vw', padding: '0.1vw', width: '98vw', maxWidth: '98vw', marginTop: '0', boxSizing: 'border-box', margin: '0 auto' }}>
+      <div ref={scrollRef} className="sroll">
+        {/* SCROLL ZOOM ZONE */}
+        <div className="s4-zone">
+          <div className="s4-sticky">
+            <div className="s4-eye" ref={eyeRef}>
+              <div className="v-dash" /><span className="t-lbl">The oracle stirs</span><div className="v-dash" />
+            </div>
 
-            {/* Fixed Background at Bottom */}
-            <div style={{
-              position: 'fixed',
-              bottom: 0,
-              left: 0,
-              width: '100%',
-              height: '50vh',
-              backgroundImage: `url(${background2})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center bottom',
-              backgroundRepeat: 'no-repeat',
-              pointerEvents: 'none',
-              zIndex: 0
-            }}></div>
-
-            {/* 75% Main Content Section */}
-            <div className="decision-main-content" style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', minWidth: 0, boxSizing: 'border-box', marginRight: '1vw', position: 'relative', zIndex: 1 }}>
-
-              {/* 10) FINAL DECISION DISPLAY */}
-              <div className='final' style={{textAlign: 'center'}}>
-                <div className='final-subtitle'>The best decision for you is:</div>
-                <div className='final-decision'>{bestDecision}</div>
-              </div>
-
-              {/* 11) DECISION BREAKDOWN ANALYSIS */}
-              <h2 style={{color: 'white', fontSize:'18px', backgroundColor: '#FF6E70', padding: '12px', margin: '-20px 0 12px 0', borderRadius: '4px'}}>Decision Breakdown Analysis</h2>
-              <p style={{display: 'none', color: '#FF6E70', fontSize: '10px', fontWeight: '700', textAlign: 'center', margin: '8px 0 12px 0', letterSpacing: '1.2px', animation: 'pulse-text 2s ease-in-out infinite'}} className="carousel-swipe-hint">← SWIPE TO VIEW →</p>
-              <div className="decision-charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
-
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '390px' }}>
-                  <CategoryBreakdown
-                    categories={categories}
-                    options={options}
-                    metricTypes={metricTypes}
-                    extractNumber={extractNumber}
-                    calculatePercentage={calculatePercentage}
-                  />
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
-                    <strong>How to read:</strong> Longer bars = better performance.<br/>
-                    <strong>Look for:</strong> Long bars in important categories.
-                  </p>
-                </div>
-
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '390px' }}>
-                  <OptionBreakdown
-                    options={options}
-                    preparePieChart={preparePieChart}
-                  />
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
-                    <strong>How to read:</strong> Each slice = category contribution.<br/>
-                    <strong>Look for:</strong> Larger slices = stronger performance.
-                  </p>
-                </div>
-
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(255, 110, 112, 0.4)', borderRadius: '8px', height: '390px' }}>
-                  <h3 style={{color: '#FF6E70', fontSize:'14px', textAlign: 'center', margin: '0 0 4px 0'}}>Risk Assessment</h3>
-                  <div ref={riskAssessmentRef} style={{ width: '100%', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
-                    <strong>How to read:</strong> Longer bars = higher risk.<br/>
-                    <strong>Look for:</strong> Options with shorter bars = safer.
-                  </p>
-                </div>
-
-              </div>
-
-              {/* 12) STRATEGIC ANALYSIS DIAGRAMS */}
-              <h2 className="strategic-analysis-header" style={{color: 'white', fontSize:'18px', backgroundColor: '#4ECDC4', padding: '12px', margin: '0 0 12px 0', borderRadius: '4px'}}>Strategic Decision Analysis</h2>
-              <p style={{display: 'none', color: '#4ECDC4', fontSize: '10px', fontWeight: '700', textAlign: 'center', margin: '8px 0 12px 0', letterSpacing: '1.2px', animation: 'pulse-text 2s ease-in-out infinite'}} className="carousel-swipe-hint">← SWIPE TO VIEW →</p>
-
-              <div className="decision-charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '390px' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 4px 0' }}>Trade-off Analysis</h3>
-                  <div ref={radarChartRef} style={{ width: '100%', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
-                    <strong>How to read:</strong> Each point = one option.<br/>
-                    <strong>Look for:</strong> Top-right = best balance.
-                  </p>
-                </div>
-
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '390px' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 4px 0' }}>Decision Confidence</h3>
-                  <div ref={comparisonChartRef} style={{ width: '100%', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
-                    <strong>How to read:</strong> Taller bars = higher scores.<br/>
-                    <strong>Look for:</strong> Clear winner.
-                  </p>
-                </div>
-
-                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(78, 205, 196, 0.4)', borderRadius: '8px', height: '390px' }}>
-                  <h3 style={{ color: '#4ECDC4', textAlign: 'center', fontSize: '14px', margin: '0 0 4px 0' }}>Decision Stability</h3>
-                  <div ref={heatmapRef} style={{ width: '100%', flex: 1 }}></div>
-                  <p style={{ color: '#999', textAlign: 'center', fontSize: '9px', lineHeight: '1.2', margin: '4px 0 0 0', marginTop: 'auto' }}>
-                    <strong>How to read:</strong> ✓ = stable, ⚠ = sensitive.<br/>
-                    <strong>Look for:</strong> Categories with ⚠.
-                  </p>
-                </div>
+            <div className="s4-orb-scale" ref={orbScaleRef}>
+              <div ref={sphere3dRef} className="w-h-orb-lg">
+                <Sphere3D
+                  triangleContent={
+                    <>
+                      <div className="tri-eight" id="s4-eight">8</div>
+                      <div className="tri-ans" id="s4-ans" />
+                      <div className="tri-sub" id="s4-sub" />
+                    </>
+                  }
+                />
               </div>
             </div>
 
-            {/* 25% Gemini Sidebar */}
-            <div className="decision-gemini-sidebar" style={{
-              flex: '0 0 23%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              minWidth: 0,
-              boxSizing: 'border-box',
-              height: '100vh',
-              position: 'sticky',
-              top: '0',
-              padding: '16px 0'
-            }}>
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(42, 70, 160, 0.2) 0%, rgba(46, 152, 221, 0.2) 100%)',
-                border: '1px solid rgba(46, 152, 221, 0.4)',
-                borderRadius: '12px',
-                padding: '20px',
-                display: 'flex',
-                flexDirection: 'column',
-                flex: 1,
-                minHeight: 0,
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
-              }}>
-                {/* Gemini Header */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '10px',
-                  marginBottom: '15px',
-                  paddingBottom: '12px',
-                  borderBottom: '1px solid rgba(46, 152, 221, 0.3)'
-                }}>
-                  <img src={gemini} alt="gemini" style={{
-                    width: '28px',
-                    height: '28px',
-                    objectFit: 'contain'
-                  }}></img>
-                  <h3 style={{
-                    fontWeight: '500',
-                    background: 'linear-gradient(to right, #5A70B8, #2E98DD)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    fontSize: '18px',
-                    margin: '0'
-                  }}>Gemini Says</h3>
-                </div>
+            <div className="s4-nudge t-lbl" ref={nudgeRef}>
+              <button className="btn btn-p" onClick={triggerSphereShake}>Shake to reveal</button>
+            </div>
 
-                {/* Gemini Content - Scrollable */}
-                <div style={{
-                  flex: 1,
-                  minHeight: 0,
-                  overflowY: 'auto',
-                  overflowX: 'hidden',
-                  paddingRight: '8px',
-                  marginRight: '-8px',
-                  scrollBehavior: 'smooth',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}>
-                  {isLoadingFeedback ? (
-                    <Buffer />
-                  ) : (
-                    <div style={{
-                      textAlign: 'left'
-                    }}>
-                      {renderGeminiFeedback(feedback)}
-                    </div>
+            <div className="s4-vname" ref={vnameRef}>{bestDecision || '\u2014'}</div>
+            <div className="s4-vpills" ref={vpillsRef}>
+              <div className="vpill"><span className="vpill-n">{wpct.toFixed(1)}%</span><span className="vpill-l">Score</span></div>
+              <div className="vsep" />
+              <div className="vpill"><span className="vpill-n">+{margin.toFixed(1)}</span><span className="vpill-l">Margin</span></div>
+              <div className="vsep" />
+              <div className="vpill"><span className="vpill-n">{confWord}</span><span className="vpill-l">Confidence</span></div>
+            </div>
+          </div>
+        </div>
+
+        {/* DASHBOARD */}
+        <div className={`s4-dash${demoMode ? ' shown' : ''}`} ref={dashRef}>
+          <div className="dash-grid">
+            <div className="dash-panels">
+              {/* 1. Total Weighted Scores */}
+              <div className="cpanel">
+                <div className="cp-h">Total weighted scores</div>
+                <div className="sbars">
+                  {sortedIndices.map((oi, rank) => {
+                    const pf = maxScore > 0 ? (scores[oi] / maxScore * 100) : 0;
+                    const pv = maxPossible > 0 ? (scores[oi] / maxPossible * 100) : 0;
+                    return (
+                      <div key={oi} className="sbar-r">
+                        <span className="sbar-l">{options[oi]}</span>
+                        <div className="sbar-tk">
+                          <div className={`sbar-f f${Math.min(rank, 3)}`} data-w={pf.toFixed(1)} />
+                        </div>
+                        <span className="sbar-v">{pv.toFixed(1)}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 2. Risk Assessment */}
+              <div className="cpanel">
+                <div className="cp-h">Risk assessment</div>
+                <div className="risk-bars">
+                  {sortedIndices.map((oi) => {
+                    const riskPct = Math.min(100, (riskScores[oi] / Math.max(...riskScores, 1)) * 100);
+                    const riskLevel = riskPct > 60 ? 'High' : riskPct > 30 ? 'Medium' : 'Low';
+                    const riskColor = riskPct > 60 ? 'rgba(255,100,100,.8)' : riskPct > 30 ? 'rgba(255,200,100,.8)' : 'rgba(100,200,100,.8)';
+                    return (
+                      <div key={oi} className="risk-row">
+                        <span className="risk-l">{options[oi]}</span>
+                        <div className="risk-bar" style={{ background: `linear-gradient(to right, ${riskColor} ${riskPct}%, var(--e2) ${riskPct}%)` }} />
+                        <span className="risk-lbl">{riskLevel}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 3. Performance Across Criteria */}
+              <div className="cpanel">
+                <div className="cp-h">Performance across criteria</div>
+                <div className="cbreaks">
+                  {categories.map((cat, ci) => {
+                    const raw = options.map((_, oi) => extractNumber(cat.metrics[oi]));
+                    const mn = Math.min(...raw), mx = Math.max(...raw), rng = (mx - mn) || 1;
+                    const winIdx = sortedIndices[0];
+                    return (
+                      <div key={ci} className="cbrow">
+                        <div className="cblbl">{cat.title}</div>
+                        <div className="cbbars">
+                          {sortedIndices.map(oi => {
+                            let n = (raw[oi] - mn) / rng;
+                            if (metricTypes[ci] === 1) n = 1 - n;
+                            const h = Math.max(5, Math.round(n * 100));
+                            return (
+                              <div key={oi} className="cbw">
+                                <div className="cbc">
+                                  <div className={`cbb${oi === winIdx ? ' w' : ''}`} style={{ height: `${h}%` }} />
+                                </div>
+                                <span className="cbn">{options[oi]}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 4. Decision Confidence */}
+              <div className="cpanel">
+                <div className="cp-h">Decision confidence</div>
+                <div className="conf-body">
+                  <div className="conf-top">
+                    <span className="conf-word">{confWord}</span>
+                    <span className="conf-pct">{wpct.toFixed(0)}%</span>
+                  </div>
+                  <div className="conf-bar"><div className="conf-fill" data-w={wpct.toFixed(0)} /></div>
+                  <p className="t-sm lh-185 mt-sp3">{confMsg}</p>
+                </div>
+              </div>
+
+              {/* 5. Trade-off Analysis */}
+              <div className="cpanel cp-full">
+                <div className="cp-h">Trade-off analysis</div>
+                <div className="sctr">
+                  <div className="sctr-f">
+                    {categories.length >= 2 && (() => {
+                      const c0 = categories[0], c1 = categories[1];
+                      const r0 = options.map((_, oi) => extractNumber(c0.metrics[oi]));
+                      const r1 = options.map((_, oi) => extractNumber(c1.metrics[oi]));
+                      const mn0 = Math.min(...r0), rng0 = (Math.max(...r0) - mn0) || 1;
+                      const mn1 = Math.min(...r1), rng1 = (Math.max(...r1) - mn1) || 1;
+                      return options.map((opt, oi) => {
+                        let x = (r0[oi] - mn0) / rng0;
+                        let y = (r1[oi] - mn1) / rng1;
+                        if (metricTypes[0] === 1) x = 1 - x;
+                        if (metricTypes[1] === 1) y = 1 - y;
+                        const isWin = oi === sortedIndices[0];
+                        return (
+                          <React.Fragment key={oi}>
+                            <div className={`spt${isWin ? ' win' : ''}`} style={{ left: `${x * 82 + 9}%`, bottom: `${y * 82 + 9}%` }} />
+                            <div className="sptl" style={{ left: `${x * 82 + 9}%`, bottom: `${y * 82 + 9}%` }}>{opt}</div>
+                          </React.Fragment>
+                        );
+                      });
+                    })()}
+                  </div>
+                  {categories.length >= 2 && (
+                    <>
+                      <span className="sax">{categories[0].title}</span>
+                      <span className="say">{categories[1].title}</span>
+                    </>
                   )}
                 </div>
+              </div>
+            </div>
 
-                {/* Reanalyze Section */}
-                <div style={{
-                  marginTop: '16px',
-                  paddingTop: '12px',
-                  borderTop: '1px solid rgba(46, 152, 221, 0.3)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px'
-                }}>
-                  <input
-                    type="text"
-                    placeholder="Add context for reanalysis..."
-                    style={{
-                      padding: '10px 12px',
-                      borderRadius: '6px',
-                      border: '1px solid rgba(46, 152, 221, 0.4)',
-                      backgroundColor: 'rgba(46, 152, 221, 0.1)',
-                      color: '#b0b0b0',
-                      fontSize: '12px',
-                      fontFamily: 'Poppins, sans-serif',
-                      outline: 'none',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onFocus={(e) => {
-                      (e.target as HTMLInputElement).style.borderColor = 'rgba(46, 152, 221, 0.8)';
-                      (e.target as HTMLInputElement).style.backgroundColor = 'rgba(46, 152, 221, 0.2)';
-                    }}
-                    onBlur={(e) => {
-                      (e.target as HTMLInputElement).style.borderColor = 'rgba(46, 152, 221, 0.4)';
-                      (e.target as HTMLInputElement).style.backgroundColor = 'rgba(46, 152, 221, 0.1)';
-                    }}
-                  />
-                  <button
-                    style={{
-                      padding: '10px 16px',
-                      borderRadius: '6px',
-                      border: 'none',
-                      background: 'linear-gradient(135deg, rgba(46, 152, 221, 0.3) 0%, rgba(90, 112, 184, 0.3) 100%)',
-                      color: '#2E98DD',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      fontFamily: 'Poppins, sans-serif',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      boxShadow: '0 2px 8px rgba(46, 152, 221, 0.2)'
-                    }}
-                    onMouseEnter={(e) => {
-                      (e.target as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(46, 152, 221, 0.5) 0%, rgba(90, 112, 184, 0.5) 100%)';
-                      (e.target as HTMLButtonElement).style.boxShadow = '0 4px 12px rgba(46, 152, 221, 0.4)';
-                      (e.target as HTMLButtonElement).style.transform = 'translateY(-1px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.target as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(46, 152, 221, 0.3) 0%, rgba(90, 112, 184, 0.3) 100%)';
-                      (e.target as HTMLButtonElement).style.boxShadow = '0 2px 8px rgba(46, 152, 221, 0.2)';
-                      (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
-                    }}
-                  >
-                    Reanalyze
-                  </button>
+            {/* ORACLE PANEL */}
+            <div className="oracle-panel">
+              <div className="op-head">
+                <div className="op-orb-mini" />
+                <span className="t-sm text-t1">Oracle Reading</span>
+                <div className="ai-dot ml-auto" />
+              </div>
+
+              <div>
+                <div className="t-lbl mb-6px">Chosen path</div>
+                <div className="op-winner">{bestDecision}</div>
+              </div>
+
+              {/* AI Reading */}
+              <div>
+                {isLoadingFeedback ? (
+                  <div className="surface-raised">
+                    <div className="ai-dot" />
+                    <span className="ai-thinking">The oracle is reading the data\u2026</span>
+                  </div>
+                ) : (
+                  renderFeedback(feedback)
+                )}
+              </div>
+
+              {/* Follow-up */}
+              <div className="ai-zone">
+                <div className="ai-lbl-row">
+                  <div className="ai-dot" />
+                  <span className="t-lbl">Ask a deeper question</span>
                 </div>
+                <textarea className="fi" rows={3} placeholder="What should I watch out for? Is there something the numbers miss?"
+                  value={followUpInput} onChange={(e) => setFollowUpInput(e.target.value)} />
+                <button className="btn btn-q btn-full" onClick={askFollowUp}>
+                  <div className="ai-dot delay-4" />
+                  Consult the oracle
+                </button>
+                {followUpResponse && (
+                  <div className="border-top-e1">
+                    <div className="ai-reading-text">{followUpResponse}</div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          <div style={{ marginTop: '40px', marginBottom: '40px', textAlign: 'center' }}>
-            {saveStatus && (
-              <div style={{
-                position: 'fixed',
-                top: '20px',
-                right: '20px',
-                padding: '15px 20px',
-                borderRadius: '8px',
-                backgroundColor: saveStatus.includes('success') ? '#4ECDC4' : '#FF6E70',
-                color: 'white',
-                zIndex: 1000,
-                boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
-              }}>
-                {saveStatus}
-              </div>
-            )}
-
-            <DecisionNamingModal
-              isOpen={showDecisionNameInput}
-              decisionName={decisionName}
-              setDecisionName={setDecisionName}
-              onSave={handleDecisionNaming}
-              onCancel={() => setShowDecisionNameInput(false)}
-            />
-
-            <CurrentDecisionSection
-              isAuthenticated={isAuthenticated}
-              options={options}
-              categories={categories}
-              bestDecision={bestDecision}
-              selectedDecisionId={selectedDecisionId}
-              saveStatus={saveStatus}
-              onSaveClick={handleSaveClick}
-              onExportPDF={handleSave}
-              onViewHistory={handleViewHistory}
-              onBack={() => setDecision(false)}
-            />
-
-            <SignInModal 
-              isOpen={showSignInModal}
-              onClose={() => setShowSignInModal(false)}
-              onSignInSuccess={() => {
-                setShowSignInModal(false);
-                saveToDatabase();
-              }}
-            />
+          {/* Footer */}
+          <div className="s4-ft">
+            <button className="btn btn-g" onClick={() => { if (onBackToMetrics) onBackToMetrics(); else setDecision(false); }}>&larr; Edit offerings</button>
+            <button className="btn btn-p" onClick={handleSaveClick}>{selectedDecisionId ? 'Update' : 'Save'}</button>
+            <button className="btn btn-g" onClick={handleExportPDF}>Export PDF</button>
+            <button className="btn btn-g" onClick={showDecisionHistory}>History</button>
+            <button className="btn btn-p" onClick={reset}>New consultation</button>
           </div>
+        </div>
+      </div>
 
-          {/* 14) BOTTOM ACTION BUTTONS */}
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            gap: '20px', 
-            marginTop: '40px', 
-            marginBottom: '40px',
-            padding: '20px'
-          }}>
-            <button 
-              className='startbutton'
-              onClick={reset}
-              style={{ 
-                backgroundColor: '#FF6E70',
-                fontSize: '16px',
-                padding: '12px 24px'
-              }}
-            >
-              Reset
-            </button>
-            <button 
-              className='startbutton'
-              onClick={handleSignOut}
-              style={{ 
-                backgroundColor: '#666',
-                fontSize: '16px',
-                padding: '12px 24px'
-              }}
-            >
-              Sign Out
-            </button>
-          </div>
+      {/* Skip button for demo */}
+      {demoMode && (
+        <button className="btn btn-g btn-sm skip-anim" onClick={skipAnimation}>Skip animation</button>
+      )}
+
+      {/* Modals */}
+      <SignInModal isOpen={showSignInModal} onClose={() => setShowSignInModal(false)}
+        onSignInSuccess={() => { setShowSignInModal(false); saveToDatabase(); }} />
+      <DecisionNamingModal isOpen={showDecisionNameInput} decisionName={decisionName}
+        setDecisionName={setDecisionName} onSave={() => { setShowDecisionNameInput(false); saveToDatabase(); }}
+        onCancel={() => setShowDecisionNameInput(false)} />
+
+      {saveStatus && (
+        <div className="toast" style={{ background: saveStatus.includes('Saved') ? 'var(--iris)' : 'var(--raised)' }}>
+          {saveStatus}
         </div>
       )}
     </div>
   );
 };
 
-export default CalculateDecision; 
+export default CalculateDecision;

@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
+import './styles/utilities.css';
 import gemini from './images/gemini.png';
 
 // Auto-expanding textarea component for choice analysis
@@ -20,7 +21,7 @@ const ChoiceTextarea: React.FC<{
   return (
     <div>
       <h4 className="geminiheading">{option}</h4>
-      <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+      <div className="row-gap-8">
         <textarea
           ref={textareaRef}
           className="geminitext"
@@ -29,15 +30,7 @@ const ChoiceTextarea: React.FC<{
           onChange={(e) => onChange(e.target.value)}
         />
         <button
-          className="geminibutton"
-          style={{
-            border: 'none',
-            padding: '8px 12px',
-            flexShrink: 0,
-            alignSelf: 'flex-start',
-            marginTop: 0,
-            marginBottom: 0
-          }}
+          className="geminibutton gemini-delete-btn"
           onClick={onDelete}
         >
           X

@@ -1,0 +1,209 @@
+/* ── History page ──────────────────────────── */
+.hist {
+  position: fixed;
+  inset: 0;
+  background: var(--void-1);
+  color: var(--t1);
+  overflow-y: auto;
+  padding: var(--sp-6) var(--sp-4);
+}
+
+.hist-inner {
+  max-width: 740px;
+  margin: 0 auto;
+}
+
+/* ── Header ───────────────────────────────── */
+.hist-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-6);
+}
+
+.hist-title {
+  font-family: var(--fd);
+  font-size: 2rem;
+  color: var(--silver);
+}
+
+.hist-count {
+  font-family: var(--fm);
+  font-size: var(--s-xs);
+  color: var(--t4);
+  margin-top: var(--sp-1);
+}
+
+/* ── Decision cards ───────────────────────── */
+.hist-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.hist-card {
+  background: var(--w06);
+  border: 1px solid var(--w06);
+  border-radius: var(--r-md);
+  padding: var(--sp-4) var(--sp-5);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative;
+}
+.hist-card:hover {
+  border-color: var(--iris);
+  background: var(--w10);
+}
+
+.hist-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.hist-card-name {
+  font-family: var(--fd);
+  font-size: 1.15rem;
+  color: var(--silver);
+  flex: 1;
+}
+
+.hist-card-name-input {
+  font-family: var(--fd);
+  font-size: 1.15rem;
+  color: var(--silver);
+  background: var(--w10);
+  border: 1px solid var(--iris);
+  border-radius: var(--r-sm);
+  padding: 2px 6px;
+  flex: 1;
+  outline: none;
+}
+
+.hist-del {
+  background: none;
+  border: 1px solid var(--w06);
+  color: var(--t4);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 13px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: border-color .2s, color .2s;
+}
+.hist-del:hover {
+  border-color: var(--e1);
+  color: var(--e1);
+}
+
+/* ── Tags ─────────────────────────────────── */
+.hist-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--sp-2);
+}
+
+.hist-tag {
+  font-family: var(--fm);
+  font-size: 11px;
+  color: var(--iris);
+  background: var(--iris-lo);
+  border-radius: 20px;
+  padding: 2px 10px;
+}
+
+/* ── Meta row ─────────────────────────────── */
+.hist-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-top: var(--sp-3);
+  font-family: var(--fm);
+  font-size: var(--s-xs);
+  color: var(--t4);
+}
+
+.hist-meta svg {
+  vertical-align: -2px;
+  margin-right: 4px;
+}
+
+.hist-winner {
+  color: var(--iris);
+}
+
+/* ── Empty state ──────────────────────────── */
+.hist-empty {
+  text-align: center;
+  padding: var(--sp-12) var(--sp-4);
+}
+
+.hist-empty-orb {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--sp-4);
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 28%, var(--iris), var(--void-1));
+  box-shadow: 0 0 32px var(--iris-lo);
+  opacity: .5;
+}
+
+.hist-empty h2 {
+  font-family: var(--fd);
+  font-size: 1.4rem;
+  color: var(--t2);
+  margin-bottom: var(--sp-2);
+}
+
+.hist-empty p {
+  font-family: var(--fb);
+  font-size: var(--s-sm);
+  color: var(--t4);
+  margin-bottom: var(--sp-6);
+}
+
+/* ── Loading ──────────────────────────────── */
+.hist-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: var(--sp-3);
+  color: var(--t3);
+  font-family: var(--fb);
+  font-size: var(--s-sm);
+}
+
+.hist-spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--w10);
+  border-top-color: var(--iris);
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Error state ──────────────────────────── */
+.hist-error {
+  text-align: center;
+  padding: var(--sp-8);
+}
+.hist-error h2 {
+  font-family: var(--fd);
+  color: var(--e1);
+  margin-bottom: var(--sp-2);
+}
+.hist-error p {
+  color: var(--t3);
+  margin-bottom: var(--sp-4);
+}

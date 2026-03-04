@@ -1,0 +1,95 @@
+/* ════════════════════════════════════════
+   UTILITIES — Common patterns extracted from inline styles
+════════════════════════════════════════ */
+
+/* ──── TEXT UTILITIES ──── */
+.text-center { text-align: center; }
+.text-t1 { color: var(--t1); }
+.text-iris { color: var(--iris); }
+.text-silver { color: var(--silver); }
+.text-italic { font-style: italic; }
+
+/* ──── FLEX UTILITIES ──── */
+.flex-shrink-0 { flex-shrink: 0; }
+.gap-8px { gap: 8px; }
+.gap-sp2 { gap: var(--sp-2); }
+.gap-sp3 { gap: var(--sp-3); }
+.gap-sp4 { gap: var(--sp-4); }
+
+/* ──── MARGIN UTILITIES ──── */
+.ml-auto { margin-left: auto; }
+.mt-0 { margin-top: 0; }
+.mt-sp2 { margin-top: var(--sp-2); }
+.mt-sp3 { margin-top: var(--sp-3); }
+.mt-sp4 { margin-top: var(--sp-4); }
+.mt-sp5 { margin-top: var(--sp-5); }
+.mt-sp6 { margin-top: var(--sp-6); }
+.mt-sp8 { margin-top: var(--sp-8); }
+.mt-sp8 { margin-top: var(--sp-8); }
+.mb-6px { margin-bottom: 6px; }
+.mb-sp2 { margin-bottom: var(--sp-2); }
+.mb-sp3 { margin-bottom: var(--sp-3); }
+
+/* ──── PADDING UTILITIES ──── */
+.p-sp3 { padding: var(--sp-3); }
+.p-sp4 { padding: var(--sp-4); }
+.p-sp5 { padding: var(--sp-5); }
+.pt-sp3 { padding-top: var(--sp-3); }
+.pb-sp3 { padding-bottom: var(--sp-3); }
+
+/* ──── SIZING UTILITIES ──── */
+.w-full { width: 100%; }
+.w-orb-lg { width: min(75vmin, 500px); }
+.h-orb-lg { height: min(75vmin, 500px); }
+.w-h-orb-lg { width: min(75vmin, 500px); height: min(75vmin, 500px); }
+.w-orb-sm { width: min(60vmin, 400px); }
+.h-orb-sm { height: min(60vmin, 400px); }
+
+/* ──── SURFACE UTILITIES ──── */
+.surface-raised { background: var(--raised); border: 1px solid var(--e1); border-radius: 1px; padding: var(--sp-5); display: flex; align-items: center; gap: var(--sp-3); }
+.surface-box { border: 1px solid var(--e1); border-radius: 1px; }
+.surface-lifted { background: var(--lifted); border: 1px solid var(--e2); border-radius: 1px; }
+
+/* ──── BORDER UTILITIES ──── */
+.border-top-e1 { border-top: 1px solid var(--e1); padding-top: var(--sp-3); }
+.border-bottom-e1 { border-bottom: 1px solid var(--e1); }
+.border-e2 { border: 1px solid var(--e2); }
+
+/* ──── LINE HEIGHT UTILITIES ──── */
+.lh-1 { line-height: 1; }
+.lh-185 { line-height: 1.85; }
+
+/* ──── MAX WIDTH UTILITIES ──– */
+.max-w-450 { max-width: 450px; }
+
+/* ──── OPACITY UTILITIES ──– */
+.opacity-88 { opacity: 0.88; }
+
+/* ──── DISPLAY UTILITIES ──── */
+.hidden { display: none; }
+.inline-flex { display: inline-flex; }
+.row-gap-8 { display: flex; align-items: center; gap: 8px; }
+
+/* ──── GEMINI UTILITIES ──── */
+.gemini-delete-btn { border: none; padding: 8px 12px; flex-shrink: 0; align-self: flex-start; margin: 0; }
+
+/* ──── ANIMATION/VISUAL UTILITIES ──── */
+.ai-dot-delay-4 { animation-delay: 0.4s; }
+.ai-dot-delay-5 { animation-delay: 0.5s; }
+.delay-4 { animation-delay: 0.4s; }
+
+/* ──── BUTTON UTILITIES ──── */
+.btn-full { width: 100%; justify-content: center; }
+
+/* ──── TOAST/NOTIFICATION UTILITIES ──── */
+.toast { position: fixed; top: 20px; right: 20px; padding: 15px 20px; border-radius: 1px; border: 1px solid var(--e2); color: var(--t1); z-index: 1000; }
+
+/* ──── STATE UTILITIES ──── */
+.selected { border-color: var(--iris); color: var(--iris); background: var(--iris-lo); }
+
+/* ──── LAYOUT UTILITIES ──── */
+.fullscreen-center { display: flex; justify-content: center; align-items: center; flex-direction: column; height: 100vh; }
+.mt-20px { margin-top: 20px; }
+
+/* ──── IMAGE/ICON UTILITIES ──── */
+.spin-icon { width: 100px; height: 100px; animation: spin 2s linear infinite; }

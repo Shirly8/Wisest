@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './styles/utilities.css';
 import logo from './images/logo.png';
 
 function Buffer() {
@@ -18,13 +19,9 @@ function Buffer() {
     }
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '100vh' }}>
-            <img src={logo} alt="Wisest Logo" style={{
-                width: '100px',
-                height: '100px',
-                animation: 'spin 2s linear infinite'
-            }} />
-            <h2 style={{ marginTop: '20px' }}>Calculating all your options...</h2>
+        <div className="fullscreen-center">
+            <img src={logo} alt="Wisest Logo" className="spin-icon" />
+            <h2 className="mt-20px">Calculating all your options...</h2>
         </div>
     );
 }

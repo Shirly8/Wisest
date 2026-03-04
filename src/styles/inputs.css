@@ -1,0 +1,30 @@
+/* ════ INPUTS ════ */
+.fi{
+  background:var(--raised);border:1px solid var(--e1);
+  color:var(--t1);padding:var(--sp-3) var(--sp-4);
+  font:400 var(--s-sm)/1 var(--fb);border-radius:1px;outline:none;width:100%;
+  transition:border-color var(--tf),box-shadow var(--tf);
+}
+.fi::placeholder{color:var(--t3)}
+.fi:focus{border-color:var(--e3);box-shadow:0 0 0 3px rgba(176,196,240,.04)}
+.fi-ln{
+  background:transparent;border:none;border-bottom:1px solid var(--e1);
+  color:var(--t1);padding:var(--sp-2) 0;
+  font:500 var(--s-sm)/1 var(--fb);outline:none;width:100%;
+  transition:border-color var(--tf);
+}
+.fi-ln:focus{border-bottom-color:var(--silver)}
+.fi-n{
+  background:var(--surface);border:1px solid var(--e1);
+  color:var(--t1);padding:var(--sp-2) var(--sp-3);
+  font:400 var(--s-xs)/1 var(--fm);border-radius:1px;outline:none;width:100%;
+}
+.fi-n:focus{border-color:var(--e3);outline:none}
+.fi-sel{
+  background:var(--surface);border:1px solid var(--e1);
+  color:var(--t2);padding:var(--sp-2) var(--sp-3);
+  font:400 var(--s-xs)/1 var(--fm);border-radius:1px;outline:none;cursor:pointer;width:100%;
+}
+.fi-sel:focus{border-color:var(--e3);outline:none}
+.fi-sel option{background:var(--surface);color:var(--t1)}
+textarea.fi{resize:vertical;line-height:1.7;font-style:italic}
