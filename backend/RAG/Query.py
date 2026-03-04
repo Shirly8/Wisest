@@ -37,8 +37,14 @@ def query_rag(query_text):
             'match_count': 5
         }
     ).execute()
-    
-    if not results.data:
+
+    print(f"[RAG] RPC Response type: {type(results)}")
+    print(f"[RAG] RPC Response: {results}")
+
+    # Handle both dict and object responses
+    results_data = results.data if hasattr(results, 'data') else results
+
+    if not results_data:
         print(f"[RAG] No results found for query: {query_text}")
         
         # Log queries with no results
@@ -53,14 +59,14 @@ def query_rag(query_text):
             
         return "I don't have enough information to answer that question."
 
-    print(f"[RAG] Found {len(results.data)} relevant documents")
-    
+    print(f"[RAG] Found {len(results_data)} relevant documents")
+
     #Initialize Groq to get the answer (replaces Ollama/Gemini)
-    
+
     #combine all the chunks and pass it to Groq (same structure as before)
     all_context = "\n\n".join([
-        f"Source: {doc['metadata']['source']}\n{doc['content']}" 
-        for doc in results.data
+        f"Source: {doc['metadata']['source']}\n{doc['content']}"
+        for doc in results_data
     ])
 
     #Create a prompt for Groq (natural, concise, adaptive)  
