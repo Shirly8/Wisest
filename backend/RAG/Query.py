@@ -4,6 +4,7 @@ import cohere
 from .RAG import initialize_chroma
 import os
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 
@@ -29,20 +30,21 @@ def query_rag(query_text):
     )
     query_embedding = response.embeddings[0]
 
-    #Search database using Supabase vector similarity (replaces ChromaDB similarity_search)
-    results = db.rpc(
-        'match_documents',
-        {
-            'query_embedding': query_embedding,
-            'match_count': 5
-        }
-    ).execute()
+    # Search database using HTTP call instead of RPC wrapper
+    rpc_url = f"{os.environ.get('SUPABASE_URL')}/rest/v1/rpc/match_documents"
+    headers = {
+        "apikey": os.environ.get('SUPABASE_SERVICE_KEY'),
+        "Authorization": f"Bearer {os.environ.get('SUPABASE_SERVICE_KEY')}",
+        "Content-Type": "application/json",
+    }
+    rpc_response = requests.post(
+        rpc_url,
+        headers=headers,
+        json={"query_embedding": query_embedding, "match_count": 5}
+    )
 
-    print(f"[RAG] RPC Response type: {type(results)}")
-    print(f"[RAG] RPC Response: {results}")
-
-    # Handle both dict and object responses
-    results_data = results.data if hasattr(results, 'data') else results
+    print(f"[RAG] RPC status: {rpc_response.status_code}")
+    results_data = rpc_response.json() if rpc_response.status_code == 200 else []
 
     if not results_data:
         print(f"[RAG] No results found for query: {query_text}")
