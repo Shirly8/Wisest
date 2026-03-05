@@ -203,19 +203,27 @@ Do not generate anything else. Just the list of 10 affirmations in this exact fo
 def chat():
     try:
         from RAG import query_rag
-        
+        import os
+        from dotenv import load_dotenv
+
+        load_dotenv()
+
         data = request.get_json()
         message = data.get('message', '')
-        
+
         if not message:
             return jsonify({'error': 'Message is required'}), 400
-        
+
+        # Debug environment
+        supabase_url = os.environ.get('SUPABASE_URL')
+        print(f"[CHAT] SUPABASE_URL: {supabase_url[:50]}..." if supabase_url else "[CHAT] SUPABASE_URL: NOT SET")
         print(f"[CHAT] Received query: {message}")
-        
+
         # Query the RAG system (using your original query_rag function)
         response = query_rag(message)
-        
+
         print(f"[CHAT] Response generated successfully")
+        print(f"[CHAT] Response: {response[:100]}...")
         return jsonify({'answer': response})
     except Exception as e:
         import traceback
