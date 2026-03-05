@@ -247,10 +247,11 @@ def debug_rag():
 
     load_dotenv()
 
+    supabase_url = os.environ.get('SUPABASE_URL', 'NOT SET')
     diagnostics = {
         'status': 'running',
         'env_vars': {
-            'SUPABASE_URL': bool(os.environ.get('SUPABASE_URL')),
+            'SUPABASE_URL': supabase_url[:50] + '...' if len(supabase_url) > 50 else supabase_url,
             'SUPABASE_SERVICE_KEY': bool(os.environ.get('SUPABASE_SERVICE_KEY')),
             'COHERE_API_KEY': bool(os.environ.get('COHERE_API_KEY')),
             'GROQ_API_KEY': bool(os.environ.get('GROQ_API_KEY')),
