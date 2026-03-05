@@ -18,7 +18,6 @@ def query_rag(query_text):
     SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY')
     
     #Generate query embedding using Cohere (384 dims for embed-english-light-v3.0)
-    print(f"[RAG] Generating embedding for query: {query_text[:50]}...")
     try:
         cohere_response = requests.post(
             "https://api.cohere.ai/v1/embed",
@@ -32,19 +31,16 @@ def query_rag(query_text):
         )
         cohere_response.raise_for_status()
         query_embedding = cohere_response.json()["embeddings"][0]
-        print(f"[RAG] Embedding generated: {len(query_embedding)} dims")
     except Exception as e:
-        print(f"[RAG] COHERE ERROR: {type(e).__name__}: {str(e)}")
         return "I'm having trouble generating an embedding for your question right now."
 
-    # Search database using HTTP call instead of RPC wrapper
+    # Search database using HTTP call
     rpc_url = f"{os.environ.get('SUPABASE_URL')}/rest/v1/rpc/match_documents"
     headers = {
         "apikey": os.environ.get('SUPABASE_SERVICE_KEY'),
         "Authorization": f"Bearer {os.environ.get('SUPABASE_SERVICE_KEY')}",
         "Content-Type": "application/json",
     }
-    print(f"[RAG] Calling RPC at {rpc_url}")
     try:
         rpc_response = requests.post(
             rpc_url,
@@ -52,16 +48,11 @@ def query_rag(query_text):
             json={"query_embedding": query_embedding, "match_count": 5},
             timeout=10
         )
-        print(f"[RAG] RPC status: {rpc_response.status_code}")
-        print(f"[RAG] RPC response: {rpc_response.text[:500]}")
         results_data = rpc_response.json() if rpc_response.status_code == 200 else []
-        print(f"[RAG] Results count: {len(results_data)}")
     except Exception as e:
-        print(f"[RAG] RPC ERROR: {type(e).__name__}: {str(e)}")
         results_data = []
 
     if not results_data:
-        print(f"[RAG] No results found for query: {query_text}")
 
         # Log queries with no results
         try:
@@ -82,8 +73,6 @@ def query_rag(query_text):
             pass
 
         return "I don't have enough information to answer that question."
-
-    print(f"[RAG] Found {len(results_data)} relevant documents")
 
     #combine all the chunks and pass it to Groq
     all_context = "\n\n".join([
@@ -120,13 +109,11 @@ def query_rag(query_text):
         groq_response.raise_for_status()
         response_data = groq_response.json()
     except Exception as e:
-        print(f"[RAG] GROQ ERROR: {type(e).__name__}: {str(e)}")
         return "I'm having trouble generating a response right now."
 
-    #Extract and print the response text
+    #Extract the response text
     if response_data and response_data.get("choices"):
         response_text = response_data["choices"][0]["message"]["content"]
-        print("Query Response: ", response_text)
 
         # Log to Supabase for analytics
         try:

@@ -203,7 +203,6 @@ Do not generate anything else. Just the list of 10 affirmations in this exact fo
 def chat():
     try:
         from RAG import query_rag
-        import os
 
         data = request.get_json()
         message = data.get('message', '')
@@ -211,16 +210,7 @@ def chat():
         if not message:
             return jsonify({'error': 'Message is required'}), 400
 
-        # Debug environment
-        supabase_url = os.environ.get('SUPABASE_URL')
-        print(f"[CHAT] SUPABASE_URL: {supabase_url[:50]}..." if supabase_url else "[CHAT] SUPABASE_URL: NOT SET")
-        print(f"[CHAT] Received query: {message}")
-
-        # Query the RAG system (using your original query_rag function)
         response = query_rag(message)
-
-        print(f"[CHAT] Response generated successfully")
-        print(f"[CHAT] Response: {response[:100]}...")
         return jsonify({'answer': response})
     except Exception as e:
         import traceback
@@ -235,141 +225,7 @@ def chat():
             'answer': "I'm having trouble accessing my knowledge base right now. Please try again later!"
         }), 500
 
-# Debug endpoint for RAG diagnostics
-@app.route('/debug/rag', methods=['GET'])
-def debug_rag():
-    """Diagnostic endpoint to test RAG components"""
-    import os
-
-    supabase_url = os.environ.get('SUPABASE_URL', 'NOT SET')
-    if supabase_url != 'NOT SET' and len(supabase_url) > 30:
-        supabase_url_display = supabase_url[:45] + '...'
-    else:
-        supabase_url_display = supabase_url
-
-    diagnostics = {
-        'status': 'running',
-        'supabase_url': supabase_url_display,
-        'env_vars': {
-            'SUPABASE_SERVICE_KEY': bool(os.environ.get('SUPABASE_SERVICE_KEY')),
-            'COHERE_API_KEY': bool(os.environ.get('COHERE_API_KEY')),
-            'GROQ_API_KEY': bool(os.environ.get('GROQ_API_KEY')),
-        }
-    }
-
-    # Test Cohere API
-    try:
-        import requests
-        resp = requests.post(
-            "https://api.cohere.ai/v1/embed",
-            headers={"Authorization": f"Bearer {os.environ.get('COHERE_API_KEY')}", "Content-Type": "application/json"},
-            json={"texts": ["test"], "model": "embed-english-light-v3.0", "input_type": "search_query"},
-            timeout=5
-        )
-        diagnostics['cohere_api'] = {'status': resp.status_code, 'working': resp.status_code == 200}
-    except Exception as e:
-        diagnostics['cohere_api'] = {'status': 'error', 'error': str(e)}
-
-    # Test Groq API
-    try:
-        resp = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={"Authorization": f"Bearer {os.environ.get('GROQ_API_KEY')}", "Content-Type": "application/json"},
-            json={"messages": [{"role": "user", "content": "test"}], "model": "llama-3.1-8b-instant"},
-            timeout=5
-        )
-        diagnostics['groq_api'] = {'status': resp.status_code, 'working': resp.status_code == 200}
-    except Exception as e:
-        diagnostics['groq_api'] = {'status': 'error', 'error': str(e)}
-
-    # Test Supabase RPC with real Cohere embedding
-    try:
-        # First generate a real embedding
-        cohere_resp = requests.post(
-            "https://api.cohere.ai/v1/embed",
-            headers={"Authorization": f"Bearer {os.environ.get('COHERE_API_KEY')}", "Content-Type": "application/json"},
-            json={"texts": ["technical skills projects"], "model": "embed-english-light-v3.0", "input_type": "search_query"},
-            timeout=5
-        )
-        if cohere_resp.status_code == 200:
-            test_embedding = cohere_resp.json()["embeddings"][0]
-            # Now test RPC with real embedding
-            resp = requests.post(
-                f"{os.environ.get('SUPABASE_URL')}/rest/v1/rpc/match_documents",
-                headers={
-                    "apikey": os.environ.get('SUPABASE_SERVICE_KEY'),
-                    "Authorization": f"Bearer {os.environ.get('SUPABASE_SERVICE_KEY')}",
-                    "Content-Type": "application/json",
-                },
-                json={"query_embedding": test_embedding, "match_count": 5},
-                timeout=5
-            )
-            diagnostics['rpc_api'] = {'status': resp.status_code, 'working': resp.status_code == 200}
-            if resp.status_code == 200:
-                diagnostics['rpc_api']['result_count'] = len(resp.json())
-        else:
-            diagnostics['rpc_api'] = {'status': 'error', 'error': 'Failed to generate embedding'}
-    except Exception as e:
-        diagnostics['rpc_api'] = {'status': 'error', 'error': str(e)}
-
-    # Check document count in database
-    try:
-        resp = requests.get(
-            f"{os.environ.get('SUPABASE_URL')}/rest/v1/documents?limit=1000",
-            headers={
-                "apikey": os.environ.get('SUPABASE_SERVICE_KEY'),
-                "Authorization": f"Bearer {os.environ.get('SUPABASE_SERVICE_KEY')}",
-                "Content-Type": "application/json",
-            },
-            timeout=5
-        )
-        if resp.status_code == 200:
-            doc_count = len(resp.json())
-            diagnostics['documents'] = {'count': doc_count, 'status': 'success'}
-            if doc_count > 0:
-                # Check if first doc has embedding
-                first_doc = resp.json()[0]
-                diagnostics['documents']['has_embedding'] = bool(first_doc.get('embedding'))
-        else:
-            diagnostics['documents'] = {'status': 'error', 'http_status': resp.status_code, 'response': resp.text[:100]}
-    except Exception as e:
-        diagnostics['documents'] = {'status': 'error', 'error': str(e)}
-
-    return jsonify(diagnostics)
-
 # Health check endpoint for deployment platforms
-@app.route('/test-db', methods=['GET'])
-def test_db():
-    """Direct database test"""
-    import os
-    import requests
-
-    supabase_url = os.environ.get('SUPABASE_URL')
-    supabase_key = os.environ.get('SUPABASE_SERVICE_KEY')
-
-    if not supabase_url or not supabase_key:
-        return jsonify({'error': 'Missing env vars'}), 400
-
-    try:
-        resp = requests.get(
-            f"{supabase_url}/rest/v1/documents?limit=5",
-            headers={
-                "apikey": supabase_key,
-                "Authorization": f"Bearer {supabase_key}",
-                "Content-Type": "application/json",
-            },
-            timeout=5
-        )
-        data = resp.json() if resp.status_code == 200 else []
-        return jsonify({
-            'http_status': resp.status_code,
-            'doc_count': len(data),
-            'error': None if resp.status_code == 200 else resp.text[:100],
-            'sample_ids': [d['id'] for d in data[:3]] if data else []
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'healthy', 'message': 'Backend is running!'})
