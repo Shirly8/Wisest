@@ -338,6 +338,38 @@ def debug_rag():
     return jsonify(diagnostics)
 
 # Health check endpoint for deployment platforms
+@app.route('/test-db', methods=['GET'])
+def test_db():
+    """Direct database test"""
+    import os
+    import requests
+
+    supabase_url = os.environ.get('SUPABASE_URL')
+    supabase_key = os.environ.get('SUPABASE_SERVICE_KEY')
+
+    if not supabase_url or not supabase_key:
+        return jsonify({'error': 'Missing env vars'}), 400
+
+    try:
+        resp = requests.get(
+            f"{supabase_url}/rest/v1/documents?limit=5",
+            headers={
+                "apikey": supabase_key,
+                "Authorization": f"Bearer {supabase_key}",
+                "Content-Type": "application/json",
+            },
+            timeout=5
+        )
+        data = resp.json() if resp.status_code == 200 else []
+        return jsonify({
+            'http_status': resp.status_code,
+            'doc_count': len(data),
+            'error': None if resp.status_code == 200 else resp.text[:100],
+            'sample_ids': [d['id'] for d in data[:3]] if data else []
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'healthy', 'message': 'Backend is running!'})
