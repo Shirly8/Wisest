@@ -1,10 +1,7 @@
 import argparse
 import os
-from dotenv import load_dotenv
 import requests
 import json
-
-load_dotenv()
 
 #To run: python3 -m RAG.Query --query "What projects has Shirley worked on?"
 

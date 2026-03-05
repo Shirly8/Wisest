@@ -5,10 +5,7 @@ import requests
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 from supabase import create_client, Client
-from dotenv import load_dotenv
 import time
-
-load_dotenv()
 
 # Supabase config
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
