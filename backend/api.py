@@ -282,21 +282,33 @@ def debug_rag():
     except Exception as e:
         diagnostics['groq_api'] = {'status': 'error', 'error': str(e)}
 
-    # Test Supabase RPC
+    # Test Supabase RPC with real Cohere embedding
     try:
-        resp = requests.post(
-            f"{os.environ.get('SUPABASE_URL')}/rest/v1/rpc/match_documents",
-            headers={
-                "apikey": os.environ.get('SUPABASE_SERVICE_KEY'),
-                "Authorization": f"Bearer {os.environ.get('SUPABASE_SERVICE_KEY')}",
-                "Content-Type": "application/json",
-            },
-            json={"query_embedding": [0.1]*384, "match_count": 1},
+        # First generate a real embedding
+        cohere_resp = requests.post(
+            "https://api.cohere.ai/v1/embed",
+            headers={"Authorization": f"Bearer {os.environ.get('COHERE_API_KEY')}", "Content-Type": "application/json"},
+            json={"texts": ["technical skills projects"], "model": "embed-english-light-v3.0", "input_type": "search_query"},
             timeout=5
         )
-        diagnostics['rpc_api'] = {'status': resp.status_code, 'working': resp.status_code == 200}
-        if resp.status_code == 200:
-            diagnostics['rpc_api']['result_count'] = len(resp.json())
+        if cohere_resp.status_code == 200:
+            test_embedding = cohere_resp.json()["embeddings"][0]
+            # Now test RPC with real embedding
+            resp = requests.post(
+                f"{os.environ.get('SUPABASE_URL')}/rest/v1/rpc/match_documents",
+                headers={
+                    "apikey": os.environ.get('SUPABASE_SERVICE_KEY'),
+                    "Authorization": f"Bearer {os.environ.get('SUPABASE_SERVICE_KEY')}",
+                    "Content-Type": "application/json",
+                },
+                json={"query_embedding": test_embedding, "match_count": 5},
+                timeout=5
+            )
+            diagnostics['rpc_api'] = {'status': resp.status_code, 'working': resp.status_code == 200}
+            if resp.status_code == 200:
+                diagnostics['rpc_api']['result_count'] = len(resp.json())
+        else:
+            diagnostics['rpc_api'] = {'status': 'error', 'error': 'Failed to generate embedding'}
     except Exception as e:
         diagnostics['rpc_api'] = {'status': 'error', 'error': str(e)}
 
