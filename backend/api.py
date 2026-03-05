@@ -315,7 +315,7 @@ def debug_rag():
     # Check document count in database
     try:
         resp = requests.get(
-            f"{os.environ.get('SUPABASE_URL')}/rest/v1/documents?select=id",
+            f"{os.environ.get('SUPABASE_URL')}/rest/v1/documents?limit=1000",
             headers={
                 "apikey": os.environ.get('SUPABASE_SERVICE_KEY'),
                 "Authorization": f"Bearer {os.environ.get('SUPABASE_SERVICE_KEY')}",
@@ -326,8 +326,12 @@ def debug_rag():
         if resp.status_code == 200:
             doc_count = len(resp.json())
             diagnostics['documents'] = {'count': doc_count, 'status': 'success'}
+            if doc_count > 0:
+                # Check if first doc has embedding
+                first_doc = resp.json()[0]
+                diagnostics['documents']['has_embedding'] = bool(first_doc.get('embedding'))
         else:
-            diagnostics['documents'] = {'status': 'error', 'http_status': resp.status_code}
+            diagnostics['documents'] = {'status': 'error', 'http_status': resp.status_code, 'response': resp.text[:100]}
     except Exception as e:
         diagnostics['documents'] = {'status': 'error', 'error': str(e)}
 
