@@ -204,9 +204,6 @@ def chat():
     try:
         from RAG import query_rag
         import os
-        from dotenv import load_dotenv
-
-        load_dotenv()
 
         data = request.get_json()
         message = data.get('message', '')
@@ -243,9 +240,6 @@ def chat():
 def debug_rag():
     """Diagnostic endpoint to test RAG components"""
     import os
-    from dotenv import load_dotenv
-
-    load_dotenv()
 
     supabase_url = os.environ.get('SUPABASE_URL', 'NOT SET')
     if supabase_url != 'NOT SET' and len(supabase_url) > 30:
