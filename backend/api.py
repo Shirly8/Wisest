@@ -312,6 +312,25 @@ def debug_rag():
     except Exception as e:
         diagnostics['rpc_api'] = {'status': 'error', 'error': str(e)}
 
+    # Check document count in database
+    try:
+        resp = requests.get(
+            f"{os.environ.get('SUPABASE_URL')}/rest/v1/documents?select=id",
+            headers={
+                "apikey": os.environ.get('SUPABASE_SERVICE_KEY'),
+                "Authorization": f"Bearer {os.environ.get('SUPABASE_SERVICE_KEY')}",
+                "Content-Type": "application/json",
+            },
+            timeout=5
+        )
+        if resp.status_code == 200:
+            doc_count = len(resp.json())
+            diagnostics['documents'] = {'count': doc_count, 'status': 'success'}
+        else:
+            diagnostics['documents'] = {'status': 'error', 'http_status': resp.status_code}
+    except Exception as e:
+        diagnostics['documents'] = {'status': 'error', 'error': str(e)}
+
     return jsonify(diagnostics)
 
 # Health check endpoint for deployment platforms
