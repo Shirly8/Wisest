@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 import json
 from datetime import datetime
+import requests as http_requests
+from supabase import create_client
 
 # Load environment variables from .env file (for local development)
 load_dotenv()
@@ -36,8 +38,68 @@ if not API_KEY:
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
+supabase = create_client(
+    os.environ.get('SUPABASE_URL'),
+    os.environ.get('SUPABASE_SERVICE_KEY')
+)
+
 # Simple in-memory storage for decisions (in production, use a database)
 decisions = {}
+
+def get_location(ip):
+    try:
+        # Strip IPv6 localhost
+        if ip in ('127.0.0.1', '::1', 'localhost'):
+            return 'Local'
+        res = http_requests.get(f'http://ip-api.com/json/{ip}', timeout=3)
+        data = res.json()
+        if data.get('status') == 'success':
+            return f"{data.get('city', '')}, {data.get('regionName', '')}, {data.get('country', '')}"
+    except Exception:
+        pass
+    return None
+
+def get_device(user_agent):
+    ua = (user_agent or '').lower()
+    if 'mobile' in ua or 'android' in ua or 'iphone' in ua:
+        device_type = 'Mobile'
+    elif 'tablet' in ua or 'ipad' in ua:
+        device_type = 'Tablet'
+    else:
+        device_type = 'Desktop'
+
+    if 'chrome' in ua and 'edg' not in ua:
+        browser = 'Chrome'
+    elif 'safari' in ua and 'chrome' not in ua:
+        browser = 'Safari'
+    elif 'firefox' in ua:
+        browser = 'Firefox'
+    elif 'edg' in ua:
+        browser = 'Edge'
+    else:
+        browser = 'Unknown'
+
+    return f"{device_type} - {browser}"
+
+def get_client_ip():
+    forwarded = request.headers.get('X-Forwarded-For')
+    if forwarded:
+        return forwarded.split(',')[0].strip()
+    return request.remote_addr
+
+def log_entry(page, query_text=None, response_text=None, duration_seconds=None):
+    try:
+        ip = get_client_ip()
+        supabase.table('logs').insert({
+            'location': get_location(ip),
+            'device': get_device(request.headers.get('User-Agent')),
+            'page': page,
+            'query_text': query_text,
+            'response_text': response_text,
+            'duration_seconds': duration_seconds,
+        }).execute()
+    except Exception as e:
+        print(f"Logging error: {e}")
 
 @app.route('/test', methods=['GET'])
 def test():
@@ -120,10 +182,11 @@ Their thoughts: {choice_consideration}
         response = model.generate_content(prompt)
         if response and response.text:
             feedback = response.text
-            print("Generated feedback:", feedback) 
+            print("Generated feedback:", feedback)
+            log_entry('/wisest', query_text=f"{main_consideration} | Options: {', '.join(options)}", response_text=feedback)
             return jsonify({'feedback': feedback})
         else:
-            print("Failed to generate feedback") 
+            print("Failed to generate feedback")
             return jsonify({'error': 'Failed to generate feedback'}), 500
     except Exception as e:
         print("Error:", str(e))
@@ -192,6 +255,7 @@ Do not generate anything else. Just the list of 10 affirmations in this exact fo
             # If parsing didn't work perfectly, return raw lines
             affirmations = [line.strip() for line in affirmations_text.split('\n') if line.strip()][:10]
 
+        log_entry('/affirmations', query_text=f"{title}: {description}", response_text='\n'.join(affirmations))
         return jsonify(affirmations), 200
 
     except Exception as e:
@@ -211,6 +275,7 @@ def chat():
             return jsonify({'error': 'Message is required'}), 400
 
         response = query_rag(message)
+        log_entry('/chat', query_text=message, response_text=response)
         return jsonify({'answer': response})
     except Exception as e:
         import traceback
@@ -224,6 +289,19 @@ def chat():
         return jsonify({
             'answer': "I'm having trouble accessing my knowledge base right now. Please try again later!"
         }), 500
+
+@app.route('/track-visit', methods=['POST'])
+def track_visit():
+    try:
+        data = request.get_json() or {}
+        log_entry(
+            page=data.get('page', '/'),
+            duration_seconds=data.get('duration_seconds')
+        )
+        return jsonify({'ok': True})
+    except Exception as e:
+        print(f"Visit tracking error: {e}")
+        return jsonify({'ok': False}), 500
 
 # Health check endpoint for deployment platforms
 @app.route('/health', methods=['GET'])
