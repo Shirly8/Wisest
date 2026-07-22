@@ -89,7 +89,7 @@ def get_client_ip():
         return forwarded.split(',')[0].strip()
     return request.remote_addr
 
-def log_entry(page, query_text=None, response_text=None, duration_seconds=None):
+def log_entry(page, query_text=None, response_text=None):
     try:
         ip = get_client_ip()
         http_requests.post(
@@ -102,7 +102,6 @@ def log_entry(page, query_text=None, response_text=None, duration_seconds=None):
                 'page': page,
                 'query_text': query_text,
                 'response_text': response_text,
-                'duration_seconds': duration_seconds,
             },
             timeout=5
         )
@@ -302,10 +301,7 @@ def chat():
 def track_visit():
     try:
         data = request.get_json() or {}
-        log_entry(
-            page=data.get('page', '/'),
-            duration_seconds=data.get('duration_seconds')
-        )
+        log_entry(page=data.get('page', '/'))
         return jsonify({'ok': True})
     except Exception as e:
         print(f"Visit tracking error: {e}")
