@@ -88,6 +88,7 @@ def get_client_ip():
     return request.remote_addr
 
 def log_entry(page, query_text=None, response_text=None, duration_seconds=None):
+    print(f"[log_entry] called for page={page}", flush=True)
     try:
         ip = get_client_ip()
         result = supabase.table('logs').insert({
@@ -98,9 +99,9 @@ def log_entry(page, query_text=None, response_text=None, duration_seconds=None):
             'response_text': response_text,
             'duration_seconds': duration_seconds,
         }).execute()
-        print(f"Log insert result: {result}")
+        print(f"[log_entry] insert result: {result}", flush=True)
     except Exception as e:
-        print(f"Logging error: {e}")
+        print(f"[log_entry] error: {e}", flush=True)
 
 @app.route('/test', methods=['GET'])
 def test():
