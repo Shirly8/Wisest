@@ -90,7 +90,7 @@ def get_client_ip():
 def log_entry(page, query_text=None, response_text=None, duration_seconds=None):
     try:
         ip = get_client_ip()
-        supabase.table('logs').insert({
+        result = supabase.table('logs').insert({
             'location': get_location(ip),
             'device': get_device(request.headers.get('User-Agent')),
             'page': page,
@@ -98,6 +98,7 @@ def log_entry(page, query_text=None, response_text=None, duration_seconds=None):
             'response_text': response_text,
             'duration_seconds': duration_seconds,
         }).execute()
+        print(f"Log insert result: {result}")
     except Exception as e:
         print(f"Logging error: {e}")
 
