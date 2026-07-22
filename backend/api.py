@@ -6,7 +6,6 @@ import google.generativeai as genai
 import json
 from datetime import datetime
 import requests as http_requests
-from supabase import create_client
 
 # Load environment variables from .env file (for local development)
 load_dotenv()
@@ -38,10 +37,13 @@ if not API_KEY:
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
-supabase = create_client(
-    os.environ.get('SUPABASE_URL'),
-    os.environ.get('SUPABASE_SERVICE_KEY')
-)
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY')
+SUPABASE_HEADERS = {
+    "apikey": SUPABASE_SERVICE_KEY,
+    "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+    "Content-Type": "application/json"
+}
 
 # Simple in-memory storage for decisions (in production, use a database)
 decisions = {}
@@ -90,16 +92,21 @@ def get_client_ip():
 def log_entry(page, query_text=None, response_text=None, duration_seconds=None):
     try:
         ip = get_client_ip()
-        supabase.table('logs').insert({
-            'ip_address': ip,
-            'location': get_location(ip),
-            'device': get_device(request.headers.get('User-Agent')),
-            'page': page,
-            'query_text': query_text,
-            'response_text': response_text,
-            'duration_seconds': duration_seconds,
-        }).execute()
-    except Exception as e:
+        http_requests.post(
+            f"{SUPABASE_URL}/rest/v1/logs",
+            headers=SUPABASE_HEADERS,
+            json={
+                'ip_address': ip,
+                'location': get_location(ip),
+                'device': get_device(request.headers.get('User-Agent')),
+                'page': page,
+                'query_text': query_text,
+                'response_text': response_text,
+                'duration_seconds': duration_seconds,
+            },
+            timeout=5
+        )
+    except Exception:
         pass
 
 @app.route('/test', methods=['GET'])
