@@ -91,6 +91,7 @@ def log_entry(page, query_text=None, response_text=None, duration_seconds=None):
     try:
         ip = get_client_ip()
         supabase.table('logs').insert({
+            'ip_address': ip,
             'location': get_location(ip),
             'device': get_device(request.headers.get('User-Agent')),
             'page': page,
