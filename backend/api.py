@@ -92,9 +92,9 @@ def get_client_ip():
 def log_entry(page, query_text=None, response_text=None):
     try:
         ip = get_client_ip()
-        http_requests.post(
+        res = http_requests.post(
             f"{SUPABASE_URL}/rest/v1/logs",
-            headers=SUPABASE_HEADERS,
+            headers={**SUPABASE_HEADERS, 'Prefer': 'return=representation'},
             json={
                 'ip_address': ip,
                 'location': get_location(ip),
@@ -105,8 +105,12 @@ def log_entry(page, query_text=None, response_text=None):
             },
             timeout=5
         )
+        rows = res.json()
+        if isinstance(rows, list) and rows:
+            return rows[0].get('id')
     except Exception:
         pass
+    return None
 
 @app.route('/test', methods=['GET'])
 def test():
@@ -301,10 +305,36 @@ def chat():
 def track_visit():
     try:
         data = request.get_json() or {}
-        log_entry(page=data.get('page', '/'))
-        return jsonify({'ok': True})
+        row_id = log_entry(page=data.get('page', '/'))
+        return jsonify({'ok': True, 'id': row_id})
     except Exception as e:
         print(f"Visit tracking error: {e}")
+        return jsonify({'ok': False}), 500
+
+@app.route('/update-visit', methods=['POST'])
+def update_visit():
+    try:
+        data = request.get_json() or {}
+        row_id = data.get('id')
+        duration = data.get('duration')
+        page = data.get('page')
+        if not row_id:
+            return jsonify({'ok': False}), 400
+        payload = {}
+        if duration is not None:
+            payload['duration'] = duration
+        if page:
+            payload['page'] = page
+        if payload:
+            http_requests.patch(
+                f"{SUPABASE_URL}/rest/v1/logs?id=eq.{row_id}",
+                headers=SUPABASE_HEADERS,
+                json=payload,
+                timeout=5
+            )
+        return jsonify({'ok': True})
+    except Exception as e:
+        print(f"Update visit error: {e}")
         return jsonify({'ok': False}), 500
 
 # Health check endpoint for deployment platforms
