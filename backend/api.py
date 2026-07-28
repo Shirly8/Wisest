@@ -25,7 +25,7 @@ allowed_origins = [
     "https://affirmly-iota.vercel.app"  # Affirmly Vercel frontend
 ]
 
-CORS(app, resources={r"/*": {"origins": allowed_origins}})
+CORS(app, resources={r"/*": {"origins": allowed_origins}}, supports_credentials=True)
 
 # Secure API key configuration for deployment
 API_KEY = os.environ.get('GEMINI_API_KEY')
