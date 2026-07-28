@@ -2,8 +2,7 @@ import React, {useState, useEffect} from 'react';
 import './styles/screen-define.css';
 import './styles/utilities.css';
 import Nav from './components/Nav';
-import Orb from './components/Orb';
-import { useOrbParallax } from './hooks/useOrbParallax';
+import Sphere3D from './components/Sphere3D';
 import MetricOptions from './MetricOptions';
 import Importance from './Importance';
 import CalculateDecision from './CalculateDecision';
@@ -193,8 +192,6 @@ const Main: React.FC<MainProps> = ({
     return true;
   };
 
-  useOrbParallax(['s2-mini'], ['s2-spec']);
-
   // ════ RENDER ════
   if (screen === 'decision') {
     return (
@@ -306,7 +303,7 @@ const Main: React.FC<MainProps> = ({
         </div>
 
         <div className="s1-sidebar">
-          <Orb size="80px" id="s2-mini" specId="s2-spec" eightSize=".85rem" showShadow={false} />
+          <Sphere3D size="110px" ballScale={1.5} triangleContent={<div className="tri-eight" style={{ fontSize: '.85rem' }}>8</div>} />
           <span className="t-lbl text-center mt-sp4">The oracle awaits</span>
         </div>
       </div>

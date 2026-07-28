@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from
 import './styles/landing.css';
 import './styles/utilities.css';
 import AtmosphereCanvas from './components/AtmosphereCanvas';
-import Orb from './components/Orb';
-import { useOrbParallax } from './hooks/useOrbParallax';
+import Sphere3D, { Sphere3DHandle } from './components/Sphere3D';
 import Main from './Main';
 import DecisionHistory from './DecisionHistory';
 import Demo from './Demo';
@@ -21,8 +20,7 @@ const ArrowSvg = () => (
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const orbStageRef = useRef<HTMLDivElement>(null);
-  const orbWrapRef = useRef<HTMLDivElement>(null);
+  const sphereRef = useRef<Sphere3DHandle>(null);
   const landZoomedRef = useRef(false);
 
   useEffect(() => {
@@ -50,11 +48,7 @@ const HomePage: React.FC = () => {
   }, [navigate]);
 
   const triggerShake = useCallback(() => {
-    const orbWrap = orbWrapRef.current;
-    if (!orbWrap) return;
-    orbWrap.classList.remove('shaking');
-    void (orbWrap as any).offsetWidth;
-    orbWrap.classList.add('shaking');
+    sphereRef.current?.shake();
     setTimeout(() => {
       enterApp();
     }, 1000);
@@ -84,8 +78,6 @@ const HomePage: React.FC = () => {
     }
   }, [triggerShake]);
 
-  useOrbParallax(['h-ball'], ['h-spec']);
-
   return (
     <>
       <AtmosphereCanvas />
@@ -109,10 +101,14 @@ const HomePage: React.FC = () => {
 
         <div className="hero-inner">
           <div className="hero-orb-ctr">
-            <div className="orb-stage" ref={orbStageRef}>
-              <div ref={orbWrapRef} className="orb-wrap">
-                <Orb size="min(46vmin, 260px)" id="h-ball" specId="h-spec" showAtmRings />
-              </div>
+            <div className="orb-stage">
+              <Sphere3D
+                ref={sphereRef}
+                showRings
+                className="hero-sphere"
+                size="min(64vmin, 430px)"
+                triangleContent={<div className="tri-eight">8</div>}
+              />
             </div>
           </div>
 

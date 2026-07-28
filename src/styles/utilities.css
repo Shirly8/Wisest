@@ -41,7 +41,8 @@
 .w-full { width: 100%; }
 .w-orb-lg { width: min(75vmin, 500px); }
 .h-orb-lg { height: min(75vmin, 500px); }
-.w-h-orb-lg { width: min(75vmin, 500px); height: min(75vmin, 500px); }
+/* capped by viewport height so the verdict stack (eye + orb + nudge + name + pills) fits in 100vh */
+.w-h-orb-lg { width: min(52vh, 75vmin, 500px); height: min(52vh, 75vmin, 500px); }
 .w-orb-sm { width: min(60vmin, 400px); }
 .h-orb-sm { height: min(60vmin, 400px); }
 

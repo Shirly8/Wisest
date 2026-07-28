@@ -3,7 +3,7 @@ import './styles/screen-verdict.css';
 import './styles/sphere-3d.css';
 import './styles/utilities.css';
 import Nav from './components/Nav';
-import Sphere3D from './components/Sphere3D';
+import Sphere3D, { Sphere3DHandle } from './components/Sphere3D';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { supabase } from './supabaseClient';
@@ -68,6 +68,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
   const dashRef = useRef<HTMLDivElement>(null);
   const revDoneRef = useRef(false);
   const sphere3dRef = useRef<HTMLDivElement>(null);
+  const sphereHandleRef = useRef<Sphere3DHandle>(null);
 
   // Auth
   useEffect(() => {
@@ -174,11 +175,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     const vnameEl = vnameRef.current;
     const vpillEl = vpillsRef.current;
 
-    if (sphere) {
-      sphere.classList.remove('shaking');
-      void (sphere as any).offsetWidth;
-      sphere.classList.add('shaking');
-    }
+    sphereHandleRef.current?.shake();
 
     // Animate sphere scale
     if (scaleEl) {
@@ -452,7 +449,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
       <Nav currentStep={3} stepLabel="III. The verdict" onLogoClick={reset}
         rightAction={onBackToMetrics
           ? <button className="btn btn-g btn-sm" onClick={onBackToMetrics}>&larr; Adjust</button>
-          : <button className="btn btn-g btn-sm" onClick={() => setDecision(false)}>&larr; Adjust</button>
+          : <button className="btn btn-g btn-sm" onClick={() => setDecision()}>&larr; Adjust</button>
         } />
 
       <div ref={scrollRef} className="sroll">
@@ -466,6 +463,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
             <div className="s4-orb-scale" ref={orbScaleRef}>
               <div ref={sphere3dRef} className="w-h-orb-lg">
                 <Sphere3D
+                  ref={sphereHandleRef}
                   triangleContent={
                     <>
                       <div className="tri-eight" id="s4-eight">8</div>
@@ -664,7 +662,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
 
           {/* Footer */}
           <div className="s4-ft">
-            <button className="btn btn-g" onClick={() => { if (onBackToMetrics) onBackToMetrics(); else setDecision(false); }}>&larr; Edit offerings</button>
+            <button className="btn btn-g" onClick={() => { if (onBackToMetrics) onBackToMetrics(); else setDecision(); }}>&larr; Edit offerings</button>
             <button className="btn btn-p" onClick={handleSaveClick}>{selectedDecisionId ? 'Update' : 'Save'}</button>
             <button className="btn btn-g" onClick={handleExportPDF}>Export PDF</button>
             <button className="btn btn-g" onClick={showDecisionHistory}>History</button>

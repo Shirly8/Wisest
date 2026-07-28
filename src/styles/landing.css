@@ -19,7 +19,8 @@
 }
 .hero-inner{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:var(--sp-8);padding:0 var(--gut);position:relative;z-index:10;
+  gap:var(--sp-5);padding:0 var(--gut);position:relative;z-index:10;
+  min-height:0;
 }
 
 .hero-orb-ctr{
@@ -31,6 +32,11 @@
 .orb-stage{
   position:relative;
   display:inline-flex;align-items:center;justify-content:center;
+  /* layout box stays small; the 3D canvas overflows it visually */
+  width:min(38vmin,250px);height:min(38vmin,250px);
+}
+.orb-stage .hero-sphere{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
 }
 .orb-stage::before{
   content:'';position:absolute;

@@ -7,7 +7,7 @@
 .s4-sticky{
   position:relative;height:100vh;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:var(--sp-6);overflow:hidden;
+  gap:var(--sp-4);overflow:hidden;
 }
 .s4-sticky::before{
   content:'';position:absolute;
