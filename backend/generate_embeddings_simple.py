@@ -49,7 +49,6 @@ def generate_embedding(text):
             if "embeddings" in data and len(data["embeddings"]) > 0:
                 return data["embeddings"][0]
         else:
-            # Debug: print error response
             pass
     except requests.exceptions.Timeout:
         pass  # Timeout - skip this document

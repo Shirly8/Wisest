@@ -3,13 +3,10 @@ import './styles/utilities.css';
 
 interface MetricOptionsProps {
   index: number;
-  setMetricTypes: React.Dispatch<React.SetStateAction<number[]>>;
   options: string[];
   metricTypes: number[];
   categories: { title: string; metrics: (number | string)[]; importance: number }[];
   handleMetricChange: (index: number, optionIndex: number, value: string) => void;
-  addCategory: () => void;
-  deleteCategory: (index: number) => void;
 }
 
 const MetricOptions: React.FC<MetricOptionsProps> = ({ index, options, metricTypes, categories, handleMetricChange }) => {

@@ -21,7 +21,6 @@ interface MainProps {
   demoMetricTypes?: number[];
   demoMainConsideration?: string;
   demoChoiceConsiderations?: { [key: string]: string };
-  autoOpenGemini?: boolean;
   onDemoCompleted?: (feedback: string) => void;
   demoFeedback?: string;
   onBackToMetrics?: () => void;
@@ -45,7 +44,6 @@ const Main: React.FC<MainProps> = ({
   demoMetricTypes,
   demoMainConsideration,
   demoChoiceConsiderations,
-  autoOpenGemini = false,
   onDemoCompleted,
   demoFeedback = '',
   onBackToMetrics
@@ -105,7 +103,7 @@ const Main: React.FC<MainProps> = ({
     setCategories(prevCategories => {
       const newCategories = [...prevCategories];
       switch (metricTypes[numCategory]) {
-        case 0: newCategories[numCategory].metrics[numOptions] = value; break;
+        case 0:
         case 1: newCategories[numCategory].metrics[numOptions] = value; break;
         case 2: newCategories[numCategory].metrics[numOptions] = value === 'Yes' ? 1 : 0; break;
         case 3: newCategories[numCategory].metrics[numOptions] = value === 'No' ? 1 : 0; break;
@@ -119,10 +117,6 @@ const Main: React.FC<MainProps> = ({
   // 4) NAVIGATION STATES — Use screen state instead of booleans
   type Screen = 'options' | 'criteria' | 'importance' | 'decision';
   const [screen, setScreen] = useState<Screen>(skipMetricsPage && demoMode ? 'decision' : 'options');
-
-  useEffect(() => {
-    if (skipMetricsPage && demoMode) setScreen('decision');
-  }, [skipMetricsPage, demoMode]);
 
   // 5) DECISION CONTEXT
   const [mainConsiderations, setMainConsiderations] = useState(
@@ -208,8 +202,6 @@ const Main: React.FC<MainProps> = ({
         categories={categories} options={options} metricTypes={metricTypes}
         setDecision={() => setScreen('criteria')} reset={reset}
         choiceConsiderations={choiceConsiderations} mainConsideration={mainConsiderations}
-        setCategories={setCategories} setOptions={setOptions} setMetricTypes={setMetricTypes}
-        setMainConsideration={setMainConsiderations} setChoiceConsiderations={setChoiceConsiderations}
         selectedDecisionId={selectedDecisionId} showDecisionHistory={showDecisionHistory}
         decisionName={decisionName} setDecisionName={setDecisionName}
         demoMode={demoMode} demoFeedback={demoFeedback}
@@ -266,9 +258,8 @@ const Main: React.FC<MainProps> = ({
                     <option value={4}>Assign ratings (1-10)</option>
                   </select>
                 </div>
-                <MetricOptions index={index} setMetricTypes={setMetricTypes} options={options}
-                  metricTypes={metricTypes} categories={categories} handleMetricChange={handleMetricChange}
-                  addCategory={addCategory} deleteCategory={deleteCategory} />
+                <MetricOptions index={index} options={options}
+                  metricTypes={metricTypes} categories={categories} handleMetricChange={handleMetricChange} />
               </div>
             ))}
             <div className="add-cc" onClick={addCategory}>

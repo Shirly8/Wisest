@@ -1,29 +1,29 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import './styles/screen-verdict.css';
 import './styles/sphere-3d.css';
 import './styles/utilities.css';
 import Nav from './components/Nav';
 import Sphere3D from './components/Sphere3D';
-import { useOrbParallax } from './hooks/useOrbParallax';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { supabase } from './supabaseClient';
 import SignInModal from './SignInModal';
 import DecisionNamingModal from './DecisionNamingModal';
 
+function extractNumber(value: string | number | undefined): number {
+  if (value === undefined || value === null) return 0;
+  const numericValue = value.toString().match(/-?\d+(\.\d+)?/);
+  return numericValue ? parseFloat(numericValue[0]) : 0;
+}
+
 interface CalculateDecisionProps {
   categories: { title: string; metrics: number[]; importance: number }[];
   options: string[];
   metricTypes: number[];
-  setDecision: React.Dispatch<React.SetStateAction<boolean>>;
+  setDecision: () => void;
   reset: () => void;
   mainConsideration: string;
   choiceConsiderations: { [key: string]: string };
-  setCategories: React.Dispatch<React.SetStateAction<{ title: string; metrics: number[]; importance: number }[]>>;
-  setOptions: React.Dispatch<React.SetStateAction<string[]>>;
-  setMetricTypes: React.Dispatch<React.SetStateAction<number[]>>;
-  setMainConsideration: React.Dispatch<React.SetStateAction<string>>;
-  setChoiceConsiderations: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
   selectedDecisionId?: string | null;
   showDecisionHistory: () => void;
   decisionName: string;
@@ -37,8 +37,6 @@ interface CalculateDecisionProps {
 const CalculateDecision: React.FC<CalculateDecisionProps> = ({
   categories, options, metricTypes, setDecision, reset,
   mainConsideration, choiceConsiderations,
-  setCategories, setOptions: _setOptions, setMetricTypes: _setMetricTypes,
-  setMainConsideration, setChoiceConsiderations: _setChoiceConsiderations,
   selectedDecisionId, showDecisionHistory,
   decisionName, setDecisionName,
   demoMode = false, demoFeedback = '',
@@ -57,6 +55,9 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showDecisionNameInput, setShowDecisionNameInput] = useState(false);
 
+  // Pending save intent — survives re-subscriptions; set before opening SignInModal
+  const pendingSaveRef = useRef(false);
+
   // Scroll refs
   const scrollRef = useRef<HTMLDivElement>(null);
   const orbScaleRef = useRef<HTMLDivElement>(null);
@@ -68,12 +69,6 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
   const revDoneRef = useRef(false);
   const sphere3dRef = useRef<HTMLDivElement>(null);
 
-  function extractNumber(value: string | number | undefined): number {
-    if (value === undefined || value === null) return 0;
-    const numericValue = value.toString().match(/-?\d+(\.\d+)?/);
-    return numericValue ? parseFloat(numericValue[0]) : 0;
-  }
-
   // Auth
   useEffect(() => {
     const checkAuth = async () => {
@@ -83,32 +78,36 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     checkAuth();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsAuthenticated(!!session?.user);
-      if (event === 'SIGNED_IN' && showSignInModal) {
+      if (event === 'SIGNED_IN' && pendingSaveRef.current) {
+        pendingSaveRef.current = false;
         setShowSignInModal(false);
         setTimeout(() => saveToDatabase(), 1000);
       }
     });
     return () => subscription.unsubscribe();
-  }, [showSignInModal]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Score calculation
   const calculateScore = useCallback(() => {
-    const minVal = categories.map(c => Math.min(...c.metrics.map(extractNumber)));
-    const maxVal = categories.map(c => Math.max(...c.metrics.map(extractNumber)));
+    const minMaxVal = categories.map(c => {
+      let min = Infinity, max = -Infinity;
+      for (const m of c.metrics) { const v = extractNumber(m); if (v < min) min = v; if (v > max) max = v; }
+      return { min, max };
+    });
     return options.map((_, oi) => {
       let score = 0;
       categories.forEach((cat, ci) => {
         let mv = extractNumber(cat.metrics[oi]);
         if (metricTypes[ci] === 1) mv = mv === 0 ? 0.1 : 1 / mv;
-        const range = maxVal[ci] - minVal[ci];
+        const { min, max } = minMaxVal[ci];
+        const range = max - min;
         let nm;
         if (range === 0) nm = 0.5;
         else {
           if (metricTypes[ci] === 1) {
-            const orig = extractNumber(cat.metrics[oi]);
-            nm = 1 - (orig - minVal[ci]) / range;
+            nm = 1 - (extractNumber(cat.metrics[oi]) - min) / range;
           } else {
-            nm = (mv - minVal[ci]) / range;
+            nm = (mv - min) / range;
           }
           nm = Math.max(0, Math.min(1, nm));
         }
@@ -162,9 +161,6 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
       if (demoMode && onDemoCompleted && !demoFeedback && fb) onDemoCompleted(fb);
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Orb parallax
-  useOrbParallax(['s4-ball'], ['s4-spec']);
 
   // Shake detection on verdict screen
   const triggerSphereShake = useCallback(() => {
@@ -345,7 +341,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
 
   const handleSaveClick = () => {
     if (demoMode) return;
-    if (!isAuthenticated) { setShowSignInModal(true); return; }
+    if (!isAuthenticated) { pendingSaveRef.current = true; setShowSignInModal(true); return; }
     if (!decisionName && !selectedDecisionId) { setShowDecisionNameInput(true); return; }
     saveToDatabase();
   };
@@ -436,19 +432,20 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
     : confWord === 'Likely' ? 'The signs favour this path. Worth verifying one criterion.'
     : 'The veil is thin. Revisit your weights carefully.';
 
-  // Risk Assessment — measure volatility/stability
-  const riskScores = options.map((_, oi) => {
+  const riskScores = useMemo(() => options.map((_, oi) => {
     let variance = 0;
     categories.forEach((cat, ci) => {
-      let mv = extractNumber(cat.metrics[oi]);
-      if (metricTypes[ci] === 1) mv = mv === 0 ? 0.1 : 1 / mv;
-      const catMetrics = categories[ci].metrics.map(m => extractNumber(m));
-      const range = (Math.max(...catMetrics) - Math.min(...catMetrics)) || 1;
-      const normalized = Math.abs((mv - Math.min(...catMetrics)) / range - 0.5);
-      variance += normalized * Math.pow(cat.importance, 2);
+      const mv = extractNumber(cat.metrics[oi]);
+      let catMin = Infinity, catMax = -Infinity;
+      for (const m of cat.metrics) { const v = extractNumber(m); if (v < catMin) catMin = v; if (v > catMax) catMax = v; }
+      const range = (catMax - catMin) || 1;
+      let n = (mv - catMin) / range;
+      if (metricTypes[ci] === 1) n = 1 - n;
+      n = Math.max(0, Math.min(1, n));
+      variance += Math.abs(n - 0.5) * Math.pow(cat.importance, 2);
     });
     return variance;
-  });
+  }), [categories, options, metricTypes]);
 
   return (
     <div className="scr" id="verdict-content">
@@ -523,8 +520,8 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
               <div className="cpanel">
                 <div className="cp-h">Risk assessment</div>
                 <div className="risk-bars">
-                  {sortedIndices.map((oi) => {
-                    const riskPct = Math.min(100, (riskScores[oi] / Math.max(...riskScores, 1)) * 100);
+                  {(() => { const maxRisk = Math.max(...riskScores, 1); return sortedIndices.map((oi) => {
+                    const riskPct = Math.min(100, (riskScores[oi] / maxRisk) * 100);
                     const riskLevel = riskPct > 60 ? 'High' : riskPct > 30 ? 'Medium' : 'Low';
                     const riskColor = riskPct > 60 ? 'rgba(255,100,100,.8)' : riskPct > 30 ? 'rgba(255,200,100,.8)' : 'rgba(100,200,100,.8)';
                     return (
@@ -534,7 +531,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
                         <span className="risk-lbl">{riskLevel}</span>
                       </div>
                     );
-                  })}
+                  })})()}
                 </div>
               </div>
 
@@ -682,8 +679,7 @@ const CalculateDecision: React.FC<CalculateDecisionProps> = ({
       )}
 
       {/* Modals */}
-      <SignInModal isOpen={showSignInModal} onClose={() => setShowSignInModal(false)}
-        onSignInSuccess={() => { setShowSignInModal(false); saveToDatabase(); }} />
+      <SignInModal isOpen={showSignInModal} onClose={() => setShowSignInModal(false)} />
       <DecisionNamingModal isOpen={showDecisionNameInput} decisionName={decisionName}
         setDecisionName={setDecisionName} onSave={() => { setShowDecisionNameInput(false); saveToDatabase(); }}
         onCancel={() => setShowDecisionNameInput(false)} />

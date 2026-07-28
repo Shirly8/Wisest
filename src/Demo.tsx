@@ -79,11 +79,6 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
   // Use pre-saved feedback initially, but clear it if user goes back and makes changes
   const [demoFeedback, setDemoFeedback] = useState<string>(DEMO_DEFAULT_FEEDBACK);
 
-  // Reset demo when user clicks reset
-  const handleReset = () => {
-    reset();
-  };
-
   // Clear demo feedback when user goes back to metrics - forces actual API call on next submit
   const handleBackToMetrics = () => {
     setDemoFeedback('');
@@ -91,7 +86,7 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
 
   return (
     <Main
-      reset={handleReset}
+      reset={reset}
       selectedDecisionId={selectedDecisionId}
       setSelectedDecisionId={setSelectedDecisionId}
       showDecisionHistory={showDecisionHistory}
@@ -102,7 +97,6 @@ Cons: Secretive culture, long commute to Cupertino, high expectations, competiti
       demoMetricTypes={demoMetricTypes}
       demoMainConsideration={demoMainConsideration}
       demoChoiceConsiderations={demoChoiceConsiderations}
-      autoOpenGemini={true}
       demoFeedback={demoFeedback}
       onBackToMetrics={handleBackToMetrics}
     />

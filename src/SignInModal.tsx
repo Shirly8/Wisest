@@ -5,7 +5,6 @@ import './styles/modals.css';
 interface SignInModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSignInSuccess: () => void;
 }
 
 const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => {
